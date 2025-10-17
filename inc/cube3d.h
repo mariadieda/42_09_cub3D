@@ -39,6 +39,28 @@ typedef struct s_mlx_data
     int				offset_y;
 }					t_mlx_data;
 
+typedef struct s_rgb
+{
+    int					r;
+    int					g;
+    int					b;
+}						t_rgb;
+
+typedef struct s_col
+{
+    char			*no_tex_p;
+    char		    *so_tex_p;
+    char			*we_tex_p;
+    char			*ea_tex_p;
+    struct s_rgb	floor;
+    struct s_rgb	ceil;
+}					t_col;
+
+typedef struct s_pos{
+    int x;
+    int y;
+}t_pos;
+
 typedef struct s_cub
 {
     t_map			*map;
@@ -47,7 +69,9 @@ typedef struct s_cub
     void			*win;
     void			*img;
     char			*pxl_arr;
-
+    struct s_col    *col;
+    char            spawn_dir;
+    struct s_pos    player_pos;
 }					t_cub;
 
 #endif //INC_42_09_CUBE3D_CUBE3D_H
