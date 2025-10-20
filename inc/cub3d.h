@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cub3d.h                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mdiederi <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/16 16:09:28 by mdiederi          #+#    #+#             */
-/*   Updated: 2025/10/16 16:09:33 by mdiederi         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #ifndef INC_42_09_CUBE3D_CUBE3D_H
 #define INC_42_09_CUBE3D_CUBE3D_H
@@ -26,15 +15,13 @@
 # define A 97
 # define S 115
 # define D 100
-
 # define LEFT 65361
 # define RIGHT 65363
 
-#include "./mlx/mlx.h"
 #include <stdio.h>
-# include "gnl/get_next_line.h"
-# include "libft/ft_printf.h"
-# include "libft/libft.h"
+# include "../gnl/get_next_line.h"
+# include "../libft/ft_printf.h"
+# include "../libft/libft.h"
 # include <fcntl.h> // open
 # include <math.h>
 # include <mlx.h>
@@ -46,16 +33,10 @@ typedef struct s_mlx_data
     int				bits_per_pixel;
     int				line_length;
     int				endian;
-    int				map_max_width;
-    int				map_max_height;
     int				screen_width;
     int				screen_height;
     int				win_width;
     int				win_height;
-    unsigned int	def_color;
-    double			zoom_factor;
-    int				offset_x;
-    int				offset_y;
 }					t_mlx_data;
 
 typedef struct s_rgb
@@ -82,7 +63,7 @@ typedef struct s_pos{
 
 typedef struct s_cub
 {
-    t_map			*map;
+    //t_map			*map;
     t_mlx_data		mlx_data;
     void			*mlx;
     void			*win;
@@ -92,5 +73,9 @@ typedef struct s_cub
     char            spawn_dir;
     struct s_pos    player_pos;
 }					t_cub;
+
+void	make_window(t_cub *cub);
+void    clean_up(t_cub *cub);
+void	error_exit(t_cub *cub, char *msg);
 
 #endif //INC_42_09_CUBE3D_CUBE3D_H

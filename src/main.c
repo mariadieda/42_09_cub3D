@@ -5,13 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mdiederi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/16 16:08:43 by mdiederi          #+#    #+#             */
-/*   Updated: 2025/10/16 16:08:48 by mdiederi         ###   ########.fr       */
+/*   Created: 2025/10/20 10:13:33 by mdiederi          #+#    #+#             */
+/*   Updated: 2025/10/20 10:14:15 by mdiederi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub.h"
-
+#include "../inc/cub3d.h"
+/*
 void	init_map(t_cub *cub)
 {
     t_map	*map;
@@ -28,28 +28,19 @@ void	init_map(t_cub *cub)
     map->max_y_pr = -2147483647;
     cub->map = map;
 }
-
+*/
 void	init_cub(t_cub *cub)
 {
     //init_map(cub);
-    cub->mlx = NULL;
-    cub->win = NULL;
-    cub->img = NULL;
-    cub->pxl_arr = NULL;
+	ft_memset(&cub->mlx_data, 0, sizeof(t_mlx_data));
     cub->mlx_data.bits_per_pixel = 24;
     cub->mlx_data.endian = 0;
-    cub->mlx_data.map_max_width = 0;
-    cub->mlx_data.map_max_height = 0;
-    cub->mlx_data.screen_width = 0;
-    cub->mlx_data.screen_height = 0;
-    cub->mlx_data.win_width = 0;
-    cub->mlx_data.win_height = 0;
-    cub->mlx_data.zoom_factor = 1;
 }
+
 
 int	handle_close(t_cub *cub)
 {
-    cleanup_cub(cub);
+    clean_up(cub);
     exit(0);
     return (0);
 }
@@ -58,12 +49,25 @@ int	handle_keypress(int keycode, t_cub *cub)
 {
     if (keycode == 65307)
         handle_close(cub);
+    if (keycode == W)
+        {;} // go straight
+	if (keycode == A)
+        {;} // go left
+	if (keycode == S)
+        {;} // back up
+	if (keycode == D)
+        {;} // go right
+	if (keycode == LEFT)
+        {;} // turn left
+	if (keycode == RIGHT)
+        {;} // turn right
     return (0);
 }
 
 int	main(int argc, char **argv)
 {
     t_cub    cub;
+    (void) argv;
 
     ft_memset(&cub, 0, sizeof(t_cub));
     if (argc != 2 ) // || !check_file_ext(argc, argv)
@@ -76,6 +80,6 @@ int	main(int argc, char **argv)
     mlx_key_hook(cub.win, handle_keypress, &cub);
     mlx_hook(cub.win, 17, 0, handle_close, &cub);
     mlx_loop(cub.mlx);
-    cleanup_cub(&cub);
+    clean_up(&cub);
     return (0);
 }

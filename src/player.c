@@ -1,7 +1,5 @@
-//
-// Created by mdiederi on 10/20/25.
-//
-
+#include"../inc/cub3d.h"
+/*
 void player_move(int x, int y)
 {
     int new_x;
@@ -14,4 +12,4 @@ void player_move(int x, int y)
         if (touch_boundaries)
                 return;
 
-}
+}*/

@@ -1,10 +1,9 @@
 
 NAME=cub3D
-SRCS=fdf.c gnl/get_next_line.c gnl/get_next_line_utils.c  parse_input.c\
- rendering.c input_check.c atol.c free_stuff.c update_points.c color_handling.c \
- parse_input_points.c on_the_edge.c
+SRCS=src/main.c src/rendering.c src/player.c src/clean_up.c\
+	 gnl/get_next_line.c gnl/get_next_line_utils.c
 OBJS=${SRCS:.c=.o} 	# Change of file extension
-INCL=inc/cub3d.h	  		 # File headers
+INCL=inc	  		 # File headers
 LIBFT_DIR=libft
 LIBFT=libft/libft.a
 MINLB_DIR=minilibx-linux
@@ -13,10 +12,6 @@ CC=cc            # Define compiler
 RM=rm -f         # Remove file without error, even if it does not exist
 CFLAGS=-Wall -Wextra -Werror -g -I$(INCL) -I gnl -I$(MINLB_DIR)  # Define options for compilation #-fsanitize=address for MAC work
 LDFLAGS=-L$(LIBFT_DIR) -lft -L$(MINLB_DIR) -lmlx -lXext -lX11 -lm # linker flags for linking stage
-
-# if your project allows you to use your libft, you must copy its sources and
-# its associated MakefileEXp in a libft folder with its associated MakefileEXp.
-# Your project’s MakefileEXp must compile the library by using its MakefileEXp, then compile the project.
 
 # Default target to build the library
 all: $(LIBFT) $(MLX) $(NAME)
