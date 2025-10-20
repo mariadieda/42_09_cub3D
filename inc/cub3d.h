@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cube3d.h                                           :+:      :+:    :+:   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mdiederi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -13,6 +13,25 @@
 #ifndef INC_42_09_CUBE3D_CUBE3D_H
 #define INC_42_09_CUBE3D_CUBE3D_H
 
+# define WIDTH 1280 //todo or define dynamically with size fun?
+# define HEIGHT 720
+
+# define CUBE_SIZE = 64
+# define PLAYER_HEIGHT (CUBE_SIZE / 2)
+
+//# define PI 3.14159265359
+# define PI 3.1415926535897932384626 //whats highest precision possible/necessary?
+
+# define W 119
+# define A 97
+# define S 115
+# define D 100
+
+# define LEFT 65361
+# define RIGHT 65363
+
+#include "./mlx/mlx.h"
+#include <stdio.h>
 # include "gnl/get_next_line.h"
 # include "libft/ft_printf.h"
 # include "libft/libft.h"
