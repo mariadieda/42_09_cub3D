@@ -4,11 +4,11 @@ void    clean_up(t_cub *cub){
     {
         if (!cub)
             return ;
-        /*if (!cub->map)
+        if (!cub->map)
             return ;
-        if (cub->map->grid)
-            ft_free_point_grid(cub, cub->map->grid, cub->map->height);
-        free(cub->map);*/
+        if (cub->map)
+            {;} // todo free grid etc.
+        free(cub->map);
         if (cub->img)
             mlx_destroy_image(cub->mlx, cub->img);
         if (cub->win)

@@ -56,6 +56,12 @@ typedef struct s_col
     struct s_rgb	ceil;
 }					t_col;
 
+typedef struct s_map {
+    int  **grid;
+    int  *widths;  // width[y] gives width of row y
+    int  height;
+} t_map;
+
 typedef struct s_pos{
     int x;
     int y;
@@ -63,7 +69,7 @@ typedef struct s_pos{
 
 typedef struct s_cub
 {
-    //t_map			*map;
+    struct s_map    *map;
     t_mlx_data		mlx_data;
     void			*mlx;
     void			*win;
