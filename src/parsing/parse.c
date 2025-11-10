@@ -129,7 +129,7 @@ char*    second_part(char *ident, char* trimd, t_cub* cub)
     return (s);
 }
 
-void    populate_color(char* trimd, char *ident, t_cub* cub)
+void    populate_color(char* trimd, char *ident, int* header_cnt, t_cub* cub)
 {
     char* color;
 
@@ -137,9 +137,17 @@ void    populate_color(char* trimd, char *ident, t_cub* cub)
     if(validate_color(color, cub))
     {
         if(*ident == 'F')
+        {
             cub->col->floor = int_color(color);
+            cub->col->has_floor = 1;      
+            header_cnt++;
+        }
         else if(*ident == 'C')
-            cub->col->ceil = int_color(color);        
+        {
+            cub->col->ceil = int_color(color);
+            cub->col->has_ceil = 1;
+            header_cnt++;
+        }      
     }        
     else
     {
@@ -165,7 +173,7 @@ int validate_address(char* token)
     return(1);
 }
 
-int check_valid_ident(char *trimd, char *ident)
+int validate_identifier(char *trimd, char *ident)
 {
     size_t len_ident;
     
@@ -182,7 +190,7 @@ int check_valid_ident(char *trimd, char *ident)
     return(1);
 }
 
-void populate_address(char* trimd, char *ident, t_cub* cub)
+void populate_address(char* trimd, char *ident, int* header_cnt, t_cub* cub)
 {
     char* token = second_part(ident, trimd, cub);
     if(!validate_address(token))
@@ -194,18 +202,29 @@ void populate_address(char* trimd, char *ident, t_cub* cub)
     else
     {
         if (ft_strncmp(ident, "NO", 2) == 0)
+        {
             cub->col->no_tex_p = token;
+            header_cnt++;
+        }
         else if(ft_strncmp(ident, "SO", 2) == 0)
+        {
             cub->col->so_tex_p = token;
+            header_cnt++;
+        }
         else if(ft_strncmp(ident, "WE", 2) == 0)
+        {
             cub->col->we_tex_p = token;
+            header_cnt++;
+        }
         else if(ft_strncmp(ident, "EA", 2) == 0)
+        {
             cub->col->ea_tex_p = token;
-    }
-    
+            header_cnt++;
+        }
+    }    
 }
 
-void    parse_text_col_line(char *line, t_cub* cub)
+void    parse_text_col_line(char *line, int* header_cnt, t_cub* cub)
 {
     char *trimd = ft_strtrim(line, " \n\t\f\v\r");
     if(!trimd)
@@ -213,18 +232,18 @@ void    parse_text_col_line(char *line, t_cub* cub)
     if(*trimd == '\0')
         error_exit(cub, "Error\nEmpty line\n");
 
-    if(check_valid_ident(trimd, "NO"))
-        populate_address(trimd, "NO", cub);
-    else if(check_valid_ident(trimd, "SO"))
-        populate_address(trimd, "SO", cub);
-    else if(check_valid_ident(trimd, "WE"))   
-        populate_address(trimd, "WE", cub);
-    else if(check_valid_ident(trimd, "EA"))
-        populate_address(trimd, "EA", cub);
-    else if(check_valid_ident(trimd, "F"))
-        populate_color(trimd, "F", cub);        
-    else if(check_valid_ident(trimd, "C"))
-        populate_color(trimd, "C", cub);
+    if(validate_identifier(trimd, "NO"))
+        populate_address(trimd, "NO", header_cnt, cub);
+    else if(validate_identifier(trimd, "SO"))
+        populate_address(trimd, "SO", header_cnt, cub);
+    else if(validate_identifier(trimd, "WE"))   
+        populate_address(trimd, "WE", header_cnt, cub);
+    else if(validate_identifier(trimd, "EA"))
+        populate_address(trimd, "EA", header_cnt, cub);
+    else if(validate_identifier(trimd, "F"))
+        populate_color(trimd, "F", header_cnt, cub);        
+    else if(validate_identifier(trimd, "C"))
+        populate_color(trimd, "C", header_cnt, cub);
     else
         error_exit(cub, "Error\nInvalid Identifier\n");
     free(trimd);
@@ -246,15 +265,8 @@ int check_paths_accessibility(t_cub* cub)
     return(1);   
 }
 
-int parse_file(char* filename, t_cub* cub)
+void check_col_state(t_cub* cub)
 {
-    int fd;
-    char *line;
-    
-    fd = open(filename, O_RDONLY);
-    if (fd == -1)
-        error_exit(cub, "Error\nError opening file\n");
-
     if (cub->col == NULL) //completely NULL col
     {
         cub->col = ft_calloc(1, sizeof(*(cub->col)));
@@ -266,31 +278,163 @@ int parse_file(char* filename, t_cub* cub)
     {
         error_exit(cub, "Error\nInternal: col already initialized\n");
     } // if col is allocated but all members are NULL -> safe to use
+}
+
+void check_missing_text_col(t_cub* cub)
+{
+    if (!cub->col->no_tex_p || !cub->col->so_tex_p ||
+        !cub->col->we_tex_p || !cub->col->ea_tex_p || 
+        !cub->col->has_floor || !cub->col->has_ceil)
+        error_exit(cub, "Error\nMissing texture path(s) or color\n");
+}
+
+int is_map(char c)
+{
+    if (c == ' ' ||c == '1' || c == '0' || c == 'N'
+         || c == 'S' || c == 'W' || c == 'E')
+        return (1);
+    else 
+        return (0);
+}
+
+int is_player(char c)
+{
+    if (c == 'N' || c == 'S' || c == 'W' || c == 'E')
+        return (1);
+    else 
+        return (0);
+}
+
+void validate_chars_in_map_line(char *trimd, int* has_player, int* map_started, t_cub* cub)// validate the line and start_map = 1
+{
+    int i;
+    int trimd_len;
+
+    i = 0;    
+    while(trimd[i])
+    {       
+        if(!is_map(trimd[i]))
+            error_exit(cub, "Error\nInvalid map character\n");        
+        if(is_player(trimd[i]))
+        {
+            if(*has_player == 1)
+                error_exit(cub, "Error\nMultiple players present\n");
+            *has_player = 1;
+            cub->player_pos.x = i;
+            cub->player_pos.y = cub->map->height;
+        }        
+        i++;
+    }
+    if(*map_started == 0)
+        *map_started = 1;
+    trimd_len = ft_strlen(trimd);
+    if(cub->map->width < trimd_len)
+        cub->map->width = trimd_len;
+    cub->map->height++;
+}
+
+void    pad_map(t_cub* cub) //to do: reallocate the small lines
+{
+    int i;
+    int width;
+
+    i = 0;
+    while(i < cub->map->height)
+    {
+        width = ft_strlen(cub->map->grid[i]);
+        while(width < cub->map->width)
+        {
+            cub->map->grid[i][width] = ' ';
+            width++;
+        }
+        i++;
+    }
+
+}
+
+void    allocate_map(t_cub* cub)
+{   
+    cub->map = ft_calloc(1, sizeof(t_map));
+    if (!cub->map)
+        error_exit(cub, "Error\nMalloc failed for map struct\n");
+
+    cub->map->height = 0;
+    cub->map->width = 0;
+    cub->map->grid = malloc(sizeof(char*) * (HEIGHT+1));
+    if (!cub->map->grid)
+        error_exit(cub, "Error\nMalloc failed for map grid\n");
+}
+
+int parse_file(char* filename, t_cub* cub)
+{
+    int fd;
+    char *line;
+    int header_cnt;
+    int map_started;
+    int has_player;
+    char *trimd;
+    
+    header_cnt = 0;
+    map_started = 0;
+    has_player = 0;
+    fd = open(filename, O_RDONLY);
+    if (fd == -1)
+        error_exit(cub, "Error\nError opening file\n");
+    check_col_state(cub);
+    allocate_map(cub);
     while(1)
     {
         line = get_next_line(fd);
-        if( line == NULL)
+        if (!line) 
             break;
-        parse_text_col_line(line, cub);
-        
+        if(header_cnt < 6)
+        {
+            if(*line == '\0')
+            {
+                free(line);
+                continue;
+            }                
+            parse_text_col_line(line, &header_cnt, cub);
+        }        
+        else
+        {
+            if (!map_started)
+            {
+                check_missing_text_col(cub);
+                if(*line == '\0')
+                {
+                    free(line);
+                    continue;
+                } 
+            }
+            else
+            {               
+                if(*line == '\0')// here i should check also if previous line is just wall
+                    error_exit(cub, "Error\nInvalid blank line inside map\n");
+                trimd = ft_strtrim(line, "\r\n");
+                validate_chars_in_map_line(trimd, &has_player, &map_started, cub);
+                cub->map->grid[cub->map->height] = ft_strdup(trimd);
+                free(trimd);
+            }         
+        }
         free(line);
+        
     }
+    pad_map(cub);
+    validate_map(cub);
     close(fd);
-    if (!cub->col->no_tex_p || !cub->col->so_tex_p ||
-        !cub->col->we_tex_p || !cub->col->ea_tex_p)
-        error_exit(cub, "Error\nMissing texture path(s)\n");
-
     if(!check_paths_accessibility(cub))
         error_exit(cub, "Error\nError opening texture file\n");
-   
     return(1);
 }
 
 /*
 ✅ What I do need to check
 Check	Where to do it	How
-1️⃣ The identifier is valid (NO, SO, WE, EA)	Parser	your check_valid_ident()
+1️⃣ The identifier is valid (NO, SO, WE, EA)	Parser	your validate_identifier()
 2️⃣ The second part exists (not empty)	Parser	if (*path == '\0') error_exit("Missing texture path");
 3️⃣ The file exists and is accessible	After parsing	open(path, O_RDONLY)
 4️⃣ The file ends with .xpm (mandatory format)
+
+No need to close(fd) when error_exit() because on exit() kernel does clean it up. 
 */
