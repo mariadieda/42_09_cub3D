@@ -140,13 +140,13 @@ void    populate_color(char* trimd, char *ident, int* header_cnt, t_cub* cub)
         {
             cub->col->floor = int_color(color);
             cub->col->has_floor = 1;      
-            header_cnt++;
+            (*header_cnt)++;
         }
         else if(*ident == 'C')
         {
             cub->col->ceil = int_color(color);
             cub->col->has_ceil = 1;
-            header_cnt++;
+            (*header_cnt)++;
         }      
     }        
     else
@@ -204,22 +204,22 @@ void populate_address(char* trimd, char *ident, int* header_cnt, t_cub* cub)
         if (ft_strncmp(ident, "NO", 2) == 0)
         {
             cub->col->no_tex_p = token;
-            header_cnt++;
+            (*header_cnt)++;
         }
         else if(ft_strncmp(ident, "SO", 2) == 0)
         {
             cub->col->so_tex_p = token;
-            header_cnt++;
+            (*header_cnt)++;
         }
         else if(ft_strncmp(ident, "WE", 2) == 0)
         {
             cub->col->we_tex_p = token;
-            header_cnt++;
+            (*header_cnt)++;
         }
         else if(ft_strncmp(ident, "EA", 2) == 0)
         {
             cub->col->ea_tex_p = token;
-            header_cnt++;
+            (*header_cnt)++;
         }
     }    
 }
@@ -245,7 +245,11 @@ void    parse_text_col_line(char *line, int* header_cnt, t_cub* cub)
     else if(validate_identifier(trimd, "C"))
         populate_color(trimd, "C", header_cnt, cub);
     else
-        error_exit(cub, "Error\nInvalid Identifier\n");
+    {
+        //ft_putstr_fd(trimd, 1);
+        error_exit(cub,  "Error\nInvalid/Missing texture/color header!\n");
+    }
+        
     free(trimd);
 }
 
@@ -285,7 +289,7 @@ void check_missing_text_col(t_cub* cub)
     if (!cub->col->no_tex_p || !cub->col->so_tex_p ||
         !cub->col->we_tex_p || !cub->col->ea_tex_p || 
         !cub->col->has_floor || !cub->col->has_ceil)
-        error_exit(cub, "Error\nMissing texture path(s) or color\n");
+        error_exit(cub, "Error\nMissing or multiple texture path(s) or color\n"); //in case i.e. 6 valid kheaders + 1 duplicate valid header
 }
 
 int is_map(char c)
@@ -311,10 +315,11 @@ void validate_chars_in_map_line(char *trimd, int* has_player, int* map_started, 
     int trimd_len;
 
     i = 0;    
+    //ft_printf("Entered in validate_chars_in_map_line");
     while(trimd[i])
     {       
         if(!is_map(trimd[i]))
-            error_exit(cub, "Error\nInvalid map character\n");        
+            error_exit(cub, "Error\nInvalid map character\n");
         if(is_player(trimd[i]))
         {
             if(*has_player == 1)
@@ -322,6 +327,8 @@ void validate_chars_in_map_line(char *trimd, int* has_player, int* map_started, 
             *has_player = 1;
             cub->player_pos.x = i;
             cub->player_pos.y = cub->map->height;
+            //ft_printf("cub->player_pos.x: %i", cub->player_pos.x);
+           // ft_printf("cub->player_pos.y: %i", cub->player_pos.y);
         }        
         i++;
     }
@@ -336,20 +343,22 @@ void validate_chars_in_map_line(char *trimd, int* has_player, int* map_started, 
 void    pad_map(t_cub* cub) //to do: reallocate the small lines
 {
     int i;
-    int width;
+    int old_width;
+    int add_size = 0;
 
     i = 0;
     while(i < cub->map->height)
     {
-        width = ft_strlen(cub->map->grid[i]);
-        while(width < cub->map->width)
-        {
-            cub->map->grid[i][width] = ' ';
-            width++;
+        old_width = ft_strlen(cub->map->grid[i]);
+        add_size = cub->map->width - old_width + 1;
+        cub->map->grid[i] = ft_realloc(cub->map->grid[i], old_width, (old_width+add_size));
+        while(old_width < cub->map->width)
+        {           
+            cub->map->grid[i][old_width] = ' ';
+            old_width++;
         }
         i++;
     }
-
 }
 
 void    allocate_map(t_cub* cub)
@@ -387,41 +396,46 @@ int parse_file(char* filename, t_cub* cub)
         line = get_next_line(fd);
         if (!line) 
             break;
+        
         if(header_cnt < 6)
         {
-            if(*line == '\0')
+            if(*line == '\n')
             {
                 free(line);
                 continue;
-            }                
+            }
             parse_text_col_line(line, &header_cnt, cub);
-        }        
-        else
+        }
+        else 
         {
-            if (!map_started)
+            if (header_cnt == 6) //meaning already 6 texture/colors
             {
                 check_missing_text_col(cub);
-                if(*line == '\0')
-                {
-                    free(line);
-                    continue;
-                } 
+                header_cnt++;       
+            }
+            if (!map_started && *line == '\n')
+            {   
+                free(line);
+                continue;                
             }
             else
             {               
-                if(*line == '\0')// here i should check also if previous line is just wall
+                if(*line == '\n')// here i should check also if previous line is just wall
                     error_exit(cub, "Error\nInvalid blank line inside map\n");
+
                 trimd = ft_strtrim(line, "\r\n");
                 validate_chars_in_map_line(trimd, &has_player, &map_started, cub);
                 cub->map->grid[cub->map->height] = ft_strdup(trimd);
+                
                 free(trimd);
-            }         
-        }
-        free(line);
+            }       
+        }  
         
+        free(line);        
     }
+
+    //ft_printf("%s\n", cub->map->grid[1]);
     pad_map(cub);
-    validate_map(cub);
     close(fd);
     if(!check_paths_accessibility(cub))
         error_exit(cub, "Error\nError opening texture file\n");
