@@ -25,7 +25,12 @@ void	make_window(t_cub *cub)
     if (!cub->win)
         error_exit(cub, "Failed to create window\n");
     //make_image(cub);
-    //mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);
+    int		img_width;
+	int		img_height;
+    cub->img = mlx_xpm_file_to_image(mlx, relative_path, &img_width, &img_height);
+    if (!cub->img)
+    	error_exit(cub, "Failed to create image\n");
+    mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);
 }
 
 

@@ -124,6 +124,7 @@ int	main(int argc, char **argv)
 	make_window(&cub);
 	mlx_key_hook(cub.win, handle_keypress, &cub);
 	mlx_hook(cub.win, 17, 0, handle_close, &cub);
+	mlx_loop_hook(mlx, render_next_frame, YourStruct);
 	mlx_loop(cub.mlx);
 	clean_up(&cub);
 	return (0);
