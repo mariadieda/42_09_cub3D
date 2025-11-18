@@ -21,9 +21,24 @@ void    clean_up(t_cub *cub){
     }
 }
 
-void	error_exit(t_cub *cub, char *msg)
+void    free_stack_array(char **arr)
 {
-    ft_putstr_fd(msg, 2);
+    int i;
+   
+    i = 0;
+    if (!arr)
+        return;
+    while(arr[i])
+    {
+        free(arr[i]);
+        i++;
+    }
+}
+
+void	error_exit(t_cub *cub, char *msg, char** to_be_freed)
+{
+    ft_putstr_fd(msg, 2);    
+    free_stack_array(to_be_freed);
     clean_up(cub);
     exit(1);
 }
