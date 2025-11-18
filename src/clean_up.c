@@ -21,7 +21,7 @@ void    clean_up(t_cub *cub){
     }
 }
 
-void    free_stack_array(char **arr)
+void    free_array2(char **arr)
 {
     int i;
    
@@ -38,7 +38,7 @@ void    free_stack_array(char **arr)
 void	error_exit(t_cub *cub, char *msg, char** to_be_freed)
 {
     ft_putstr_fd(msg, 2);    
-    free_stack_array(to_be_freed);
+    free_array2(to_be_freed);
     clean_up(cub);
     exit(1);
 }
