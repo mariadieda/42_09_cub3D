@@ -573,13 +573,6 @@ int     parse_file(char* filename, t_cub* cub)
         error_exit(cub, "Error\nInvalid map structure\n", NULL);
     replace_palyer_with_floor(cub);
 
-    int j = 0;
-    while(cub->map->grid[j])
-    {
-        ft_printf("%s\n",cub->map->grid[j]);
-        j++;
-    }
-
     return(1);
 }
 
