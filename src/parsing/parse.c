@@ -459,12 +459,12 @@ int     check_map(t_cub* cub)
     int w;
     char **grid = cub->map->grid;
 
-    y = 0;
-    x = 0;
+    y = 0;   
     h = cub->map->height;
     w = cub->map->width;
     while(y < cub->map->height)
     {
+        x = 0;
         while (x < cub->map->width)
         {
             if((y == 0) || (y == h-1) || x == 0 || (x == w-1)) // all first/last row/column
