@@ -120,6 +120,7 @@ int	main(int argc, char **argv)
 	}
 	init_cub(&cub);
 	// todo read_in_lines(&cub, argv[1]);
+	parse_file(argv[1], &cub);
 	// todo normalize_rotate_map(&cub);
 	make_window(&cub);
 	mlx_key_hook(cub.win, handle_keypress, &cub);
