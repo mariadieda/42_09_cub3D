@@ -290,6 +290,9 @@ int     check_paths_accessibility(t_cub* cub)
         fd = open(paths[i], O_RDONLY);
         if (fd == -1)
             return (0);
+        char * extension = ft_strrchr(paths[i], '.');
+        if(ft_strncmp(extension, ".xpm", 4) != 0)
+            return (0);
         close(fd);
         i++;
     }
