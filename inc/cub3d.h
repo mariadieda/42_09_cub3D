@@ -54,12 +54,15 @@ typedef struct s_col
     char			*ea_tex_p;
     struct s_rgb	floor;
     struct s_rgb	ceil;
+    int has_floor;
+    int has_ceil;
 }					t_col;
 
 typedef struct s_map {
     int  **grid;
-    int  *widths;  // width[y] gives width of row y
+    int  widths;  // width[y] gives width of row y
     int  height;
+    int  capacity;
 } t_map;
 
 typedef struct s_pos{
@@ -83,5 +86,6 @@ typedef struct s_cub
 void	make_window(t_cub *cub);
 void    clean_up(t_cub *cub);
 void	error_exit(t_cub *cub, char *msg);
+int     parse_file(char* filename, t_cub* cub);
 
 #endif //INC_42_09_CUBE3D_CUBE3D_H
