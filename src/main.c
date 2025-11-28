@@ -12,7 +12,7 @@
 
 #include "../inc/cub3d.h"
 
-void	init_col(t_cub *cub)
+/*void	init_col(t_cub *cub)
 {
 	t_col	*col;
 	t_rgb	white;
@@ -58,13 +58,11 @@ void	init_map(t_cub *cub)
 	map.widths = widths;
 	map.grid = grid;
 	cub->map = map;
-}
+}*/
 
 void	init_cub(t_cub *cub)
 {
-	init_map(cub);
-	init_col(cub);
-	ft_memset(&cub->mlx_data, 0, sizeof(t_mlx_data));
+	ft_memset(cub, 0, sizeof(t_cub));
 	cub->mlx_data.bits_per_pixel = 24;
 	cub->mlx_data.endian = 0;
 }
@@ -78,33 +76,61 @@ int	handle_close(t_cub *cub)
 
 int	handle_keypress(int keycode, t_cub *cub)
 {
-	if (keycode == 65307)
+	if (keycode == XK_Escape)
 		handle_close(cub);
-	if (keycode == W)
-	{
-		;
-	} // go straight
-	if (keycode == A)
-	{
-		;
-	} // go left
-	if (keycode == S)
-	{
-		;
-	} // back up
-	if (keycode == D)
-	{
-		;
-	} // go right
-	if (keycode == LEFT)
-	{
-		;
-	} // turn left
-	if (keycode == RIGHT)
-	{
-		;
-	} // turn right
+	if (keycode == XK_W || keycode == XK_w )
+		cub->move.forward = 1;
+	if (keycode == XK_A || keycode == XK_a)
+		cub->move.left = 1;
+	if (keycode == XK_S || keycode == XK_s)
+		cub->move.backward = 1;
+	if (keycode == XK_D || keycode == XK_d)
+		cub->move.right = 1;
+	if (keycode == XK_Left)
+		cub->move.rotate_left = 1;
+	if (keycode == XK_Right)
+		cub->move.rotate_right = 1;
 	return (0);
+}
+
+int	handle_keyrelease(int keycode, t_cub *cub)
+{
+	if (keycode == XK_W || keycode == XK_w )
+		cub->move.forward = 0;
+	if (keycode == XK_A || keycode == XK_a)
+		cub->move.left = 0;
+	if (keycode == XK_S || keycode == XK_s)
+		cub->move.backward = 0;
+	if (keycode == XK_D || keycode == XK_d)
+		cub->move.right = 0;
+	if (keycode == XK_Left)
+		cub->move.rotate_left = 0;
+	if (keycode == XK_Right)
+		cub->move.rotate_right = 0;
+	return (0);
+}
+
+int render(t_cub *cub)
+{
+	(void)cub;
+	/*//For Maria 
+	game_update_and_render(cub);	
+	clear_image(cub->img);
+	cast_rays(cub);
+	mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);*/
+	return(0);
+}
+
+int	has_cub_extension(char *cub_fn)
+{
+	char * extension;
+
+	if (!cub_fn)
+		return (0);
+	extension = ft_strrchr(cub_fn, '.');	
+	if(!extension || ft_strncmp(extension, ".cub", 4) != 0)
+		return (0);
+	return (1);
 }
 
 int	main(int argc, char **argv)
@@ -113,20 +139,20 @@ int	main(int argc, char **argv)
 
 	(void)argv;
 	ft_memset(&cub, 0, sizeof(t_cub));
-	if (argc != 2)
-	{ // || !check_file_ext(argc, argv)
+	if (argc != 2 || !has_cub_extension(argv[1]))
+	{
 		error_exit(&cub,
-			"Please provide exactly one valid .cub file as an argument\n");
+			"Please provide exactly one valid .cub file as an argument\n", NULL);
 	}
-	init_cub(&cub);
 	// todo read_in_lines(&cub, argv[1]);
 	parse_file(argv[1], &cub);
 	// todo normalize_rotate_map(&cub);
 	make_window(&cub);
-	mlx_key_hook(cub.win, handle_keypress, &cub);
+	mlx_hook(cub.win, 2, 1L << 0, handle_keypress, &cub);
+	mlx_hook(cub.win, 3, 1L << 1, handle_keyrelease, &cub);
 	mlx_hook(cub.win, 17, 0, handle_close, &cub);
-	mlx_loop_hook(mlx, render_next_frame, YourStruct);
+	mlx_loop_hook(cub.mlx, render, &cub);
 	mlx_loop(cub.mlx);
-	clean_up(&cub);
+	//clean_up(&cub); //after mlx_loop nothing runs
 	return (0);
 }
