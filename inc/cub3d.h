@@ -65,7 +65,7 @@ typedef struct s_col
 
 typedef struct s_map {
     char  **grid;
-    int  width;  // width[y] gives width of row y
+    int  width;
     int  height;
     int  capacity;
 }                   t_map;
@@ -105,6 +105,7 @@ typedef struct s_cub
     struct s_pos    player_pos;
     struct s_move   move;
 }					t_cub;
+//we can add int player_tile_x and int player_tile_y if it helps you (i.e:to check collisions). If not you just use: (int)player_pos.x
 
 void	make_window(t_cub *cub);
 void    clean_up(t_cub *cub);
