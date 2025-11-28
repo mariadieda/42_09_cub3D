@@ -49,12 +49,12 @@ void	init_map(t_cub *cub)
 	int height = 10;
 		// todo replace with actual number of rows ( set cub.map.height)
 	map = malloc(sizeof(t_map));
-	/*grid = malloc(height * sizeof(int *));
+	grid = malloc(height * sizeof(int *));
 	y = -1;
 		while (++y < height) {
 			int width = get_row_width(y);  // can differ per row
 			grid[y] = malloc(width * sizeof(int));
-		}*/
+		}
 	map.widths = widths;
 	map.grid = grid;
 	cub->map = map;
