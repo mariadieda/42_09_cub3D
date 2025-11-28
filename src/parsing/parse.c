@@ -1,18 +1,9 @@
 #include "cub3d.h"
 
-void    free_array(char **arr, int grid_height)
+
+static int rgb_to_int(t_rgb c)
 {
-    int i;
-   
-    i = 0;
-    if (!arr) 
-        return;
-    while(i < grid_height)
-    {
-        free(arr[i]);
-        i++;
-    }
-    free(arr);
+    return ((c.r << 16) | (c.g << 8) | c.b);
 }
 
 int     ft_isspace(unsigned char c)
@@ -133,35 +124,36 @@ char*   trim_the_line(char *line, t_cub* cub)
     return trimd;
 }
 
-void    populate_color(char* line, char *ident, int* header_cnt, t_cub* cub)
+void    populate_color(char **bufs, char *ident, int* header_cnt, t_cub* cub)
 {
     char* color;
     char* trimd;
 
-    trimd = trim_the_line(line, cub);
+    trimd = bufs[1];
     color = second_part(ident, trimd, cub);
     if(validate_color(color, cub))
     {
         if(*ident == 'F')
         {
             if(cub->col->has_floor)
-                error_exit(cub, "Error\nDouble color definition for Floor\n", (char*[]){line, trimd, color, NULL});
+                error_exit(cub, "Error\nDouble color definition for Floor\n", (char*[]){bufs[0], trimd, color, NULL});
             cub->col->floor = int_color(color);
-            cub->col->has_floor = 1;      
+            cub->col->floor_color = rgb_to_int(cub->col->floor);
+            cub->col->has_floor = 1;
             (*header_cnt)++;
         }
         else if(*ident == 'C')
         {
             if(cub->col->has_ceil)
-                error_exit(cub, "Error\nDouble color definition for Ceil\n", (char*[]){line, trimd, color, NULL});
+                error_exit(cub, "Error\nDouble color definition for Ceil\n", (char*[]){bufs[0], trimd, color, NULL});
             cub->col->ceil = int_color(color);
+            cub->col->ceil_color = rgb_to_int(cub->col->ceil);
             cub->col->has_ceil = 1;
             (*header_cnt)++;
         }      
     }        
     else    
-        error_exit(cub, "Error\nInvalid Color Format\n", (char*[]){line, color, trimd, NULL});
-    free(trimd);
+        error_exit(cub, "Error\nInvalid Color Format\n", (char*[]){bufs[0], color, trimd, NULL});
 }
 
 int     validate_address(char* token)
@@ -180,34 +172,27 @@ int     validate_address(char* token)
     return(1);
 }
 
-int     validate_identifier(char *ident, char *line, t_cub* cub)
+int     validate_identifier(char *ident, char *trimd)
 {
     size_t len_ident;
-    char* trimd;
-
-    trimd = trim_the_line(line, cub);
-    if(!trimd || !ident)
-    {
-        free(trimd);
-        return (0);
-    }    
+    
     len_ident = ft_strlen(ident);  
     if((ft_strlen(trimd) < len_ident))
     {
-        free(trimd);
+        
         return (0);
     }
     if (ft_strncmp(trimd, ident, len_ident) != 0 
         || trimd[len_ident] == '\0' || !ft_isspace((unsigned char)trimd[len_ident]))
     {
-        free(trimd);
+       
         return (0);
     }
-    free(trimd);
+    
     return(1);
 }
 
-int    populate_address(char* token, char *ident, int* header_cnt, t_cub* cub)
+int     populate_address(char* token, char *ident, int* header_cnt, t_cub* cub)
 {       
     
     if (ft_strncmp(ident, "NO", 2) == 0)
@@ -241,46 +226,54 @@ int    populate_address(char* token, char *ident, int* header_cnt, t_cub* cub)
     return (1);    
 }
 
-void validate_and_populate_address(char *line, char* idn, int* header_cnt, t_cub* cub)
+void    validate_and_populate_address(char **bufs, char* idn, int* header_cnt, t_cub* cub)
 {
     char* token;
     char * trimd;
 
-    trimd = trim_the_line(line, cub);
-    token = second_part("NO", trimd, cub);
+    trimd = bufs[1];
+    token = second_part(idn, trimd, cub);
     if(!validate_address(token))
-        error_exit(cub, "Error\nInvalid Path Format\n", (char*[]){trimd, token, line, NULL});
+        error_exit(cub, "Error\nInvalid Path Format\n", (char*[]){trimd, token, bufs[0], NULL});
     if (!populate_address(token, idn, header_cnt, cub))
     {
         char* s1 = "Error\nMultiple addresses for identifier: ";
         char* s2 = ft_strjoin(s1, idn);
+        if(!s2)
+            error_exit(cub, "Error\nMalloc failed\n", (char*[]){trimd, token, bufs[0], NULL});
         char* msg = ft_strjoin(s2, "\n");
         free(s2);
-        error_exit(cub, msg, (char*[]){trimd, token, line, msg, NULL});
+        error_exit(cub, msg, (char*[]){trimd, token, bufs[0], msg, NULL});
     }
-    free(trimd);
 }
 
 void    parse_text_col_line(char *line, int* header_cnt, t_cub* cub)
 {
-    if(validate_identifier("NO", line, cub))
-        validate_and_populate_address(line, "NO", header_cnt, cub);
-    else if(validate_identifier("SO", line, cub))
-        validate_and_populate_address(line, "SO", header_cnt, cub);
-    else if(validate_identifier("WE", line, cub))
-        validate_and_populate_address(line, "WE", header_cnt, cub);
-    else if(validate_identifier("EA", line, cub))
-        validate_and_populate_address(line, "EA", header_cnt, cub);
-    else if(validate_identifier("F", line, cub))
-        populate_color(line, "F", header_cnt, cub);
-    else if(validate_identifier("C", line, cub))
-        populate_color(line, "C", header_cnt, cub);
+    char* trimd;
+    char *bufs[3];
+
+    trimd = trim_the_line(line, cub);
+    bufs[0] = line;
+    bufs[1] = trimd;
+    bufs[2] = NULL;
+    if(validate_identifier("NO", trimd))
+        validate_and_populate_address(bufs, "NO", header_cnt, cub);
+    else if(validate_identifier("SO", trimd))
+        validate_and_populate_address(bufs, "SO", header_cnt, cub);
+    else if(validate_identifier("WE", trimd))
+        validate_and_populate_address(bufs, "WE", header_cnt, cub);
+    else if(validate_identifier("EA", trimd))
+        validate_and_populate_address(bufs, "EA", header_cnt, cub);
+    else if(validate_identifier("F", trimd))
+        populate_color(bufs, "F", header_cnt, cub);
+    else if(validate_identifier("C", trimd))
+        populate_color(bufs, "C", header_cnt, cub);
     else
         error_exit(cub,  "Error\nInvalid/Missing texture/color header!\n",(char*[]){line, NULL});
-    
+    free(trimd);
 }
 
-int     check_paths_accessibility(t_cub* cub)
+void     check_paths_accessibility(t_cub* cub)
 {
     int i = 0;
     char *paths[5] = {cub->col->no_tex_p, cub->col->so_tex_p, cub->col->we_tex_p, cub->col->ea_tex_p, NULL};
@@ -289,14 +282,16 @@ int     check_paths_accessibility(t_cub* cub)
     {    
         fd = open(paths[i], O_RDONLY);
         if (fd == -1)
-            return (0);
+            error_exit(cub, "Error\nCannot open texture file\n", NULL);
         char * extension = ft_strrchr(paths[i], '.');
-        if(ft_strncmp(extension, ".xpm", 4) != 0)
-            return (0);
+        if(!extension || ft_strncmp(extension, ".xpm", 4) != 0)
+        {
+            close(fd);
+            error_exit(cub, "Error\nTexture is not .xpm\n", NULL);
+        }
         close(fd);
         i++;
-    }
-    return(1);   
+    }    
 }
 
 void    check_col_state(t_cub* cub)
@@ -373,8 +368,9 @@ int    validate_chars_in_map_line(char *trimd, int* has_player, int* map_started
             if(*has_player == 1)
                 return (0);//error_exit(cub, "Error\nMultiple players present\n");
             *has_player = 1;
-            cub->player_pos.x = i;
-            cub->player_pos.y = cub->map->height;
+            cub->player_pos.x = i + 0.5;
+            cub->player_pos.y = cub->map->height + 0.5;
+            cub->spawn_dir = trimd[i];
         }        
         i++;
     }
@@ -470,12 +466,12 @@ int     check_map(t_cub* cub)
         x = 0;
         while (x < cub->map->width)
         {
-            if((y == 0) || (y == h-1) || x == 0 || (x == w-1)) // all first/last row/column
+            if((y == 0) || (y == h-1) || x == 0 || (x == w-1))
             {
                 if(grid[y][x] == '0' || is_player(grid[y][x]))
                     return (0);
             }            
-            else if(grid[y][x] == '0') 
+            else if(grid[y][x] == '0'|| is_player(grid[y][x]))
             {
                 if((grid[y-1][x] != '1' &&  grid[y-1][x] != '0' 
                     &&  !is_player(grid[y-1][x])))
@@ -500,7 +496,9 @@ int     check_map(t_cub* cub)
 
 void    replace_palyer_with_floor(t_cub* cub)
 {
-    cub->map->grid[cub->player_pos.y][cub->player_pos.x] = '0';
+    int x = (int)cub->player_pos.x;
+    int y = (int)cub->player_pos.y;
+    cub->map->grid[y][x] = '0';
 }
 
 int     parse_file(char* filename, t_cub* cub)
@@ -553,7 +551,7 @@ int     parse_file(char* filename, t_cub* cub)
                     error_exit(cub, "Error\nInvalid blank line inside map\n", (char*[]){line, NULL});
                 trimd = ft_strtrim(line, "\r\n");
                 if(!validate_chars_in_map_line(trimd, &has_player, &map_started, cub))
-                    error_exit(cub, "Error\nInvalid map character\n", (char*[]){trimd, line, NULL});
+                    error_exit(cub, "Error\nInvalid map character or Multiple players present\n", (char*[]){trimd, line, NULL});
                 add_line_to_grid(cub, trimd, line);          
                 free(trimd);
             }
@@ -567,8 +565,7 @@ int     parse_file(char* filename, t_cub* cub)
         error_exit(cub, "Error\nNo player found\n", NULL);
     pad_map(cub);
     close(fd);
-    if(!check_paths_accessibility(cub))
-        error_exit(cub, "Error\nError opening texture file\n", NULL);
+    check_paths_accessibility(cub);
     if (!check_map(cub))
         error_exit(cub, "Error\nInvalid map structure\n", NULL);
     replace_palyer_with_floor(cub);
