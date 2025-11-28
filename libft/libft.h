@@ -60,6 +60,7 @@ int					ft_toupper(int c);
 int					ft_tolower(int c);
 int					ft_atoi(const char *nptr);
 void				*ft_calloc(size_t nmemb, size_t size);
+void				*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 char				*ft_strdup(const char *s);
 
 char				**ft_split(char const *s, char c);
