@@ -1,0 +1,11 @@
+Hello Maria,
+
+for the first time I had to run the following:
+
+chmod +x minilibx-linux/configure
+( cd minilibx-linux && ./configure )
+
+
+and then "make".
+
+./cub3D maps/map.cub
