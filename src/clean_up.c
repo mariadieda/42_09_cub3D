@@ -18,15 +18,16 @@ void    free_array(char **arr, int grid_height)
 void    clean_up(t_cub *cub){
     {
         if (!cub)
-            return ;        
-        if (cub->img)
-            mlx_destroy_image(cub->mlx, cub->img);
-        if (cub->win)
-            mlx_destroy_window(cub->mlx, cub->win);
-        if (cub->mlx)
-        {
+            return ;
+         if (cub->mlx)
+        {     
+            if (cub->img)
+                mlx_destroy_image(cub->mlx, cub->img);
+            if (cub->win)
+                mlx_destroy_window(cub->mlx, cub->win);        
             mlx_destroy_display(cub->mlx);
             free(cub->mlx);
+            
         }
         if (cub->map)
         {
