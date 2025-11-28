@@ -5,7 +5,11 @@ for the first time I had to run the following:
 chmod +x minilibx-linux/configure
 ( cd minilibx-linux && ./configure )
 
-
 and then "make".
 
 ./cub3D maps/map.cub
+
+I have updated some stuff regarding keypress and the window. 
+My next step will be to load the images , probably at the end of next week: 6-7/12
+
+See you!
