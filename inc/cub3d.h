@@ -7,6 +7,7 @@
 
 # define CUBE_SIZE 64
 # define PLAYER_HEIGHT (CUBE_SIZE / 2)
+# define PLAYER_SPEED 1
 
 //# define PI 3.14159265359
 # define PI 3.1415926535897932384626 //whats highest precision possible/necessary?
@@ -104,10 +105,14 @@ typedef struct s_cub
     char            spawn_dir;
     struct s_pos    player_pos;
     struct s_move   move;
+    int             velocity; //how fast the player is moving (how many units per keypress)
 }					t_cub;
 //we can add int player_tile_x and int player_tile_y if it helps you (i.e:to check collisions). If not you just use: (int)player_pos.x
 
 void	make_window(t_cub *cub);
+int     render(t_cub *cub);
+void    player_move(t_cub *cub);
+int check_px_bounds(t_cub *cub, int cx, int cy);
 void    clean_up(t_cub *cub);
 void	error_exit(t_cub *cub, char *msg, char** to_be_freed);
 int     parse_file(char* filename, t_cub* cub);

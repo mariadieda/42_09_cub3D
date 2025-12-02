@@ -11,6 +11,59 @@
 /* ************************************************************************** */
 #include"../inc/cub3d.h"
 
+int check_px_bounds(t_cub *cub, int cx, int cy)
+{
+   if (cx <0 || cy < 0 ||
+      cx >= cub->mlx_data.win_width
+      || cy >= cub->mlx_data.win_height)
+      return 0;
+   return 1;
+}
+void draw_cube_centered(t_cub *cub, int cx, int cy, int color)
+{
+   int     i;
+   int     j;
+   int     x;
+   int     y;
+   int     x_start = cx - CUBE_SIZE / 2;
+   int     y_start = cy - CUBE_SIZE / 2;
+   char    *pixel;
+
+   i = 0;
+   while (i < CUBE_SIZE)
+   {
+      j = 0;
+      while (j < CUBE_SIZE)
+      {
+         x = x_start + i;
+         y = y_start + j;
+
+         if (check_px_bounds(cub, x, y))
+         {
+            pixel = cub->pxl_arr
+                + (y * cub->mlx_data.line_length)
+                + (x * (cub->mlx_data.bits_per_pixel / 8));
+
+            *(unsigned int *)pixel = color;
+         }
+         j++;
+      }
+      i++;
+   }
+}
+
+int render(t_cub *cub)
+{
+   printf("player pos:%f, %f", cub->player_pos.x, cub->player_pos.y);
+   player_move(cub);
+   draw_cube_centered(cub, (int)cub->player_pos.x, (int)cub->player_pos.y, 0xFFFFFF);
+   //game_update_and_render(cub);
+   //clear_image(cub->img);
+   //cast_rays(cub);
+   mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);
+   return(0);
+}
+
 void	make_window(t_cub *cub)
 {
    cub->mlx = mlx_init();
@@ -26,18 +79,16 @@ void	make_window(t_cub *cub)
          cub->mlx_data.win_height, "cub3D");
    if (!cub->win)
       error_exit(cub, "Failed to create window\n", NULL);
-   
-   
    cub->img = mlx_new_image(cub->mlx, cub->mlx_data.win_width, cub->mlx_data.win_height);
    if (!cub->img)
       error_exit(cub, "Failed to create image\n", NULL);
-
    cub->pxl_arr = mlx_get_data_addr(
       cub->img,
       &cub->mlx_data.bits_per_pixel,
       &cub->mlx_data.line_length,
       &cub->mlx_data.endian
    );
+   mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);
 }
 
 

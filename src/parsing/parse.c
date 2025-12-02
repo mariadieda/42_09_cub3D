@@ -297,7 +297,7 @@ void     check_paths_accessibility(t_cub* cub)
 void    check_col_state(t_cub* cub)
 {
     if (!cub)
-        error_exit(cub, "Error\nCub is not initiallized\n", NULL);
+        error_exit(cub, "Error\nCub is not initialized\n", NULL);
     if (cub->col == NULL) //completely NULL col
     {
         cub->col = ft_calloc(1, sizeof(*(cub->col)));
@@ -494,7 +494,7 @@ int     check_map(t_cub* cub)
     return(1);
 }
 
-void    replace_palyer_with_floor(t_cub* cub)
+void    replace_player_with_floor(t_cub* cub)
 {
     int x = (int)cub->player_pos.x;
     int y = (int)cub->player_pos.y;
@@ -568,7 +568,7 @@ int     parse_file(char* filename, t_cub* cub)
     check_paths_accessibility(cub);
     if (!check_map(cub))
         error_exit(cub, "Error\nInvalid map structure\n", NULL);
-    replace_palyer_with_floor(cub);
+    replace_player_with_floor(cub);
 
     return(1);
 }

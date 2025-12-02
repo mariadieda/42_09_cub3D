@@ -110,16 +110,7 @@ int	handle_keyrelease(int keycode, t_cub *cub)
 	return (0);
 }
 
-int render(t_cub *cub)
-{
-	(void)cub;
-	/*//For Maria 
-	game_update_and_render(cub);	
-	clear_image(cub->img);
-	cast_rays(cub);
-	mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);*/
-	return(0);
-}
+
 
 int	has_cub_extension(char *cub_fn)
 {
