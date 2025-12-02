@@ -8,6 +8,7 @@
 # define CUBE_SIZE 64
 # define PLAYER_HEIGHT (CUBE_SIZE / 2)
 # define PLAYER_SPEED 1
+# define PLAYER_ROTATE_SPEED 0.5
 
 //# define PI 3.14159265359
 # define PI 3.1415926535897932384626 //whats highest precision possible/necessary?
@@ -104,6 +105,7 @@ typedef struct s_cub
     struct s_col    *col;
     char            spawn_dir;
     struct s_pos    player_pos;
+    float           rot_angle;
     struct s_move   move;
     int             velocity; //how fast the player is moving (how many units per keypress)
 }					t_cub;

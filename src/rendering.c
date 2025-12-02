@@ -52,11 +52,59 @@ void draw_cube_centered(t_cub *cub, int cx, int cy, int color)
    }
 }
 
+void clean_img(t_cub *cub, int color) //todo replace one color with true map pixel colors
+{
+   int     i;
+   int     j;
+   char    *pixel;
+
+   i = 0;
+   while (i < cub->mlx_data.win_height)
+   {
+      j = 0;
+      while (j < cub->mlx_data.win_width)
+      {
+         {
+            pixel = cub->pxl_arr
+                + (i * cub->mlx_data.line_length)
+                + (j * (cub->mlx_data.bits_per_pixel / 8));
+            *(unsigned int *)pixel = color;
+         }
+         j++;
+      }
+      i++;
+   }
+}
+
+void draw_map(t_cub *cub, int color) //todo replace one color with true map pixel colors
+{
+   int     i;
+   int     j;
+
+   i = 0;
+   while (cub->map->grid[i])
+   {
+      j = 0;
+      while (cub->map->grid[i][j])
+      {
+         if (cub->map->grid[i][j] == '1')
+            draw_cube_centered(cub, i*CUBE_SIZE, j*CUBE_SIZE, color);
+         j++;
+      }
+      i++;
+   }
+}
+
+
+
 int render(t_cub *cub)
 {
    printf("player pos:%f, %f", cub->player_pos.x, cub->player_pos.y);
    player_move(cub);
+   clean_img(cub, 0x000000);
+   //todo ensure rendering is not at 0,0 with half the square off screen
    draw_cube_centered(cub, (int)cub->player_pos.x, (int)cub->player_pos.y, 0xFFFFFF);
+   draw_map(cub, 0x444444);
    //game_update_and_render(cub);
    //clear_image(cub->img);
    //cast_rays(cub);
