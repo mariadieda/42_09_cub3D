@@ -139,6 +139,7 @@ int	main(int argc, char **argv)
 	parse_file(argv[1], &cub);
 	// todo normalize_rotate_map(&cub);
 	make_window(&cub);
+	cub.rot_angle = PI / 2; //todo set to orientation read from map
 	mlx_hook(cub.win, 2, 1L << 0, handle_keypress, &cub);
 	mlx_hook(cub.win, 3, 1L << 1, handle_keyrelease, &cub);
 	mlx_hook(cub.win, 17, 0, handle_close, &cub);
