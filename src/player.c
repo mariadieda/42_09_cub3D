@@ -16,49 +16,99 @@ float set_rot_angle(float current_angle, int decrease)
     return angle;
 }
 
-void set_new_pos(t_cub *cub, int decrease_x, int decrease_y)
+int check_wall(char **grid, float new_x, float new_y)
 {
-    float x_move;
-    float y_move;
+    if (grid[(int)new_y][(int)new_x])
+        return 1;
+    return 0;
 
-    x_move = cos(cub->rot_angle) * PLAYER_SPEED;
-    y_move = sin(cub->rot_angle) * PLAYER_SPEED;
-    if (decrease_x)
-        x_move *= -1;
-    if (decrease_y)
-        y_move *= -1;
+}
 
-    if (check_px_bounds(cub, cub->player_pos.x + x_move, cub->player_pos.y + y_move))
+//todo also consider player width?
+void set_new_pos(t_cub *cub, int decrease_cos, int decrease_sin, int strife)
+{
+    float cos_angle;
+    float sin_angle;
+    float new_x;
+    float new_y;
+
+    cos_angle = cos(cub->rot_angle) * PLAYER_SPEED;
+    sin_angle = sin(cub->rot_angle) * PLAYER_SPEED;
+    if (decrease_cos)
+        cos_angle *= -1;
+    if (decrease_sin)
+        sin_angle *= -1;
+    if (strife)
     {
-        //todo also consider player width?
-        cub->player_pos.x += x_move;
-        cub->player_pos.y += y_move;
+        new_x = sin_angle + cub->player_pos.x;
+        new_y = cos_angle + cub->player_pos.x;
+    }
+    else
+    {
+        new_x = cos_angle + cub->player_pos.x;
+        new_y = sin_angle + cub->player_pos.x;
+    }
+    int i = 0;
+    while(cub->map->grid[i])
+    {
+        printf("\n%s\n\n",cub->map->grid[i]);
+        i++;
+    }
+    printf("\n\n\n\n\nn\n%d\n\n\n\\n\nn\n\\n\nn\n", cub->map->grid[(int)new_y][(int)new_x]);
+    // todo does new pos touch boundaties? if so, block, i.e. do nothing!
+    if (check_px_bounds(cub, (int)new_x, (int)new_y) && !cub->map->grid[(int)new_y][(int)new_x])
+    {
+        printf("\n\n\n\n\nn\n\n\n\n\\n\nn\n\\n\nn\n");
+        cub->player_pos.x = new_x;
+        cub->player_pos.y = new_y;
     }
 }
 
+void update_pos(t_cub *cub,
+
+
 void player_move(t_cub *cub)
 {
-    int touch_boundaries = 0;
-
-
-    // todo does new pos touch boundaties? if so, block, i.e. do nothing!
-    if (touch_boundaries == 1)
-        return;
-
-    //todo viewer perspective, not actual psotion change
+    //rotation = viewer perspective, not actual position change
     //should rotation be alwazs possible or should the bounds be checked to, because the player is "square"? --> no, shoudl always be possible
     if (cub->move.rotate_left)
         cub->rot_angle = set_rot_angle(cub->rot_angle, 1);
     if (cub->move.rotate_right)
         cub->rot_angle = set_rot_angle(cub->rot_angle, 0);
 
+    float cos_angle;
+    float sin_angle;
+    float new_x = 0;
+    float new_y = 0;
+
+    cos_angle = cos(cub->rot_angle) * PLAYER_SPEED;
+    sin_angle = sin(cub->rot_angle) * PLAYER_SPEED;
+
     if (cub->move.forward)
-        set_new_pos(cub, 0, 0);
+    {
+        new_x = cub->player_pos.x + cos_angle;
+        new_y = cub->player_pos.y + sin_angle;
+    }
     if (cub->move.backward)
-        set_new_pos(cub, 1, 1);
+    {
+        new_x = cub->player_pos.x - cos_angle;
+        new_y = cub->player_pos.y - sin_angle;
+    }
     if (cub->move.left)
-        set_new_pos(cub, 0, 1);
-    if (cub->move.right)
-        set_new_pos(cub, 1, 0);
+    {
+        new_x = cub->player_pos.x + sin_angle;
+        new_y = cub->player_pos.y - cos_angle;
+    }
+    if (cub->move.right){
+        new_x = cub->player_pos.x - sin_angle;
+        new_y = cub->player_pos.y + cos_angle;
+        update_pos()
+    }
+    if (check_px_bounds(cub, (int)new_x, (int)new_y) && !cub->map->grid[(int)new_y][(int)new_x])
+    {
+        printf("\n\n\n\n\nn\n\n\n\n\\n\nn\n\\n\nn\n");
+        cub->player_pos.x = new_x;
+        cub->player_pos.y = new_y;
+    }
 
 }
