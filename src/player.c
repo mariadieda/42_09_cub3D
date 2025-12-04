@@ -16,13 +16,7 @@ float set_rot_angle(float current_angle, int decrease)
     return angle;
 }
 
-int check_wall(char **grid, float new_x, float new_y)
-{
-    if (grid[(int)new_y][(int)new_x])
-        return 1;
-    return 0;
 
-}
 
 //todo also consider player width?
 void set_new_pos(t_cub *cub, int decrease_cos, int decrease_sin, int strife)
@@ -54,17 +48,34 @@ void set_new_pos(t_cub *cub, int decrease_cos, int decrease_sin, int strife)
         printf("\n%s\n\n",cub->map->grid[i]);
         i++;
     }
-    printf("\n\n\n\n\nn\n%d\n\n\n\\n\nn\n\\n\nn\n", cub->map->grid[(int)new_y][(int)new_x]);
+    printf("\n\ngrid value: %d\n\n", cub->map->grid[(int)new_y][(int)new_x]);
     // todo does new pos touch boundaties? if so, block, i.e. do nothing!
-    if (check_px_bounds(cub, (int)new_x, (int)new_y) && !cub->map->grid[(int)new_y][(int)new_x])
+    printf("new player pos:%f, %f\n", cub->player_pos.x, cub->player_pos.y);
+    printf("bounds check:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
+    if (check_walkable_pos(cub, new_x, new_y))
     {
-        printf("\n\n\n\n\nn\n\n\n\n\\n\nn\n\\n\nn\n");
         cub->player_pos.x = new_x;
         cub->player_pos.y = new_y;
     }
+    else
+        printf("!!! out of bounds for:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
+
 }
 
-void update_pos(t_cub *cub,
+void update_pos(t_cub *cub, float new_x, float new_y)
+{
+    printf("\n\ngrid value: %c\n\n", cub->map->grid[(int)new_y][(int)new_x]);
+    printf("new player pos:%f, %f\n", new_x, new_y);
+    printf("max width, height:%d, %d\n", cub->mlx_data.win_width, cub->mlx_data.win_height);
+    if (check_walkable_pos(cub, new_x, new_y))
+    {
+        cub->player_pos.x = new_x;
+        cub->player_pos.y = new_y;
+    }
+    else
+        printf("!!! out of bounds for:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
+
+}
 
 
 void player_move(t_cub *cub)
@@ -88,27 +99,23 @@ void player_move(t_cub *cub)
     {
         new_x = cub->player_pos.x + cos_angle;
         new_y = cub->player_pos.y + sin_angle;
+        update_pos(cub, new_x, new_y);
     }
     if (cub->move.backward)
     {
         new_x = cub->player_pos.x - cos_angle;
         new_y = cub->player_pos.y - sin_angle;
+        update_pos(cub, new_x, new_y);
     }
     if (cub->move.left)
     {
         new_x = cub->player_pos.x + sin_angle;
         new_y = cub->player_pos.y - cos_angle;
+        update_pos(cub, new_x, new_y);
     }
     if (cub->move.right){
         new_x = cub->player_pos.x - sin_angle;
         new_y = cub->player_pos.y + cos_angle;
-        update_pos()
+        update_pos(cub, new_x, new_y);
     }
-    if (check_px_bounds(cub, (int)new_x, (int)new_y) && !cub->map->grid[(int)new_y][(int)new_x])
-    {
-        printf("\n\n\n\n\nn\n\n\n\n\\n\nn\n\\n\nn\n");
-        cub->player_pos.x = new_x;
-        cub->player_pos.y = new_y;
-    }
-
 }

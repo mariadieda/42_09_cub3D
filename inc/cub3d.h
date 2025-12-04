@@ -114,7 +114,9 @@ typedef struct s_cub
 void	make_window(t_cub *cub);
 int     render(t_cub *cub);
 void    player_move(t_cub *cub);
-int     check_px_bounds(t_cub *cub, int cx, int cy);
+int     check_screen_bounds(t_cub *cub, int cx, int cy);
+int     check_walkable_pos(t_cub *cub, float new_x, float new_y);
+int check_map_bounds(t_cub *cub, float new_x, float new_y);
 void    clean_up(t_cub *cub);
 void	error_exit(t_cub *cub, char *msg, char** to_be_freed);
 int     parse_file(char* filename, t_cub* cub);

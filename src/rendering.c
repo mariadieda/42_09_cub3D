@@ -11,9 +11,28 @@
 /* ************************************************************************** */
 #include"../inc/cub3d.h"
 
-int check_px_bounds(t_cub *cub, int cx, int cy)
+int check_walkable_pos(t_cub *cub, float new_x, float new_y)
 {
-   if (cx <0 || cy < 0 ||
+   if (check_map_bounds(cub, (int)new_x, (int)new_y))
+   {
+      if (cub->map->grid[(int)new_y][(int)new_x] != '1')
+         return 1;
+   }
+   return 0;
+
+}
+
+int check_map_bounds(t_cub *cub, float new_x, float new_y)
+{
+   if ((int)new_x < 0 || (int)new_x >= cub->map->width ||
+       (int)new_y < 0 || (int)new_y >= cub->map->height)
+      return 0;
+   return 1;
+}
+
+int check_screen_bounds(t_cub *cub, int cx, int cy)
+{
+    if (cx <0 || cy < 0 ||
       cx >= cub->mlx_data.win_width
       || cy >= cub->mlx_data.win_height)
       return 0;
@@ -38,7 +57,7 @@ void draw_cube_centered(t_cub *cub, int cx, int cy, int color)
          x = x_start + i;
          y = y_start + j;
 
-         if (check_px_bounds(cub, x, y))
+         if (check_screen_bounds(cub, x, y))
          {
             pixel = cub->pxl_arr
                 + (y * cub->mlx_data.line_length)
@@ -99,7 +118,7 @@ void draw_map(t_cub *cub, int color) //todo replace one color with true map pixe
 
 int render(t_cub *cub)
 {
-   printf("player pos:%f, %f", cub->player_pos.x, cub->player_pos.y);
+   //printf("player pos:%f, %f\n", cub->player_pos.x, cub->player_pos.y);
    player_move(cub);
    clean_img(cub, 0x000000);
    //todo ensure rendering is not at 0,0 with half the square off screen
@@ -146,23 +165,6 @@ CHECKING intersections (Permadi, 1996)
 Note: remember the Cartesian coordinate is increasing downward (as in page 3), and any fractional values will be rounded down.
 
 ======Finding horizontal intersection ======
-1. Finding the coordinate of A.
-   If the ray is facing up
-     A.y = rounded_down(Py/64) * (64) - 1;
-   If the ray is facing down
-     A.y = rounded_down(Py/64) * (64) + 64;
-
-   (In the picture, the ray is facing up, so we use
-   the first formula.
-   A.y=rounded_down(224/64) * (64) - 1 = 191;
-   Now at this point, we can find out the grid
-   coordinate of y.
-   However, we must decide whether A is part of
-   the block above the line,
-   or the block below the line.
-   Here, we chose to make A part of the block
-   above the line, that is why we subtract 1 from A.y.
-   So the grid coordinate of A.y is 191/64 = 2;
 
    A.x = Px + (Py-A.y)/tan(ALPHA);
    In the picture, (assume ALPHA is 60 degrees),
