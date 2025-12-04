@@ -149,7 +149,12 @@ void normalize_map(t_cub *cub)
 	}
 }
 
-ft_fmin()
+double ft_fmin(double x, double y)
+{
+	if (x >= y)
+		return x;
+	return y;
+}
 
 
 int	main(int argc, char **argv)
@@ -173,11 +178,7 @@ int	main(int argc, char **argv)
 	normalize_map(&cub);
 	// todo rotate_map(&cub); ??
 	make_window(&cub);
-	cub.map->tile_size = fmin(
-	cub.mlx_data.win_width  / cub.map->width,
-	cub.mlx_data.win_height / cub.map->height
-);
-
+	cub.map->tile_size = ft_fmin(cub.mlx_data.win_width  / cub.map->width,cub.mlx_data.win_height / cub.map->height);
 
 	printf("map w=%d h=%d | window w=%d h=%d, map_width  * CUBE_SIZE: %d, map_height  * CUBE_SIZE: %d\n", cub.map->width, cub.map->height,cub.mlx_data.win_width, cub.mlx_data.win_height, cub.map->width*cub.map->tile_size, cub.map->height * cub.map->tile_size);
 
