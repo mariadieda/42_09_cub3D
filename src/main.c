@@ -125,6 +125,33 @@ int	has_cub_extension(char *cub_fn)
 	return (1);
 }
 
+void normalize_map(t_cub *cub)
+{
+	int i;
+	int j;
+
+	for (i = 0; i < cub->map->height; i++)
+	{
+		char *old = cub->map->grid[i];
+		char *new = ft_calloc(cub->map->width + 1, 1);
+
+		j = 0;
+		while (old[j])
+		{
+			new[j] = old[j];
+			j++;
+		}
+		while (j < cub->map->width)
+			new[j++] = ' ';
+
+		free(old);
+		cub->map->grid[i] = new;
+	}
+}
+
+ft_fmin()
+
+
 int	main(int argc, char **argv)
 {
 	t_cub	cub;
@@ -136,10 +163,24 @@ int	main(int argc, char **argv)
 		error_exit(&cub,
 			"Please provide exactly one valid .cub file as an argument\n", NULL);
 	}
-	// todo read_in_lines(&cub, argv[1]);
 	parse_file(argv[1], &cub);
-	// todo normalize_rotate_map(&cub);
+	int i = 0;
+	while(cub.map->grid[i])
+	{
+		printf("\n%s\n\n",cub.map->grid[i]);
+		i++;
+	}
+	normalize_map(&cub);
+	// todo rotate_map(&cub); ??
 	make_window(&cub);
+	cub.map->tile_size = fmin(
+	cub.mlx_data.win_width  / cub.map->width,
+	cub.mlx_data.win_height / cub.map->height
+);
+
+
+	printf("map w=%d h=%d | window w=%d h=%d, map_width  * CUBE_SIZE: %d, map_height  * CUBE_SIZE: %d\n", cub.map->width, cub.map->height,cub.mlx_data.win_width, cub.mlx_data.win_height, cub.map->width*cub.map->tile_size, cub.map->height * cub.map->tile_size);
+
 	cub.rot_angle = PI / 2; //todo set to orientation read from map
 	mlx_hook(cub.win, 2, 1L << 0, handle_keypress, &cub);
 	mlx_hook(cub.win, 3, 1L << 1, handle_keyrelease, &cub);

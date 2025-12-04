@@ -56,10 +56,10 @@ void draw_cube(t_cub *cub, int x_start, int y_start, int color)
    char    *pixel;
 
    i = 0;
-   while (i < CUBE_SIZE)
+   while (i < cub->map->tile_size)
    {
       j = 0;
-      while (j < CUBE_SIZE)
+      while (j < cub->map->tile_size)
       {
          x = x_start + i;
          y = y_start + j;
@@ -114,7 +114,11 @@ void draw_map(t_cub *cub, int color) //todo replace one color with true map pixe
       while (cub->map->grid[i][j])
       {
          if (cub->map->grid[i][j] == '1')
-            draw_cube(cub, j*CUBE_SIZE, i*CUBE_SIZE, color);
+            draw_cube(cub, j*cub->map->tile_size, i*cub->map->tile_size, color);
+         if (cub->map->grid[i][j] == '0')
+            draw_cube(cub, j*cub->map->tile_size, i*cub->map->tile_size, 0x000000);
+         if (cub->map->grid[i][j] == ' ')
+            draw_cube(cub, j*cub->map->tile_size, i*cub->map->tile_size, 0x111111);
          j++;
       }
       i++;
@@ -129,8 +133,10 @@ int render(t_cub *cub)
    player_move(cub);
    clean_img(cub, 0x000000);
    //todo ensure rendering is not at 0,0 with half the square off screen
-   draw_cube(cub, cub->player_pos.x*CUBE_SIZE, (int)cub->player_pos.y*CUBE_SIZE, 0xFFFFFF);
+   //draw_cube(cub, cub->player_pos.x*CUBE_SIZE, (int)cub->player_pos.y*CUBE_SIZE, 0xFFFFFF);
    draw_map(cub, 0x444444);
+   draw_cube(cub, cub->player_pos.x*cub->map->tile_size, (int)cub->player_pos.y*cub->map->tile_size, 0xFFFFFF);
+
    //game_update_and_render(cub);
    //clear_image(cub->img);
    //cast_rays(cub);

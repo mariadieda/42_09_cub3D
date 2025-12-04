@@ -19,54 +19,12 @@ float set_rot_angle(float current_angle, int decrease)
 
 
 //todo also consider player width?
-void set_new_pos(t_cub *cub, int decrease_cos, int decrease_sin, int strife)
-{
-    float cos_angle;
-    float sin_angle;
-    float new_x;
-    float new_y;
-
-    cos_angle = cos(cub->rot_angle) * PLAYER_SPEED;
-    sin_angle = sin(cub->rot_angle) * PLAYER_SPEED;
-    if (decrease_cos)
-        cos_angle *= -1;
-    if (decrease_sin)
-        sin_angle *= -1;
-    if (strife)
-    {
-        new_x = sin_angle + cub->player_pos.x;
-        new_y = cos_angle + cub->player_pos.x;
-    }
-    else
-    {
-        new_x = cos_angle + cub->player_pos.x;
-        new_y = sin_angle + cub->player_pos.x;
-    }
-    int i = 0;
-    while(cub->map->grid[i])
-    {
-        printf("\n%s\n\n",cub->map->grid[i]);
-        i++;
-    }
-    printf("\n\ngrid value: %d\n\n", cub->map->grid[(int)new_y][(int)new_x]);
-    // todo does new pos touch boundaties? if so, block, i.e. do nothing!
-    printf("new player pos:%f, %f\n", cub->player_pos.x, cub->player_pos.y);
-    printf("bounds check:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
-    if (check_walkable_pos(cub, new_x, new_y))
-    {
-        cub->player_pos.x = new_x;
-        cub->player_pos.y = new_y;
-    }
-    else
-        printf("!!! out of bounds for:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
-
-}
-
 void update_pos(t_cub *cub, float new_x, float new_y)
 {
     printf("\n\ngrid value: %c\n\n", cub->map->grid[(int)new_y][(int)new_x]);
     printf("new player pos:%f, %f\n", new_x, new_y);
     printf("max width, height:%d, %d\n", cub->mlx_data.win_width, cub->mlx_data.win_height);
+    printf("map width, height:%d, %d\n", cub->map->width, cub->map->height);
     if (check_walkable_pos(cub, new_x, new_y))
     {
         cub->player_pos.x = new_x;
@@ -97,24 +55,24 @@ void player_move(t_cub *cub)
     if (cub->move.forward)
     {
         new_x = cub->player_pos.x + cos_angle;
-        new_y = cub->player_pos.y + sin_angle;
+        new_y = cub->player_pos.y - sin_angle;
         update_pos(cub, new_x, new_y);
     }
     if (cub->move.backward)
     {
         new_x = cub->player_pos.x - cos_angle;
-        new_y = cub->player_pos.y - sin_angle;
+        new_y = cub->player_pos.y + sin_angle;
         update_pos(cub, new_x, new_y);
     }
     if (cub->move.left)
     {
-        new_x = cub->player_pos.x + sin_angle;
-        new_y = cub->player_pos.y - cos_angle;
+        new_x = cub->player_pos.x - sin_angle;
+        new_y = cub->player_pos.y + cos_angle;
         update_pos(cub, new_x, new_y);
     }
     if (cub->move.right){
-        new_x = cub->player_pos.x - sin_angle;
-        new_y = cub->player_pos.y + cos_angle;
+        new_x = cub->player_pos.x + sin_angle;
+        new_y = cub->player_pos.y - cos_angle;
         update_pos(cub, new_x, new_y);
     }
 }

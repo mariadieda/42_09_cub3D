@@ -5,9 +5,10 @@
 # define WIDTH 1280 //todo or define dynamically with size fun?
 # define HEIGHT 720
 
+
 # define CUBE_SIZE 64
 # define PLAYER_HEIGHT (CUBE_SIZE / 2)
-# define PLAYER_SPEED 1 //how fast the player is moving (how many units per keypress)
+# define PLAYER_SPEED 0.3 //how fast the player is moving (how many units per keypress)
 # define PLAYER_ROTATE_SPEED 0.1 //how fast the player is turning
 
 //# define PI 3.14159265359
@@ -67,6 +68,7 @@ typedef struct s_col
 
 typedef struct s_map {
     char  **grid;
+    int  tile_size;
     int  width;
     int  height;
     int  capacity;
