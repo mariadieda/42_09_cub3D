@@ -135,8 +135,10 @@ int render(t_cub *cub)
    //todo ensure rendering is not at 0,0 with half the square off screen
    //draw_cube(cub, cub->player_pos.x*CUBE_SIZE, (int)cub->player_pos.y*CUBE_SIZE, 0xFFFFFF);
    draw_map(cub, 0x444444);
-   draw_cube(cub, cub->player_pos.x*cub->map->tile_size, (int)cub->player_pos.y*cub->map->tile_size, 0xFFFFFF);
-
+   //draw_cube(cub, cub->player_pos.x*cub->map->tile_size, (int)cub->player_pos.y*cub->map->tile_size, 0xFFFFFF);
+   draw_cube(cub,
+      (cub->player_pos.x*cub->map->tile_size)-(cub->map->tile_size/2),
+      (cub->player_pos.y*cub->map->tile_size)-(cub->map->tile_size/2), 0xFFFFFF);
    //game_update_and_render(cub);
    //clear_image(cub->img);
    //cast_rays(cub);
