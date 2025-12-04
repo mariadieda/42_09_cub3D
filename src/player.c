@@ -73,8 +73,7 @@ void update_pos(t_cub *cub, float new_x, float new_y)
         cub->player_pos.y = new_y;
     }
     else
-        printf("!!! out of bounds for:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
-
+        printf("invalid move:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
 }
 
 

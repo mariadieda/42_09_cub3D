@@ -13,11 +13,20 @@
 
 int check_walkable_pos(t_cub *cub, float new_x, float new_y)
 {
-   if (check_map_bounds(cub, (int)new_x, (int)new_y))
+   int mx = (int)new_x;
+   int my = (int)new_y;
+
+   /* Check map bounds */
+   if (mx < 0 || my < 0 || mx >= cub->map->width || my >= cub->map->height)
    {
-      if (cub->map->grid[(int)new_y][(int)new_x] != '1')
-         return 1;
+      printf("!!! out of map bounds for:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
+      return 0;
    }
+
+   /* Check walls */
+   if (cub->map->grid[my][mx] != '1')
+      return 1;
+   printf("!!! running into wall at :%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
    return 0;
 
 }
@@ -38,14 +47,12 @@ int check_screen_bounds(t_cub *cub, int cx, int cy)
       return 0;
    return 1;
 }
-void draw_cube_centered(t_cub *cub, int cx, int cy, int color)
+void draw_cube(t_cub *cub, int x_start, int y_start, int color)
 {
    int     i;
    int     j;
    int     x;
    int     y;
-   int     x_start = cx - CUBE_SIZE / 2;
-   int     y_start = cy - CUBE_SIZE / 2;
    char    *pixel;
 
    i = 0;
@@ -107,7 +114,7 @@ void draw_map(t_cub *cub, int color) //todo replace one color with true map pixe
       while (cub->map->grid[i][j])
       {
          if (cub->map->grid[i][j] == '1')
-            draw_cube_centered(cub, i*CUBE_SIZE, j*CUBE_SIZE, color);
+            draw_cube(cub, j*CUBE_SIZE, i*CUBE_SIZE, color);
          j++;
       }
       i++;
@@ -122,7 +129,7 @@ int render(t_cub *cub)
    player_move(cub);
    clean_img(cub, 0x000000);
    //todo ensure rendering is not at 0,0 with half the square off screen
-   draw_cube_centered(cub, (int)cub->player_pos.x, (int)cub->player_pos.y, 0xFFFFFF);
+   draw_cube(cub, cub->player_pos.x*CUBE_SIZE, (int)cub->player_pos.y*CUBE_SIZE, 0xFFFFFF);
    draw_map(cub, 0x444444);
    //game_update_and_render(cub);
    //clear_image(cub->img);
