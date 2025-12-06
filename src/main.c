@@ -93,14 +93,11 @@ int	main(int argc, char **argv)
 
 	ft_memset(&cub, 0, sizeof(t_cub));
 	if (argc != 2 || !has_cub_extension(argv[1]))
-	{
-		error_exit(&cub,
-			"Please provide exactly one valid .cub file as an argument\n", NULL);
-	}
+		error_exit(&cub,"Please provide exactly one valid .cub file as an argument\n", NULL);
 	parse_file(argv[1], &cub);
+	printf("map w=%d h=%d\n", cub.map->width, cub.map->height);
 	if (cub.map->width <= 0 || cub.map->height <= 0)
 		error_exit(&cub,"Invalid map size\n", NULL);
-	printf("map w=%d h=%d\n", cub.map->width, cub.map->height);
 	//normalize_map(&cub);
 	// todo rotate_map(&cub); ??
 	print_map(&cub); //todo rm debug

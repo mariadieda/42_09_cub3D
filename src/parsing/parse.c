@@ -379,6 +379,7 @@ int    validate_chars_in_map_line(char *trimd, int* has_player, int* map_started
     trimd_len = ft_strlen(trimd);
     if(cub->map->width < trimd_len)
         cub->map->width = trimd_len;
+    printf("map width:%d", cub->map->width);
     return (1);
 }
 
