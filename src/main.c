@@ -96,8 +96,7 @@ int	main(int argc, char **argv)
 		error_exit(&cub,"Please provide exactly one valid .cub file as an argument\n", NULL);
 	parse_file(argv[1], &cub);
 	printf("map w=%d h=%d\n", cub.map->width, cub.map->height);
-	if (cub.map->width <= 0 || cub.map->height <= 0)
-		error_exit(&cub,"Invalid map size\n", NULL);
+
 	//normalize_map(&cub);
 	// todo rotate_map(&cub); ??
 	print_map(&cub); //todo rm debug

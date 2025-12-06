@@ -379,7 +379,6 @@ int    validate_chars_in_map_line(char *trimd, int* has_player, int* map_started
     trimd_len = ft_strlen(trimd);
     if(cub->map->width < trimd_len)
         cub->map->width = trimd_len;
-    printf("map width:%d", cub->map->width);
     return (1);
 }
 
@@ -459,7 +458,9 @@ int     check_map(t_cub* cub)
     int w;
     char **grid = cub->map->grid;
 
-    y = 0;   
+    y = 0;
+    if (cub.map->width <= 0 || cub.map->height <= 0)
+        error_exit(&cub,"Invalid map size\n", NULL);
     h = cub->map->height;
     w = cub->map->width;
     while(y < cub->map->height)
