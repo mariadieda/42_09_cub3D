@@ -1,7 +1,14 @@
 
 NAME=cub3D
-SRCS=src/main.c src/rendering.c src/player.c src/clean_up.c src/parsing/parse.c\
-	 gnl/get_next_line.c gnl/get_next_line_utils.c
+SRCS=src/main.c \
+	 src/rendering.c\
+	 src/player.c\
+	 src/clean_up.c \
+	 src/utils.c \
+	 src/keyhandlers.c \
+	 src/parsing/parse.c\
+	 gnl/get_next_line.c \
+	 gnl/get_next_line_utils.c
 OBJS=${SRCS:.c=.o} 	# Change of file extension
 INCL=inc	  		 # File headers
 LIBFT_DIR=libft

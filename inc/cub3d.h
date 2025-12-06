@@ -2,9 +2,6 @@
 #ifndef INC_42_09_CUBE3D_CUBE3D_H
 #define INC_42_09_CUBE3D_CUBE3D_H
 
-# define WIDTH 1280 //todo or define dynamically with size fun?
-# define HEIGHT 720
-
 # define PLAYER_SPEED 0.3 //how fast the player is moving (how many units per keypress)
 # define PLAYER_ROTATE_SPEED 0.1 //how fast the player is turning
 
@@ -35,6 +32,7 @@ typedef struct s_mlx_data
     int				bits_per_pixel;
     int				line_length;
     int				endian;
+    int             tile_size;
     int				screen_width;
     int				screen_height;
     int				win_width;
@@ -65,7 +63,6 @@ typedef struct s_col
 
 typedef struct s_map {
     char  **grid;
-    int  tile_size;
     int  width;
     int  height;
     int  capacity;
@@ -108,17 +105,37 @@ typedef struct s_cub
     struct s_move   move;
 
 }					t_cub;
-//we can add int player_tile_x and int player_tile_y if it helps you (i.e:to check collisions). If not you just use: (int)player_pos.x
+//we can add int player_tile_x and int player_tile_y
+//if it helps you (i.e:to check collisions). If not you just use: (int)player_pos.x
 
 void	make_window(t_cub *cub);
+
+
+
+//parse
+int     parse_file(char* filename, t_cub* cub);
+
+//keyhandlers
+int    handle_keyrelease(int keycode, t_cub *cub);
+int    handle_keypress(int keycode, t_cub *cub);
+int    handle_close(t_cub *cub);
+
+//rendering
 int     render(t_cub *cub);
-void    player_move(t_cub *cub);
 int     check_screen_bounds(t_cub *cub, int cx, int cy);
 int     check_walkable_pos(t_cub *cub, float new_x, float new_y);
-int check_map_bounds(t_cub *cub, float new_x, float new_y);
+int     check_map_bounds(t_cub *cub, float new_x, float new_y);
+
+//player
+void    player_move(t_cub *cub);
+
+//clean up
 void    clean_up(t_cub *cub);
 void	error_exit(t_cub *cub, char *msg, char** to_be_freed);
-int     parse_file(char* filename, t_cub* cub);
 void    free_array(char **arr, int grid_height);
+
+//utils
+void    print_map(t_cub *cub);
+double  ft_fmin(double x, double y);
 
 #endif //INC_42_09_CUBE3D_CUBE3D_H

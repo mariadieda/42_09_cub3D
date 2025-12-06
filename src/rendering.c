@@ -148,15 +148,6 @@ int render(t_cub *cub)
 
 void	make_window(t_cub *cub)
 {
-   cub->mlx = mlx_init();
-   if (!cub->mlx)
-      error_exit(cub, "Failed to initialize MLX\n", NULL);
-
-   mlx_get_screen_size(cub->mlx, &cub->mlx_data.screen_width,
-      &cub->mlx_data.screen_height);
-   cub->mlx_data.win_width = (int)round(cub->mlx_data.screen_width * 0.7);
-   cub->mlx_data.win_height = (int)round(cub->mlx_data.screen_height * 0.7);
-   
    cub->win = mlx_new_window(cub->mlx, cub->mlx_data.win_width,
          cub->mlx_data.win_height, "cub3D");
    if (!cub->win)
