@@ -11,25 +11,47 @@
 /* ************************************************************************** */
 #include"../inc/cub3d.h"
 
+/*
+//todo also consider player width?
 int check_walkable_pos(t_cub *cub, float new_x, float new_y)
 {
    int mx = (int)new_x;
    int my = (int)new_y;
 
-   /* Check map bounds */
+   // Check map bounds
    if (mx < 0 || my < 0 || mx >= cub->map->width || my >= cub->map->height)
    {
       printf("!!! out of map bounds for:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
       return 0;
    }
-
-   /* Check walls */
-   if (cub->map->grid[my][mx] != '1')
+   if (cub->map->grid[my][mx] != '1')    //Check walls
       return 1;
    printf("!!! running into wall at :%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
    return 0;
 
+}*/
+int check_walkable_pos(t_cub *cub, float new_x, float new_y, float radius)
+{
+   int x0 = (int)(new_x - radius);
+   int x1 = (int)(new_x + radius);
+   int y0 = (int)(new_y - radius);
+   int y1 = (int)(new_y + radius);
+
+   for (int y = y0; y <= y1; y++)
+   {
+      for (int x = x0; x <= x1; x++)
+      {
+         if (x < 0 || y < 0 || x >= cub->map->width || y >= cub->map->height)
+            return 0; // out of bounds
+         if (cub->map->grid[y][x] == '1')
+            return 0; // wall collision
+      }
+   }
+   return 1;
 }
+
+
+
 
 int check_map_bounds(t_cub *cub, float new_x, float new_y)
 {
@@ -129,7 +151,9 @@ void draw_map(t_cub *cub, int color) //todo replace one color with true map pixe
 
 int render(t_cub *cub)
 {
+   //mlx_do_sync(cub->mlx);
    //printf("player pos:%f, %f\n", cub->player_pos.x, cub->player_pos.y);
+   //printf("render loop called\n");
    player_move(cub);
    clean_img(cub, 0x000000);
    //todo ensure rendering is not at 0,0 with half the square off screen
@@ -139,9 +163,17 @@ int render(t_cub *cub)
    draw_cube(cub,
       (cub->player_pos.x*cub->mlx_data.tile_size)-(cub->mlx_data.tile_size/2),
       (cub->player_pos.y*cub->mlx_data.tile_size)-(cub->mlx_data.tile_size/2), 0xFFFFFF);
-   //game_update_and_render(cub);
-   //clear_image(cub->img);
+
    //cast_rays(cub);
+   float fraction = PI / 3 / cub.mlx_data.screen_width; //or window width?
+   float start_x = cub->rot_angle - PI / 6;
+   int i = 0;
+   while(i < cub.mlx_data->screen_width)
+   {
+      draw_ray(cub, start_x, i);
+      start_x += fraction;
+      i++;
+   }
    mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);
    return(0);
 }

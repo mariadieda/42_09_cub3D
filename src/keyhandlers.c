@@ -23,7 +23,7 @@ int	handle_keypress(int keycode, t_cub *cub)
         cub->move.rotate_left = 1;
     if (keycode == XK_Right)
         cub->move.rotate_right = 1;
-    printf("keycode pressed: %d\n", keycode);
+    //printf("keycode pressed: %d\n", keycode);
     return (0);
 }
 
@@ -41,6 +41,7 @@ int	handle_keyrelease(int keycode, t_cub *cub)
         cub->move.rotate_left = 0;
     if (keycode == XK_Right)
         cub->move.rotate_right = 0;
+    //printf("keyrelease pressed: %d\n", keycode);
     return (0);
 }
 

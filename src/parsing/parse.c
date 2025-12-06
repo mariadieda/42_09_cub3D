@@ -459,8 +459,8 @@ int     check_map(t_cub* cub)
     char **grid = cub->map->grid;
 
     y = 0;
-    if (cub.map->width <= 0 || cub.map->height <= 0)
-        error_exit(&cub,"Invalid map size\n", NULL);
+    if (cub->map->width <= 0 || cub->map->height <= 0)
+        error_exit(cub,"Invalid map size\n", NULL);
     h = cub->map->height;
     w = cub->map->width;
     while(y < cub->map->height)

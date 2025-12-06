@@ -19,21 +19,90 @@ float set_rot_angle(float current_angle, int decrease)
 
 
 //todo also consider player width?
-void update_pos(t_cub *cub, float new_x, float new_y)
+/*void update_pos(t_cub *cub, float new_x, float new_y)
 {
     printf("\n\ngrid value: %c\n\n", cub->map->grid[(int)new_y][(int)new_x]);
     printf("new player pos:%f, %f\n", new_x, new_y);
     printf("max width, height:%d, %d\n", cub->mlx_data.win_width, cub->mlx_data.win_height);
     printf("map width, height:%d, %d\n", cub->map->width, cub->map->height);
-    if (check_walkable_pos(cub, new_x, new_y))
+    *//*if (check_walkable_pos(cub, new_x, new_y))
     {
         cub->player_pos.x = new_x;
         cub->player_pos.y = new_y;
-    }
+    }*//*
+    if (check_walkable_pos(cub, cub->player_pos.x - new_x, cub->player_pos.y))
+        cub->player_pos.x = new_x;
     else
-        printf("invalid move:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
+        printf("invalid move x coord:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
+    if (check_walkable_pos(cub, cub->player_pos.x, cub->player_pos.y - new_y))
+        cub->player_pos.y = new_y;
+    else
+        printf("invalid move y coord:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
+}*/
+
+void update_pos(t_cub *cub, float new_x, float new_y)
+{
+    float radius = 0.3f; // radius in tiles
+
+    // Check X movement
+    if (check_walkable_pos(cub, new_x, cub->player_pos.y, radius))
+        cub->player_pos.x = new_x;
+    else
+        printf("invalid move x coord: %f, %f\n", cub->player_pos.x, cub->player_pos.y);
+
+    // Check Y movement
+    if (check_walkable_pos(cub, cub->player_pos.x, new_y, radius))
+        cub->player_pos.y = new_y;
+    else
+        printf("invalid move y coord: %f, %f\n", cub->player_pos.x, cub->player_pos.y);
 }
 
+int touch(t_cub *cub, float new_x, float new_y){
+    int x = new_x / cub->mlx_data.tile_size;
+    int y = new_y / cub->mlx_data.tile_size;
+    if (cub->map->grid[y][x] == '1')
+        return 0;
+    return 1;
+}
+
+void try_put_pixel(t_cub *cub, float x, float y, int color){
+    if (check_screen_bounds(cub, x, y))
+    {
+        pixel = cub->pxl_arr
+            + (y * cub->mlx_data.line_length)
+            + (x * (cub->mlx_data.bits_per_pixel / 8));
+        *(unsigned int *)pixel = color;
+    }
+}
+
+
+void draw_ray(t_cub *cub, float start_x, int i){
+{
+    float cos_angle = cos(start_x);
+    float sin_angle = sin(start_x);
+    float ray_x =  cub->player_pos.x;
+    float ray_y =  cub->player_pos.y;
+
+    while(!touch(cub, ray_x, ray_y))
+    {
+        try_put_pixel(cub, ray_x, ray_y, 0xFF0000); //remove for 3d version
+        ray_x += cos_angle;
+        ray_y += sin_angle;
+    }
+/*
+    if(!DEBUG)
+    {
+        float dist = fixed_dist(player->x, player->y, ray_x, ray_y, game);
+        float height = (cub->mlx_data.tile_size / dist) * (WIDTH / 2);
+        int start_y = (HEIGHT - height) / 2;
+        int end = start_y + height;
+        while(start_y < end)
+        {
+            try_put_pixel(i, start_y, 255, game);
+            start_y++;
+        }
+    }*/
+}
 
 void player_move(t_cub *cub)
 {
