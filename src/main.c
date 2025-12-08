@@ -45,7 +45,7 @@ void init_cub_for_rendering(t_cub *cub)
 		cub->map->width * cub->mlx_data.tile_size,
 		cub->map->height * cub->mlx_data.tile_size);
 
-	cub->rot_angle = PI / 2;
+	cub->player_angle = PI / 2;
 }
 
 

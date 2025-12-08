@@ -368,8 +368,8 @@ int    validate_chars_in_map_line(char *trimd, int* has_player, int* map_started
             if(*has_player == 1)
                 return (0);//error_exit(cub, "Error\nMultiple players present\n");
             *has_player = 1;
-            cub->player_pos.x = i + 0.5;
-            cub->player_pos.y = cub->map->height + 0.5;
+            cub->player_tile.x = i + 0.5;
+            cub->player_tile.y = cub->map->height + 0.5;
             cub->spawn_dir = trimd[i];
         }        
         i++;
@@ -498,8 +498,8 @@ int     check_map(t_cub* cub)
 
 void    replace_player_with_floor(t_cub* cub)
 {
-    int x = (int)cub->player_pos.x;
-    int y = (int)cub->player_pos.y;
+    int x = (int)cub->player_tile.x;
+    int y = (int)cub->player_tile.y;
     cub->map->grid[y][x] = '0';
 }
 

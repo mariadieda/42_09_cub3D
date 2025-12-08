@@ -50,13 +50,10 @@ int check_walkable_pos(t_cub *cub, float new_x, float new_y, float radius)
    return 1;
 }
 
-
-
-
-int check_map_bounds(t_cub *cub, float new_x, float new_y)
+int check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile)
 {
-   if ((int)new_x < 0 || (int)new_x >= cub->map->width ||
-       (int)new_y < 0 || (int)new_y >= cub->map->height)
+   if (x_tile < 0 || x_tile >= cub->map->width ||
+       y_tile < 0 || y_tile >= cub->map->height)
       return 0;
    return 1;
 }
@@ -161,17 +158,17 @@ int render(t_cub *cub)
    draw_map(cub, 0x444444);
    //draw_cube(cub, cub->player_pos.x*cub->map->tile_size, (int)cub->player_pos.y*cub->map->tile_size, 0xFFFFFF);
    draw_cube(cub,
-      (cub->player_pos.x*cub->mlx_data.tile_size)-(cub->mlx_data.tile_size/2),
-      (cub->player_pos.y*cub->mlx_data.tile_size)-(cub->mlx_data.tile_size/2), 0xFFFFFF);
+      (cub->player_tile.x*cub->mlx_data.tile_size)-(cub->mlx_data.tile_size/2),
+      (cub->player_tile.y*cub->mlx_data.tile_size)-(cub->mlx_data.tile_size/2), 0xFFFFFF);
 
    //cast_rays(cub);
-   float fraction = PI / 3 / cub.mlx_data.screen_width; //or window width?
-   float start_x = cub->rot_angle - PI / 6;
+   float fraction = PI / 3 / cub->mlx_data.screen_width; //or window width?
+   float start_angle = cub->player_angle - PI / 6;
    int i = 0;
-   while(i < cub.mlx_data->screen_width)
+   while(i < cub->mlx_data.screen_width)
    {
-      draw_ray(cub, start_x, i);
-      start_x += fraction;
+      draw_ray(cub, start_angle, i);
+      start_angle += fraction;
       i++;
    }
    mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);

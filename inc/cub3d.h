@@ -2,8 +2,8 @@
 #ifndef INC_42_09_CUBE3D_CUBE3D_H
 #define INC_42_09_CUBE3D_CUBE3D_H
 
-# define PLAYER_SPEED 0.3 //how fast the player is moving (how many units per keypress)
-# define PLAYER_ROTATE_SPEED 0.2 //how fast the player is turning
+# define PLAYER_SPEED 0.03f //how fast the player is moving (how many tile units per keypress)
+# define PLAYER_ROTATE_SPEED 0.02f //how fast the player is turning
 
 //# define PI 3.14159265359
 # define PI 3.1415926535897932384626 //whats highest precision possible/necessary?
@@ -69,8 +69,8 @@ typedef struct s_map {
 }                   t_map;
 
 typedef struct s_pos {
-    double x;
-    double y;
+    float x;
+    float y;
 }                   t_pos;
 
 typedef struct s_dir {
@@ -89,6 +89,13 @@ typedef struct s_move
     int rotate_left;
     int rotate_right;
 }                   t_move;
+/*
+typedef struct s_player
+{
+    struct s_pos    tile_pos;
+    //struct s_pos    px_pos;
+
+} t_player;*/
 
 typedef struct s_cub
 {
@@ -99,14 +106,13 @@ typedef struct s_cub
     void			*img;
     char			*pxl_arr;
     struct s_col    *col;
+    //t_player		*player;
     char            spawn_dir;
-    struct s_pos    player_pos;
-    float           rot_angle;
+    struct s_pos    player_tile;
+    float           player_angle;
     struct s_move   move;
 
 }					t_cub;
-//we can add int player_tile_x and int player_tile_y
-//if it helps you (i.e:to check collisions). If not you just use: (int)player_pos.x
 
 //main
 void	make_window(t_cub *cub);
@@ -123,12 +129,12 @@ int    handle_close(t_cub *cub);
 int     render(t_cub *cub);
 int     check_screen_bounds(t_cub *cub, int cx, int cy);
 //int     check_walkable_pos(t_cub *cub, float new_x, float new_y);
-int     check_map_bounds(t_cub *cub, float new_x, float new_y);
+int     check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile);
 int check_walkable_pos(t_cub *cub, float new_x, float new_y, float radius);
 
 //player
 void    player_move(t_cub *cub);
-void    draw_ray(t_cub *cub, float start_x, int i);
+void    draw_ray(t_cub *cub, float start_angle, int i);
 
 //clean up
 void    clean_up(t_cub *cub);
