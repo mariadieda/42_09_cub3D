@@ -162,10 +162,11 @@ int render(t_cub *cub)
       (cub->player_tile.y*cub->mlx_data.tile_size)-(cub->mlx_data.tile_size/2), 0xFFFFFF);
 
    //cast_rays(cub);
-   float fraction = PI / 3 / cub->mlx_data.screen_width; //or window width?
-   float start_angle = cub->player_angle - PI / 6;
+	float fov = PI / 3; //60 deg
+   float fraction = fov / cub->mlx_data.win_width;
+   float start_angle = cub->player_angle - (fov / 2);
    int i = 0;
-   while(i < cub->mlx_data.screen_width)
+   while(i < cub->mlx_data.win_width)
    {
       draw_ray(cub, start_angle, i);
       start_angle += fraction;
