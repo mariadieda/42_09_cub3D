@@ -2,7 +2,7 @@
 #ifndef INC_42_09_CUBE3D_CUBE3D_H
 #define INC_42_09_CUBE3D_CUBE3D_H
 
-# define PLAYER_SPEED 0.03f //how fast the player is moving (how many tile units per keypress)
+# define PLAYER_SPEED 5 //how fast the player is moving (how many tile units per keypress)
 # define PLAYER_ROTATE_SPEED 0.02f //how fast the player is turning
 
 //# define PI 3.14159265359
@@ -32,7 +32,6 @@ typedef struct s_mlx_data
     int				bits_per_pixel;
     int				line_length;
     int				endian;
-    int             tile_size;
     int				screen_width;
     int				screen_height;
     int				win_width;
@@ -108,9 +107,12 @@ typedef struct s_cub
     struct s_col    *col;
     //t_player		*player;
     char            spawn_dir;
-    struct s_pos    player_tile;
+    struct s_pos    player_tile; //only used for parsing
+    struct s_pos    player_px;
     float           player_angle;
+    float           player_fov;
     struct s_move   move;
+    int             tile_size;
 
 }					t_cub;
 
@@ -127,10 +129,14 @@ int    handle_close(t_cub *cub);
 
 //rendering
 int     render(t_cub *cub);
-int     check_screen_bounds(t_cub *cub, int cx, int cy);
+int     check_screen_bounds_px(t_cub *cub, float x_px, float y_px);
 //int     check_walkable_pos(t_cub *cub, float new_x, float new_y);
 int     check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile);
-int check_walkable_pos(t_cub *cub, float new_x, float new_y, float radius);
+int check_walkable_pos(t_cub *cub, float new_x_px, float new_y_px);
+
+//2D debug
+void    draw_cube(t_cub *cub, float x_start_px, float y_start_px, int color);
+void    draw_map(t_cub *cub, int color) ;
 
 //player
 void    player_move(t_cub *cub);

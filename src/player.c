@@ -40,21 +40,19 @@ float set_rot_angle(float current_angle, int decrease)
         printf("invalid move y coord:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
 }*/
 
-void update_pos(t_cub *cub, float new_x, float new_y)
+void update_pos(t_cub *cub, float new_x_px, float new_y_px)
 {
-    float radius = 0.3f; // radius in tiles
-
     // Check X movement
-    if (check_walkable_pos(cub, new_x, cub->player_tile.y, radius))
-        cub->player_tile.x = new_x;
+    if (check_walkable_pos(cub, new_x_px, cub->player_px.y))
+        cub->player_px.x = new_x_px;
     else
         printf("invalid move x coord: %f, %f\n", cub->player_tile.x, cub->player_tile.y);
 
     // Check Y movement
-    if (check_walkable_pos(cub, cub->player_tile.x, new_y, radius))
-        cub->player_tile.y = new_y;
+    if (check_walkable_pos(cub, cub->player_px.x, new_y_px))
+        cub->player_px.y = new_y_px;
     else
-        printf("invalid move y coord: %f, %f\n", cub->player_tile.x, cub->player_tile.y);
+        printf("invalid move y coord: %f, %f\n", cub->player_px.x, cub->player_px.y);
 }
 
 int touches_wall(t_cub *cub, int x_tile, int y_tile){
@@ -64,13 +62,13 @@ int touches_wall(t_cub *cub, int x_tile, int y_tile){
     return 0;
 }
 
-void try_put_pixel(t_cub *cub, float x_tile, float y_tile, int color){
+void try_put_pixel(t_cub *cub, float x_px, float y_px, int color){
     char *pixel;
     int x;
     int y;
-    x = (int) x_tile * cub->mlx_data.tile_size;
-    y = (int) y_tile * cub->mlx_data.tile_size;
-    if (check_screen_bounds(cub, x, y))
+    x = (int) x_px;
+    y = (int) y_px;
+    if (check_screen_bounds_px(cub, x, y))
     {
         pixel = cub->pxl_arr + (y * cub->mlx_data.line_length)
             + (x * (cub->mlx_data.bits_per_pixel / 8));
@@ -80,17 +78,17 @@ void try_put_pixel(t_cub *cub, float x_tile, float y_tile, int color){
 
 
 void draw_ray(t_cub *cub, float start_angle, int i){
-    float cos_angle = cos(start_angle)*PLAYER_ROTATE_SPEED;
-    float sin_angle = sin(start_angle)*PLAYER_ROTATE_SPEED;
-    float ray_x_px =  cub->player_tile.x * cub->mlx_data.tile_size;
-    float ray_y_px =  cub->player_tile.y * cub->mlx_data.tile_size;
+    float cos_angle = cos(start_angle);
+    float sin_angle = sin(start_angle);
+    float ray_x_px =  cub->player_px.x;
+    float ray_y_px =  cub->player_px.y;
 
-    while(!touches_wall(cub, (int)ray_x_px/cub->mlx_data.tile_size, (int)ray_y_px/cub->mlx_data.tile_size))
+    while(!touches_wall(cub, (int)ray_x_px/cub->tile_size, (int)ray_y_px/cub->tile_size))
     {
-        if (!check_map_bounds_tiles(cub, (int)ray_x_px/cub->mlx_data.tile_size, (int)ray_y_px/cub->mlx_data.tile_size))
+        if (!check_map_bounds_tiles(cub, (int)ray_x_px/cub->tile_size, (int)ray_y_px/cub->tile_size))
             break;
         //printf("drwaing ray from start_x:%f\n", start_angle);
-        try_put_pixel(cub, ray_x_px/cub->mlx_data.tile_size, ray_y_px/cub->mlx_data.tile_size, 0xFF0000); //remove for 3d version
+        try_put_pixel(cub, ray_x_px, ray_y_px, 0xFF0000); //remove for 3d version
         ray_x_px += cos_angle;
         ray_y_px += sin_angle;
     }
@@ -129,25 +127,26 @@ void player_move(t_cub *cub)
 
     if (cub->move.forward)
     {
-        new_x = cub->player_tile.x + cos_angle;
-        new_y = cub->player_tile.y - sin_angle;
-        update_pos(cub, new_x, new_y);
+        //new_x = cub->player_px.x + cos_angle;
+        //new_y = cub->player_px.y - sin_angle;
+        update_pos(cub, cub->player_px.x + cos_angle, cub->player_px.y + sin_angle);
     }
     if (cub->move.backward)
     {
-        new_x = cub->player_tile.x - cos_angle;
-        new_y = cub->player_tile.y + sin_angle;
-        update_pos(cub, new_x, new_y);
+        /*new_x = cub->player_px.x - cos_angle;
+        new_y = cub->player_px.y + sin_angle;
+        update_pos(cub, new_x, new_y);*/
+        update_pos(cub, cub->player_px.x - cos_angle, cub->player_px.y - sin_angle);
     }
     if (cub->move.left)
     {
-        new_x = cub->player_tile.x - sin_angle;
-        new_y = cub->player_tile.y + cos_angle;
+        new_x = cub->player_px.x - sin_angle;
+        new_y = cub->player_px.y + cos_angle;
         update_pos(cub, new_x, new_y);
     }
     if (cub->move.right){
-        new_x = cub->player_tile.x + sin_angle;
-        new_y = cub->player_tile.y - cos_angle;
+        new_x = cub->player_px.x + sin_angle;
+        new_y = cub->player_px.y - cos_angle;
         update_pos(cub, new_x, new_y);
     }
 }

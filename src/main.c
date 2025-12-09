@@ -20,35 +20,26 @@ void init_cub_for_rendering(t_cub *cub)
 	cub->mlx = mlx_init();
 	if (!cub->mlx)
 		error_exit(cub, "Failed to initialize MLX\n", NULL);
-
-	printf("map w=%d h=%d\n", cub->map->width, cub->map->height);
-
-	mlx_get_screen_size(
-		cub->mlx,
-		&cub->mlx_data.screen_width,
-		&cub->mlx_data.screen_height
-	);
-
-	cub->mlx_data.tile_size = ft_fmin(
+	printf("map w=%d h=%d\n", cub->map->width, cub->map->height); //todo rm debug
+	mlx_get_screen_size( cub->mlx, &cub->mlx_data.screen_width, &cub->mlx_data.screen_height);
+	cub->tile_size = ft_fmin(
 		cub->mlx_data.screen_width  / cub->map->width,
 		cub->mlx_data.screen_height / cub->map->height
 	);
-
-	if (cub->mlx_data.tile_size < 1)
+	if (cub->tile_size < 1)
 		error_exit(cub, "Map too large for screen\n", NULL);
-
-	cub->mlx_data.win_width  = cub->mlx_data.tile_size * cub->map->width;
-	cub->mlx_data.win_height = cub->mlx_data.tile_size * cub->map->height;
+	cub->mlx_data.win_width  = cub->tile_size * cub->map->width;
+	cub->mlx_data.win_height = cub->tile_size * cub->map->height;
 
 	printf("window w=%d h=%d, map w*CUBE %d, map h*CUBE %d\n",
 		cub->mlx_data.win_width, cub->mlx_data.win_height,
-		cub->map->width * cub->mlx_data.tile_size,
-		cub->map->height * cub->mlx_data.tile_size);
-
+		cub->map->width * cub->tile_size,
+		cub->map->height * cub->tile_size);  //todo rm debug
+	cub->player_px.x = cub->tile_size * cub->player_tile.x; //convert from read in tile position to px
+	cub->player_px.y = cub->tile_size * cub->player_tile.y; //convert from read in tile position to px
 	cub->player_angle = PI / 2;
+	cub->player_fov = PI / 3; //60 deg
 }
-
-
 
 int	has_cub_extension(char *cub_fn)
 {

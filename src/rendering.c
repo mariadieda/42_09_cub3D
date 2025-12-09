@@ -30,25 +30,32 @@ int check_walkable_pos(t_cub *cub, float new_x, float new_y)
    return 0;
 
 }*/
-int check_walkable_pos(t_cub *cub, float new_x, float new_y, float radius)
+int check_walkable_pos(t_cub *cub, float new_x_px, float new_y_px)
 {
-   int x0 = (int)(new_x - radius);
-   int x1 = (int)(new_x + radius);
-   int y0 = (int)(new_y - radius);
-   int y1 = (int)(new_y + radius);
+   float radius = 0.3f * cub->tile_size;
 
-   for (int y = y0; y <= y1; y++)
+   int left   = (int)floorf((new_x_px - radius) / cub->tile_size);
+   int right  = (int)ceilf ((new_x_px + radius) / cub->tile_size);
+   int top    = (int)floorf((new_y_px - radius) / cub->tile_size);
+   int bottom = (int)ceilf ((new_y_px + radius) / cub->tile_size);
+
+   int y = top;
+   while (y <= bottom)
    {
-      for (int x = x0; x <= x1; x++)
+      int x = left;
+      while (x <= right)
       {
          if (x < 0 || y < 0 || x >= cub->map->width || y >= cub->map->height)
-            return 0; // out of bounds
+            return 0;
          if (cub->map->grid[y][x] == '1')
-            return 0; // wall collision
+            return 0;
+         x++;
       }
+      y++;
    }
    return 1;
 }
+
 
 int check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile)
 {
@@ -58,44 +65,17 @@ int check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile)
    return 1;
 }
 
-int check_screen_bounds(t_cub *cub, int cx, int cy)
+int check_screen_bounds_px(t_cub *cub, float x_px, float y_px)
 {
-    if (cx <0 || cy < 0 ||
-      cx >= cub->mlx_data.win_width
-      || cy >= cub->mlx_data.win_height)
+   const int x = (int)x_px;
+   const int y = (int)y_px;
+    if (x <0 || y < 0 ||
+      x >= cub->mlx_data.win_width
+      || y >= cub->mlx_data.win_height)
       return 0;
    return 1;
 }
-void draw_cube(t_cub *cub, int x_start, int y_start, int color)
-{
-   int     i;
-   int     j;
-   int     x;
-   int     y;
-   char    *pixel;
 
-   i = 0;
-   while (i < cub->mlx_data.tile_size)
-   {
-      j = 0;
-      while (j < cub->mlx_data.tile_size)
-      {
-         x = x_start + i;
-         y = y_start + j;
-
-         if (check_screen_bounds(cub, x, y))
-         {
-            pixel = cub->pxl_arr
-                + (y * cub->mlx_data.line_length)
-                + (x * (cub->mlx_data.bits_per_pixel / 8));
-
-            *(unsigned int *)pixel = color;
-         }
-         j++;
-      }
-      i++;
-   }
-}
 
 void clean_img(t_cub *cub, int color) //todo replace one color with true map pixel colors
 {
@@ -121,31 +101,6 @@ void clean_img(t_cub *cub, int color) //todo replace one color with true map pix
    }
 }
 
-void draw_map(t_cub *cub, int color) //todo replace one color with true map pixel colors
-{
-   int     i;
-   int     j;
-
-   i = 0;
-   while (cub->map->grid[i])
-   {
-      j = 0;
-      while (cub->map->grid[i][j])
-      {
-         if (cub->map->grid[i][j] == '1')
-            draw_cube(cub, j*cub->mlx_data.tile_size, i*cub->mlx_data.tile_size, color);
-         if (cub->map->grid[i][j] == '0')
-            draw_cube(cub, j*cub->mlx_data.tile_size, i*cub->mlx_data.tile_size, 0x000000);
-         if (cub->map->grid[i][j] == ' ')
-            draw_cube(cub, j*cub->mlx_data.tile_size, i*cub->mlx_data.tile_size, 0x111111);
-         j++;
-      }
-      i++;
-   }
-}
-
-
-
 int render(t_cub *cub)
 {
    //mlx_do_sync(cub->mlx);
@@ -158,13 +113,11 @@ int render(t_cub *cub)
    draw_map(cub, 0x444444);
    //draw_cube(cub, cub->player_pos.x*cub->map->tile_size, (int)cub->player_pos.y*cub->map->tile_size, 0xFFFFFF);
    draw_cube(cub,
-      (cub->player_tile.x*cub->mlx_data.tile_size)-(cub->mlx_data.tile_size/2),
-      (cub->player_tile.y*cub->mlx_data.tile_size)-(cub->mlx_data.tile_size/2), 0xFFFFFF);
-
-   //cast_rays(cub);
-	float fov = PI / 3; //60 deg
-   float fraction = fov / cub->mlx_data.win_width;
-   float start_angle = cub->player_angle - (fov / 2);
+             (cub->player_px.x)-(float)(cub->tile_size/2),
+             (cub->player_px.y)-(float)(cub->tile_size/2), 0xFFFFFF);
+   // cast_rays
+   float fraction = cub->player_fov / cub->mlx_data.win_width;
+   float start_angle = cub->player_angle - (cub->player_fov / 2);
    int i = 0;
    while(i < cub->mlx_data.win_width)
    {
