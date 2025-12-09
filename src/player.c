@@ -58,8 +58,13 @@ void update_pos(t_cub *cub, float new_x_px, float new_y_px)
 int touches_wall(t_cub *cub, int x_tile, int y_tile){
 
     if (cub->map->grid[y_tile][x_tile] == '1')
+    {
         return 1;
+    }
+    /*if (y_tile > 1 && x_tile > 1 && cub->map->grid[y_tile][x_tile-1] == '1' && cub->map->grid[y_tile-1][x_tile] == '1') // blocks the diagonal peeking
+        return 1;*/
     return 0;
+
 }
 
 void try_put_pixel(t_cub *cub, float x_px, float y_px, int color){
