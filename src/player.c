@@ -119,34 +119,16 @@ void player_move(t_cub *cub)
 
     float cos_angle;
     float sin_angle;
-    float new_x = 0;
-    float new_y = 0;
 
     cos_angle = cos(cub->player_angle) * PLAYER_SPEED;
     sin_angle = sin(cub->player_angle) * PLAYER_SPEED;
 
     if (cub->move.forward)
-    {
-        //new_x = cub->player_px.x + cos_angle;
-        //new_y = cub->player_px.y - sin_angle;
         update_pos(cub, cub->player_px.x + cos_angle, cub->player_px.y + sin_angle);
-    }
     if (cub->move.backward)
-    {
-        /*new_x = cub->player_px.x - cos_angle;
-        new_y = cub->player_px.y + sin_angle;
-        update_pos(cub, new_x, new_y);*/
         update_pos(cub, cub->player_px.x - cos_angle, cub->player_px.y - sin_angle);
-    }
+    if (cub->move.right)
+        update_pos(cub, cub->player_px.x - sin_angle, cub->player_px.y + cos_angle);
     if (cub->move.left)
-    {
-        new_x = cub->player_px.x - sin_angle;
-        new_y = cub->player_px.y + cos_angle;
-        update_pos(cub, new_x, new_y);
-    }
-    if (cub->move.right){
-        new_x = cub->player_px.x + sin_angle;
-        new_y = cub->player_px.y - cos_angle;
-        update_pos(cub, new_x, new_y);
-    }
+        update_pos(cub, cub->player_px.x + sin_angle, cub->player_px.y - cos_angle);
 }
