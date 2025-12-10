@@ -1,6 +1,6 @@
 #include "../inc/cub3d.h"
 
-void draw_cube(t_cub *cub, float x_start_px, float y_start_px, int color)
+void draw_tile(t_cub *cub, float x_start_px, float y_start_px, float size_factor, int color)
 {
     int     i;
     int     j;
@@ -9,10 +9,10 @@ void draw_cube(t_cub *cub, float x_start_px, float y_start_px, int color)
     char    *pixel;
 
     i = 0;
-    while (i < cub->tile_size)
+    while (i < (int)(cub->tile_size * size_factor))
     {
         j = 0;
-        while (j < cub->tile_size)
+        while (j < (int)(cub->tile_size * size_factor))
         {
             x = x_start_px + i;
             y = y_start_px + j;
@@ -44,11 +44,11 @@ void draw_map(t_cub *cub, int color) //todo replace one color with true map pixe
         while (cub->map->grid[i][j])
         {
             if (cub->map->grid[i][j] == '1')
-                draw_cube(cub, j*cub->tile_size, i*cub->tile_size, color);
+                draw_tile(cub, j*cub->tile_size, i*cub->tile_size, 1, color);
             if (cub->map->grid[i][j] == '0')
-                draw_cube(cub, j*cub->tile_size, i*cub->tile_size, 0x000000);
+                draw_tile(cub, j*cub->tile_size, i*cub->tile_size, 1, 0x000000);
             if (cub->map->grid[i][j] == ' ')
-                draw_cube(cub, j*cub->tile_size, i*cub->tile_size, 0x111111);
+                draw_tile(cub, j*cub->tile_size, i*cub->tile_size, 1, 0x111111);
             j++;
         }
         i++;

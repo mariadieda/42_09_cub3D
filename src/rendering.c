@@ -132,18 +132,10 @@ int render(t_cub *cub)
    //printf("render loop called\n");
    player_move(cub);
    clean_img(cub, 0x000000);
-   //todo ensure rendering is not at 0,0 with half the square off screen
-   //draw_cube(cub, cub->player_pos.x*CUBE_SIZE, (int)cub->player_pos.y*CUBE_SIZE, 0xFFFFFF);
    draw_map(cub, 0x444444);
-   //draw_cube(cub, cub->player_pos.x*cub->map->tile_size, (int)cub->player_pos.y*cub->map->tile_size, 0xFFFFFF);
-   draw_player_triangle(cub,
-    cub->player_angle, // radians!
-    10.0f               // triangle size on minimap
-    ,0xFFFFFF);
-
-   /*draw_cube(cub,
-             (cub->player_px.x)-(float)(cub->tile_size/2),
-             (cub->player_px.y)-(float)(cub->tile_size/2), 0xFFFFFF);*/
+   draw_player_triangle(cub, cub->player_angle, cub->tile_size*0.6 ,0xFFFFFF);
+   //alternatively draw player cub
+   /*draw_cube(cub, (cub->player_px.x)-(float)(cub->tile_size*0.6/2), (cub->player_px.y)-(float)(cub->tile_size*0.6/2), 0.6,0xFFFFFF);*/
    // cast_rays
    //todo block peaking??
    float fraction = cub->player_fov / cub->mlx_data.win_width;

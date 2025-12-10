@@ -145,7 +145,7 @@ int     check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile);
 int check_walkable_pos(t_cub *cub, float new_x_px, float new_y_px);
 
 //2D debug
-void    draw_cube(t_cub *cub, float x_start_px, float y_start_px, int color);
+void    draw_tile(t_cub *cub, float x_start_px, float y_start_px, float size_factor, int color);
 void    draw_map(t_cub *cub, int color) ;
 
 //player

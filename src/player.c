@@ -4,6 +4,7 @@ float set_rot_angle(float current_angle, int decrease)
 {
     float rotate_speed;
     float angle;
+
     angle = current_angle;
     rotate_speed = PLAYER_ROTATE_SPEED;
     if (decrease)
@@ -15,8 +16,6 @@ float set_rot_angle(float current_angle, int decrease)
         angle = 2 * PI;
     return angle;
 }
-
-
 
 //todo also consider player width?
 /*void update_pos(t_cub *cub, float new_x, float new_y)
