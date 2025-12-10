@@ -81,6 +81,22 @@ void try_put_pixel(t_cub *cub, float x_px, float y_px, int color){
     }
 }
 
+void draw_line(t_cub *cub, float start_angle, int i){
+    float cos_angle = cos(start_angle);
+    float sin_angle = sin(start_angle);
+    float ray_x_px =  cub->player_px.x;
+    float ray_y_px =  cub->player_px.y;
+
+    while(!touches_wall(cub, (int)ray_x_px/cub->tile_size, (int)ray_y_px/cub->tile_size))
+    {
+        if (!check_map_bounds_tiles(cub, (int)ray_x_px/cub->tile_size, (int)ray_y_px/cub->tile_size))
+            break;
+        //printf("drwaing ray from start_x:%f\n", start_angle);
+        try_put_pixel(cub, ray_x_px, ray_y_px, 0xFF0000); //remove for 3d version
+        ray_x_px += cos_angle;
+        ray_y_px += sin_angle;
+    }
+
 
 void draw_ray(t_cub *cub, float start_angle, int i){
     float cos_angle = cos(start_angle);
