@@ -170,6 +170,20 @@ void	make_window(t_cub *cub)
 }
 
 
+// distance calculation functions
+float distance(float x, float y){
+   return sqrt(x * x + y * y);
+}
+
+float fixed_dist(float x1, float y1, float x2, float y2, t_game *game)
+{
+   float delta_x = x2 - x1;
+   float delta_y = y2 - y1;
+   float angle = atan2(delta_y, delta_x) - game->player.angle;
+   float fix_dist = distance(delta_x, delta_y) * cos(angle);
+   return fix_dist;
+}
+
 /*
 CHECKING intersections (Permadi, 1996)
 
