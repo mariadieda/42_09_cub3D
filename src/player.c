@@ -109,8 +109,8 @@ void draw_line(t_cub *cub, t_pos start_pos_px, t_pos end_pos_px, int color)
     ft_memset(&line, 0, sizeof(t_line));
     line.start_point = start_pos_px;
     line.end_point = end_pos_px;
-    line.x_diff = line.start_point.x - line.end_point.x;
-    line.y_diff = line.start_point.y - line.end_point.y;
+    line.x_diff = line.end_point.x - line.start_point.x;
+    line.y_diff = line.end_point.y - line.start_point.y;
     line.line_len = sqrt(line.x_diff * line.x_diff + line.y_diff
             * line.y_diff);
     if (line.line_len > 0)

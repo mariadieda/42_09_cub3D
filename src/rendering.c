@@ -138,7 +138,7 @@ int render(t_cub *cub)
    //draw_cube(cub, cub->player_pos.x*cub->map->tile_size, (int)cub->player_pos.y*cub->map->tile_size, 0xFFFFFF);
    draw_player_triangle(cub,
     cub->player_angle, // radians!
-    6.0f               // triangle size on minimap
+    10.0f               // triangle size on minimap
     ,0xFFFFFF);
 
    /*draw_cube(cub,
