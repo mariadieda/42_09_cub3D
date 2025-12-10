@@ -88,6 +88,16 @@ typedef struct s_move
     int rotate_left;
     int rotate_right;
 }                   t_move;
+
+typedef struct s_line
+{
+    struct s_pos	start_point;
+    struct s_pos	end_point;
+    double			line_len;
+    double			x_diff;
+    double			y_diff;
+}					t_line;
+
 /*
 typedef struct s_player
 {
@@ -141,6 +151,7 @@ void    draw_map(t_cub *cub, int color) ;
 //player
 void    player_move(t_cub *cub);
 void    draw_ray(t_cub *cub, float start_angle, int i);
+void    draw_line(t_cub *cub, t_pos start_pos_px, t_pos end_pos_px, int color);
 
 //clean up
 void    clean_up(t_cub *cub);

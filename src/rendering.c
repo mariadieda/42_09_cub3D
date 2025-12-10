@@ -102,27 +102,25 @@ void clean_img(t_cub *cub, int color) //todo replace one color with true map pix
    }
 }
 
-void draw_player_triangle(float px, float py, float angle, float size)
+void draw_player_triangle(t_cub *cub, float angle, float size, int color)
 {
-   // Triangle geometry:
-   // tip    = +size forward
-   // left   = -size/2 forward + size/2 left
-   // right  = -size/2 forward - size/2 left
+   t_pos tip; //+size forward
+   t_pos left; //-size/2 forward + size/2 left
+   t_pos right; //-size/2 forward - size/2 left
 
-   float tip_x   = px + cosf(angle) * size;
-   float tip_y   = py + sinf(angle) * size;
+   tip.x   = cub->player_px.x + cosf(angle) * size;
+   tip.y   = cub->player_px.y + sinf(angle) * size;
 
-   float left_x  = px + cosf(angle + M_PI * 0.75f) * size * 0.7f;
-   float left_y  = py + sinf(angle + M_PI * 0.75f) * size * 0.7f;
+   left.x  = cub->player_px.x + cosf(angle + PI * 0.75f) * size * 0.7f;
+   left.y  = cub->player_px.y + sinf(angle + PI * 0.75f) * size * 0.7f;
 
-   float right_x = px + cosf(angle - M_PI * 0.75f) * size * 0.7f;
-   float right_y = py + sinf(angle - M_PI * 0.75f) * size * 0.7f;
+   right.x = cub->player_px.x + cosf(angle - PI * 0.75f) * size * 0.7f;
+   right.y = cub->player_px.y + sinf(angle - PI * 0.75f) * size * 0.7f;
 
-   // Now draw the triangle with your MLX line or polygon drawing function:
-   draw_line(px, py, tip_x, tip_y);
-   draw_line(tip_x, tip_y, left_x, left_y);
-   draw_line(left_x, left_y, right_x, right_y);
-   draw_line(right_x, right_y, tip_x, tip_y);
+   draw_line(cub, cub->player_px, tip, color);
+   draw_line(cub, tip, left, color);
+   draw_line(cub,left, right, color);
+   draw_line(cub, right, tip, color);
 }
 
 
@@ -138,15 +136,16 @@ int render(t_cub *cub)
    //draw_cube(cub, cub->player_pos.x*CUBE_SIZE, (int)cub->player_pos.y*CUBE_SIZE, 0xFFFFFF);
    draw_map(cub, 0x444444);
    //draw_cube(cub, cub->player_pos.x*cub->map->tile_size, (int)cub->player_pos.y*cub->map->tile_size, 0xFFFFFF);
-   draw_player_triangle(cub->player_pos.x, cub->player_pos.y,
+   draw_player_triangle(cub,
     cub->player_angle, // radians!
     6.0f               // triangle size on minimap
-    );
+    ,0xFFFFFF);
 
    /*draw_cube(cub,
              (cub->player_px.x)-(float)(cub->tile_size/2),
              (cub->player_px.y)-(float)(cub->tile_size/2), 0xFFFFFF);*/
    // cast_rays
+   //todo block peaking??
    float fraction = cub->player_fov / cub->mlx_data.win_width;
    float start_angle = cub->player_angle - (cub->player_fov / 2);
    int i = 0;

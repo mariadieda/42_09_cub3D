@@ -81,22 +81,47 @@ void try_put_pixel(t_cub *cub, float x_px, float y_px, int color){
     }
 }
 
-void draw_line(t_cub *cub, float start_angle, int i){
-    float cos_angle = cos(start_angle);
-    float sin_angle = sin(start_angle);
-    float ray_x_px =  cub->player_px.x;
-    float ray_y_px =  cub->player_px.y;
+void	put_line_pixels(t_cub *cub, t_line *line, int color)
+{
+    int	x_cord;
+    int	y_cord;
+    int	i;
 
+    i = 0;
+    while (i <= (int)line->line_len)
+    {
+        x_cord = (int)(line->start_point.x + (i / line->line_len) * line->x_diff);
+        y_cord = (int)(line->start_point.y + (i / line->line_len) * line->y_diff);
+        if (x_cord >= 0 && x_cord < cub->mlx_data.win_width && y_cord >= 0
+            && y_cord < cub->mlx_data.win_height)
+        {
+            try_put_pixel(cub, x_cord, y_cord, color);
+        }
+        i++;
+    }
+}
+
+
+void draw_line(t_cub *cub, t_pos start_pos_px, t_pos end_pos_px, int color)
+{
+    t_line	line;
+
+    ft_memset(&line, 0, sizeof(t_line));
+    line.start_point = start_pos_px;
+    line.end_point = end_pos_px;
+    line.x_diff = line.start_point.x - line.end_point.x;
+    line.y_diff = line.start_point.y - line.end_point.y;
+    line.line_len = sqrt(line.x_diff * line.x_diff + line.y_diff
+            * line.y_diff);
+    if (line.line_len > 0)
+        put_line_pixels(cub, &line, color);
+    /* checks wanted?
     while(!touches_wall(cub, (int)ray_x_px/cub->tile_size, (int)ray_y_px/cub->tile_size))
     {
         if (!check_map_bounds_tiles(cub, (int)ray_x_px/cub->tile_size, (int)ray_y_px/cub->tile_size))
             break;
-        //printf("drwaing ray from start_x:%f\n", start_angle);
-        try_put_pixel(cub, ray_x_px, ray_y_px, 0xFF0000); //remove for 3d version
-        ray_x_px += cos_angle;
-        ray_y_px += sin_angle;
-    }
-
+    }*/
+}
 
 void draw_ray(t_cub *cub, float start_angle, int i){
     float cos_angle = cos(start_angle);
