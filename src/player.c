@@ -142,7 +142,7 @@ void draw_ray(t_cub *cub, float start_angle, int i){
     {
         float dist = fixed_dist(cub, cub->player_px.x, cub->player_px.y, ray_x_px, ray_y_px);
         float height = (cub->tile_size / dist) * (cub->mlx_data.win_width / 2);
-        int start_y = (cub->mlx_data.win_height - cub->tile_size ) / 2;
+        int start_y = (cub->mlx_data.win_height - height ) / 2;
         int end = start_y + height;
         while(start_y < end)
         {

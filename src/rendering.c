@@ -132,10 +132,13 @@ int render(t_cub *cub)
    //printf("render loop called\n");
    player_move(cub);
    clean_img(cub, 0x000000);
-   draw_map(cub, 0x444444);
-   draw_player_triangle(cub, cub->player_angle, cub->tile_size*0.6 ,0xFFFFFF);
-   //alternatively draw player cub
-   /*draw_cube(cub, (cub->player_px.x)-(float)(cub->tile_size*0.6/2), (cub->player_px.y)-(float)(cub->tile_size*0.6/2), 0.6,0xFFFFFF);*/
+   if (DEBUG)
+   {
+      draw_map(cub, 0x444444);
+      draw_player_triangle(cub, cub->player_angle, cub->tile_size*0.6 ,0xFFFFFF);
+      //alternatively draw player cub
+      /*draw_cube(cub, (cub->player_px.x)-(float)(cub->tile_size*0.6/2), (cub->player_px.y)-(float)(cub->tile_size*0.6/2), 0.6,0xFFFFFF);*/
+   }
    // cast_rays
    //todo block peaking??
    float fraction = cub->player_fov / cub->mlx_data.win_width;

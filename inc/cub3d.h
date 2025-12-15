@@ -25,6 +25,7 @@
 # include <fcntl.h> // open
 # include <math.h>
 # include <mlx.h>
+//# include "minilibx-linux/mlx.h"
 # include <stdlib.h> // malloc, free, exit
 # include <unistd.h> // close, read, write
 
