@@ -14,7 +14,7 @@
 # define D 100
 # define LEFT 65361
 # define RIGHT 65363
-#define DEBUG 1
+#define DEBUG 0
 
 # include <X11/X.h>
 # include <X11/keysym.h>
@@ -159,7 +159,7 @@ void    draw_ray(t_cub *cub, float start_angle, int i);
 void    draw_line(t_cub *cub, t_pos start_pos_px, t_pos end_pos_px, int color);
 void    set_last_ray_point(t_cub *cub, float start_angle, t_pos *ray_px);
 void    try_put_pixel(t_cub *cub, float x_px, float y_px, int color);
-void    draw_obstacles_per_px_col(t_cub *cub, int i, t_pos ray_px, int obj_color);
+void    draw_obstacles_per_px_col(t_cub *cub, int i, t_pos *ray_px, int obj_color);
 
 
 //clean up

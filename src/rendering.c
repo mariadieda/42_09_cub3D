@@ -138,7 +138,7 @@ void cast_rays(t_cub *cub)  //todo block peaking??
       ray_px =  cub->player_px;
       set_last_ray_point(cub, start_angle, &ray_px);
       if(!DEBUG) //  3D version
-         draw_obstacles_per_px_col(cub, i, ray_px, 0x444444);
+         draw_obstacles_per_px_col(cub, i, &ray_px, 0x444444);
       start_angle += fraction;
       i++;
    }

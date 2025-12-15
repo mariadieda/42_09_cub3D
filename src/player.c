@@ -127,30 +127,30 @@ void set_last_ray_point(t_cub *cub, float start_angle, t_pos *ray_px)
     float cos_angle = cos(start_angle);
     float sin_angle = sin(start_angle);
 
-    while(!touches_wall(cub, (int)*ray_px->x /cub->tile_size, (int)*ray_px.y/cub->tile_size))
+    while(!touches_wall(cub, (int) ray_px->x /cub->tile_size, (int) ray_px->y/cub->tile_size))
     {
-        if (!check_map_bounds_tiles(cub, (int)*ray_px.x/cub->tile_size, (int)*ray_px.y/cub->tile_size))
+        if (!check_map_bounds_tiles(cub, (int)ray_px->x/cub->tile_size, (int)ray_px->y/cub->tile_size))
             break;
         //printf("drwaing ray from start_x:%f\n", start_angle);
         if (DEBUG)
-            try_put_pixel(cub, *ray_px->x , *ray_px.y, 0xFF0000); //remove for 3d version
-        *ray_px->x += cos_angle;
-        *ray_px.y += sin_angle;
+            try_put_pixel(cub, ray_px->x , ray_px->y, 0xFF0000); //remove for 3d version
+        ray_px->x += cos_angle;
+        ray_px->y += sin_angle;
     }
 }
 
-float get_point_distance(t_cub *cub, t_pos start_pos_px, t_pos end_pos_px)
+float get_point_distance(t_cub *cub, t_pos start_pos_px, t_pos *end_pos_px)
 {
-    float diff_x = end_pos_px.x - start_pos_px.x; //any precaution to ensure not going neg?
-    float diff_y = end_pos_px.y - start_pos_px.y;
+    float diff_x = end_pos_px->x - start_pos_px.x; //any precaution to ensure not going neg?
+    float diff_y = end_pos_px->y - start_pos_px.y;
     float simple_dist = sqrt(diff_x * diff_x + diff_y * diff_y);
-    float corrected_dist = (float)(simple_dist * cos(atan2(diff_x, diff_y) - cub->player_angle));
+    float corrected_dist = (float)(simple_dist * cos(atan2(diff_y, diff_x) - cub->player_angle));
     return corrected_dist;
 }
 
 void draw_obstacles_per_px_col(t_cub *cub, int i, t_pos *ray_px, int obj_color)
 {
-    float dist = get_point_distance(cub, cub->player_px, *ray_px);
+    float dist = get_point_distance(cub, cub->player_px, ray_px);
     float height = (cub->tile_size / dist) * (cub->mlx_data.win_width / 2);
     int start_y = (cub->mlx_data.win_height - height ) / 2;
     int end = start_y + height;
