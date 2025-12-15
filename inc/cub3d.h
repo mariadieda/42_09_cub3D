@@ -14,6 +14,7 @@
 # define D 100
 # define LEFT 65361
 # define RIGHT 65363
+#define DEBUG 0
 
 # include <X11/X.h>
 # include <X11/keysym.h>
@@ -143,6 +144,7 @@ int     check_screen_bounds_px(t_cub *cub, float x_px, float y_px);
 //int     check_walkable_pos(t_cub *cub, float new_x, float new_y);
 int     check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile);
 int check_walkable_pos(t_cub *cub, float new_x_px, float new_y_px);
+float fixed_dist(t_cub *cub, float x1, float y1, float x2, float y2);
 
 //2D debug
 void    draw_tile(t_cub *cub, float x_start_px, float y_start_px, float size_factor, int color);

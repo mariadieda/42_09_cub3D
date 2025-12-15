@@ -133,24 +133,23 @@ void draw_ray(t_cub *cub, float start_angle, int i){
         if (!check_map_bounds_tiles(cub, (int)ray_x_px/cub->tile_size, (int)ray_y_px/cub->tile_size))
             break;
         //printf("drwaing ray from start_x:%f\n", start_angle);
-        try_put_pixel(cub, ray_x_px, ray_y_px, 0xFF0000); //remove for 3d version
+        if (DEBUG)
+            try_put_pixel(cub, ray_x_px, ray_y_px, 0xFF0000); //remove for 3d version
         ray_x_px += cos_angle;
         ray_y_px += sin_angle;
     }
-    (void) i;
-/*
-    if(!DEBUG)
+    if(!DEBUG) //  3D version
     {
-        float dist = fixed_dist(player->x, player->y, ray_x, ray_y, game);
-        float height = (cub->mlx_data.tile_size / dist) * (WIDTH / 2);
-        int start_y = (HEIGHT - height) / 2;
+        float dist = fixed_dist(cub, cub->player_px.x, cub->player_px.y, ray_x_px, ray_y_px);
+        float height = (cub->tile_size / dist) * (cub->mlx_data.win_width / 2);
+        int start_y = (cub->mlx_data.win_height - cub->tile_size ) / 2;
         int end = start_y + height;
         while(start_y < end)
         {
-            try_put_pixel(i, start_y, 255, game);
+            try_put_pixel(cub, i, start_y, 255);
             start_y++;
         }
-    }*/
+    }
 }
 
 void player_move(t_cub *cub)
