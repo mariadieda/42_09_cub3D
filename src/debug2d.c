@@ -32,6 +32,16 @@ void draw_tile(t_cub *cub, float x_start_px, float y_start_px, float size_factor
 }
 
 
+void draw_player_in_minimap(t_cub *cub, int wall_color, int triangle_color)
+{
+    draw_map(cub, wall_color);
+    draw_player_triangle(cub, cub->player_angle, cub->tile_size*0.6 , triangle_color);
+    //alternatively draw player cub
+    /*draw_cube(cub, (cub->player_px.x)-(float)(cub->tile_size*0.6/2), (cub->player_px.y)-(float)(cub->tile_size*0.6/2), 0.6,0xFFFFFF);*/
+
+}
+
+
 void draw_map(t_cub *cub, int color) //todo replace one color with true map pixel colors
 {
     int     i;

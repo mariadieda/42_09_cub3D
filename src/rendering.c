@@ -123,33 +123,35 @@ void draw_player_triangle(t_cub *cub, float angle, float size, int color)
    draw_line(cub, right, tip, color);
 }
 
+void cast_rays(t_cub *cub)  //todo block peaking??
+{
+   t_pos ray_px;
+   float fraction;
+   float start_angle;
+   int i;
 
+   fraction = cub->player_fov / cub->mlx_data.win_width;
+   start_angle = cub->player_angle - (cub->player_fov / 2);
+   i = 0;
+   while(i < cub->mlx_data.win_width)
+   {
+      ray_px =  cub->player_px;
+      set_last_ray_point(cub, start_angle, &ray_px);
+      if(!DEBUG) //  3D version
+         draw_obstacles_per_px_col(cub, i, ray_px, 0x444444);
+      start_angle += fraction;
+      i++;
+   }
+}
 
 int render(t_cub *cub)
 {
    //mlx_do_sync(cub->mlx);
-   //printf("player pos:%f, %f\n", cub->player_pos.x, cub->player_pos.y);
-   //printf("render loop called\n");
    player_move(cub);
    clean_img(cub, 0x000000);
    if (DEBUG)
-   {
-      draw_map(cub, 0x444444);
-      draw_player_triangle(cub, cub->player_angle, cub->tile_size*0.6 ,0xFFFFFF);
-      //alternatively draw player cub
-      /*draw_cube(cub, (cub->player_px.x)-(float)(cub->tile_size*0.6/2), (cub->player_px.y)-(float)(cub->tile_size*0.6/2), 0.6,0xFFFFFF);*/
-   }
-   // cast_rays
-   //todo block peaking??
-   float fraction = cub->player_fov / cub->mlx_data.win_width;
-   float start_angle = cub->player_angle - (cub->player_fov / 2);
-   int i = 0;
-   while(i < cub->mlx_data.win_width)
-   {
-      draw_ray(cub, start_angle, i);
-      start_angle += fraction;
-      i++;
-   }
+      draw_player_in_minimap(cub, 0x444444, 0xFFFFFF);
+   cast_rays(cub);
    mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);
    return(0);
 }
@@ -172,20 +174,6 @@ void	make_window(t_cub *cub)
    mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);
 }
 
-
-// distance calculation functions
-float distance(float x, float y){
-   return sqrt(x * x + y * y);
-}
-
-float fixed_dist(t_cub *cub, float x1, float y1, float x2, float y2)
-{
-   float delta_x = x2 - x1;
-   float delta_y = y2 - y1;
-   float angle = atan2(delta_y, delta_x) - cub->player_angle;
-   float fix_dist = distance(delta_x, delta_y) * cos(angle);
-   return fix_dist;
-}
 
 /*
 CHECKING intersections (Permadi, 1996)

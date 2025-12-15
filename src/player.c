@@ -122,33 +122,42 @@ void draw_line(t_cub *cub, t_pos start_pos_px, t_pos end_pos_px, int color)
     }*/
 }
 
-void draw_ray(t_cub *cub, float start_angle, int i){
+void set_last_ray_point(t_cub *cub, float start_angle, t_pos *ray_px)
+{
     float cos_angle = cos(start_angle);
     float sin_angle = sin(start_angle);
-    float ray_x_px =  cub->player_px.x;
-    float ray_y_px =  cub->player_px.y;
 
-    while(!touches_wall(cub, (int)ray_x_px/cub->tile_size, (int)ray_y_px/cub->tile_size))
+    while(!touches_wall(cub, (int)*ray_px->x /cub->tile_size, (int)*ray_px.y/cub->tile_size))
     {
-        if (!check_map_bounds_tiles(cub, (int)ray_x_px/cub->tile_size, (int)ray_y_px/cub->tile_size))
+        if (!check_map_bounds_tiles(cub, (int)*ray_px.x/cub->tile_size, (int)*ray_px.y/cub->tile_size))
             break;
         //printf("drwaing ray from start_x:%f\n", start_angle);
         if (DEBUG)
-            try_put_pixel(cub, ray_x_px, ray_y_px, 0xFF0000); //remove for 3d version
-        ray_x_px += cos_angle;
-        ray_y_px += sin_angle;
+            try_put_pixel(cub, *ray_px->x , *ray_px.y, 0xFF0000); //remove for 3d version
+        *ray_px->x += cos_angle;
+        *ray_px.y += sin_angle;
     }
-    if(!DEBUG) //  3D version
+}
+
+float get_point_distance(t_cub *cub, t_pos start_pos_px, t_pos end_pos_px)
+{
+    float diff_x = end_pos_px.x - start_pos_px.x; //any precaution to ensure not going neg?
+    float diff_y = end_pos_px.y - start_pos_px.y;
+    float simple_dist = sqrt(diff_x * diff_x + diff_y * diff_y);
+    float corrected_dist = (float)(simple_dist * cos(atan2(diff_x, diff_y) - cub->player_angle));
+    return corrected_dist;
+}
+
+void draw_obstacles_per_px_col(t_cub *cub, int i, t_pos *ray_px, int obj_color)
+{
+    float dist = get_point_distance(cub, cub->player_px, *ray_px);
+    float height = (cub->tile_size / dist) * (cub->mlx_data.win_width / 2);
+    int start_y = (cub->mlx_data.win_height - height ) / 2;
+    int end = start_y + height;
+    while(start_y < end)
     {
-        float dist = fixed_dist(cub, cub->player_px.x, cub->player_px.y, ray_x_px, ray_y_px);
-        float height = (cub->tile_size / dist) * (cub->mlx_data.win_width / 2);
-        int start_y = (cub->mlx_data.win_height - height ) / 2;
-        int end = start_y + height;
-        while(start_y < end)
-        {
-            try_put_pixel(cub, i, start_y, 255);
-            start_y++;
-        }
+        try_put_pixel(cub, i, start_y, obj_color);
+        start_y++;
     }
 }
 
