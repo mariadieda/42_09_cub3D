@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mdiederi <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/16 10:17:44 by mdiederi          #+#    #+#             */
+/*   Updated: 2025/12/16 10:17:48 by mdiederi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
 int     ft_isspace(unsigned char c)
@@ -32,7 +44,7 @@ int     validate_color(char *s, t_cub* cub)
         i++;
     if(i !=3)       // 200,50
     {
-        free_array(nums, i);
+        free_n_array(nums, i);
         return (0);
     }
     i = 0;
@@ -42,12 +54,12 @@ int     validate_color(char *s, t_cub* cub)
         trimd_num = ft_strtrim(nums[i], " \n\t\f\v\r");        
         if(!trimd_num)
         {
-            free_array(nums, 3);
+            free_n_array(nums, 3);
             error_exit(cub, "Error\nMalloc failed!\n", NULL);
         }
         if(trimd_num[0] == '\0') // 100,,50
         {
-            free_array(nums, 3);
+            free_n_array(nums, 3);
             free(trimd_num);
             return(0);
         }
@@ -55,7 +67,7 @@ int     validate_color(char *s, t_cub* cub)
         {
             if(trimd_num[j] < 48 ||  trimd_num[j] > 57) // "1 00" "2a1" "1!6"
             {
-                free_array(nums, 3);
+                free_n_array(nums, 3);
                 free(trimd_num);
                 return(0);
             }
@@ -64,14 +76,14 @@ int     validate_color(char *s, t_cub* cub)
         num = ft_atoi(trimd_num);        
         if(num < 0 || num > 255) // -1,258,1000
         {
-            free_array(nums, 3);
+            free_n_array(nums, 3);
             free(trimd_num);
             return(0);
         }
         free(trimd_num);
         i++;
     }
-    free_array(nums, 3);    
+    free_n_array(nums, 3);
     return(1);
 }
 
@@ -88,7 +100,7 @@ int get_int_color_from_str(char* s)
     g = ft_atoi(nums[1]);
     b = ft_atoi(nums[2]);
     color = ((r << 16) | (g << 8) | b);
-    free_array(nums, 3);
+    free_n_array(nums, 3);
     free(s);
     return (color);
 }
@@ -430,13 +442,13 @@ void    add_line_to_grid(t_cub* cub, char *trimd, char* line)
             new_grid[i] = ft_strdup(cub->map->grid[i]);
             if(!new_grid[i])
             {
-                free_array(new_grid, i);        
+                free_n_array(new_grid, i);
                 error_exit(cub, "Error\nMalloc failed\n", (char*[]){line, trimd, NULL});
             }
             i++;
         }
         cub->map->capacity *= 2;
-        free_array(cub->map->grid, cub->map->height);
+        free_n_array(cub->map->grid, cub->map->height);
         cub->map->grid = new_grid;
     }
 

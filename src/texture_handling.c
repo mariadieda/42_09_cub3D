@@ -1,36 +1,11 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   texture_handling.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mdiederi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/16 10:17:28 by mdiederi          #+#    #+#             */
-/*   Updated: 2025/12/16 10:17:31 by mdiederi         ###   ########.fr       */
+/*   Created: 2025/12/16 10:17:12 by mdiederi          #+#    #+#             */
+/*   Updated: 2025/12/16 10:17:15 by mdiederi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "../inc/cub3d.h"
-
-int	ft_fmin(const double x, const double y)
-{
-	int	min;
-
-	if (x <= y)
-		min = (int)x;
-	else
-		min = (int)y;
-	return (min);
-}
-
-void	print_map(t_cub *cub)
-{
-	int	i;
-
-	i = 0;
-	while (cub->map->grid[i])
-	{
-		printf("\n%s\n\n", cub->map->grid[i]);
-		i++;
-	}
-}

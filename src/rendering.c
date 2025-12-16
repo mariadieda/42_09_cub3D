@@ -9,174 +9,191 @@
 /*   Updated: 2025/10/16 16:09:01 by mdiederi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include"../inc/cub3d.h"
+#include "../inc/cub3d.h"
 
 /*
 //todo also consider player width?
-int check_walkable_pos(t_cub *cub, float new_x, float new_y)
+int	check_walkable_pos(t_cub *cub, float new_x, float new_y)
 {
-   int mx = (int)new_x;
-   int my = (int)new_y;
+	int			mx;
+	int			my;
+	float		radius;
+	const float	eps;
+	int			left;
+	int			right;
+	int			top;
+	int			bottom;
+	int			y;
+	int			x;
+	float		radius;
+	float		eps;
+	int			left;
+	int			top;
+	int			right;
+	int			bottom;
+	int			y;
+	int			x;
 
+   mx = (int)new_x;
+   my = (int)new_y;
    // Check map bounds
    if (mx < 0 || my < 0 || mx >= cub->map->width || my >= cub->map->height)
    {
-      printf("!!! out of map bounds for:%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
-      return 0;
+      printf("!!! out of map bounds for:%f, %f max width, height:%d, %d\n",
+		cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width,
+		cub->mlx_data.win_height);
+      return (0);
    }
    if (cub->map->grid[my][mx] != '1')    //Check walls
-      return 1;
-   printf("!!! running into wall at :%f, %f max width, height:%d, %d\n", cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width, cub->mlx_data.win_height);
-   return 0;
-
+      return (1);
+   printf("!!! running into wall at :%f, %f max width, height:%d, %d\n",
+		cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width,
+		cub->mlx_data.win_height);
+   return (0);
 }*/
-int check_walkable_pos(t_cub *cub, float new_x_px, float new_y_px)
+int	check_walkable_pos(t_cub *cub, float new_x_px, float new_y_px)
 {
-   float radius = 0.3f * cub->tile_size;
-   const float eps = 0.0001f;
-
-   int left   = (int)floorf((new_x_px - radius - eps) / cub->tile_size);
-   int right  = (int)floorf((new_x_px + radius - eps) / cub->tile_size);
-   int top    = (int)floorf((new_y_px - radius - eps) / cub->tile_size);
-   int bottom = (int)floorf((new_y_px + radius - eps) / cub->tile_size);
-
-   int y = top;
-   while (y <= bottom)
-   {
-      int x = left;
-      while (x <= right)
-      {
-         if (x < 0 || y < 0 || x >= cub->map->width || y >= cub->map->height)
-            return 0;
-         if (cub->map->grid[y][x] == '1')
-            return 0;
-         x++;
-      }
-      y++;
-   }
-   return 1;
+	radius = 0.3f * cub->tile_size;
+	eps = 0.0001f;
+	left = (int)floorf((new_x_px - radius - eps) / cub->tile_size);
+	right = (int)floorf((new_x_px + radius - eps) / cub->tile_size);
+	top = (int)floorf((new_y_px - radius - eps) / cub->tile_size);
+	bottom = (int)floorf((new_y_px + radius - eps) / cub->tile_size);
+	y = top;
+	while (y <= bottom)
+	{
+		x = left;
+		while (x <= right)
+		{
+			if (x < 0 || y < 0 || x >= cub->map->width || y >= cub->map->height)
+				return (0);
+			if (cub->map->grid[y][x] == '1')
+				return (0);
+			x++;
+		}
+		y++;
+	}
+	return (1);
 }
 
-
-int check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile)
+int	check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile)
 {
-   if (x_tile < 0 || x_tile >= cub->map->width ||
-       y_tile < 0 || y_tile >= cub->map->height)
-      return 0;
-   return 1;
+	if (x_tile < 0 || x_tile >= cub->map->width
+		|| y_tile < 0 || y_tile >= cub->map->height)
+		return (0);
+	return (1);
 }
 
-int check_screen_bounds_px(t_cub *cub, float x_px, float y_px)
+int	check_screen_bounds_px(t_cub *cub, float x_px, float y_px)
 {
-   const int x = (int)x_px;
-   const int y = (int)y_px;
-    if (x <0 || y < 0 ||
-      x >= cub->mlx_data.win_width
-      || y >= cub->mlx_data.win_height)
-      return 0;
-   return 1;
+	int	x;
+	int	y;
+
+	x = (int)x_px;
+	y = (int)y_px;
+	if (x < 0 || y < 0 || x >= cub->mlx_data.win_width
+		|| y >= cub->mlx_data.win_height)
+		return (0);
+	return (1);
 }
 
-
-void clean_img(t_cub *cub, int color) //todo replace one color with true map pixel colors
+void	clean_img(t_cub *cub, int color)
+//todo replace one color with true map pixel colors
 {
-   int     i;
-   int     j;
-   char    *pixel;
+	char	*pixel;
+	int		i;
+	int		j;
 
-   i = 0;
-   while (i < cub->mlx_data.win_height)
-   {
-      j = 0;
-      while (j < cub->mlx_data.win_width)
-      {
-         {
-            pixel = cub->pxl_arr
-                + (i * cub->mlx_data.line_length)
-                + (j * (cub->mlx_data.bits_per_pixel / 8));
-            *(unsigned int *)pixel = color;
-         }
-         j++;
-      }
-      i++;
-   }
+	i = 0;
+	while (i < cub->mlx_data.win_height)
+	{
+		j = 0;
+		while (j < cub->mlx_data.win_width)
+		{
+			{
+				pixel = cub->pxl_arr + (i * cub->mlx_data.line_length) + (j
+						* (cub->mlx_data.bits_per_pixel / 8));
+				*(unsigned int *)pixel = color;
+			}
+			j++;
+		}
+		i++;
+	}
 }
 
-void draw_player_triangle(t_cub *cub, float angle, float size, int color)
+/* add size to player pos to find tip, [-size/2 forward
+	+ size/2 left] to find left
+ * [-size/2 forward - size/2 left] to find right */
+void	draw_player_triangle(t_cub *cub, float angle, float size, int color)
 {
-   t_pos tip; //+size forward
-   t_pos left; //-size/2 forward + size/2 left
-   t_pos right; //-size/2 forward - size/2 left
+	t_pos	tip;
+	t_pos	left;
+	t_pos	right;
 
-   tip.x   = cub->player_px.x + cosf(angle) * size;
-   tip.y   = cub->player_px.y + sinf(angle) * size;
-
-   left.x  = cub->player_px.x + cosf(angle + PI * 0.75f) * size * 0.7f;
-   left.y  = cub->player_px.y + sinf(angle + PI * 0.75f) * size * 0.7f;
-
-   right.x = cub->player_px.x + cosf(angle - PI * 0.75f) * size * 0.7f;
-   right.y = cub->player_px.y + sinf(angle - PI * 0.75f) * size * 0.7f;
-
-   draw_line(cub, cub->player_px, tip, color);
-   draw_line(cub, tip, left, color);
-   draw_line(cub,left, right, color);
-   draw_line(cub, right, tip, color);
+	tip.x = cub->player_px.x + cosf(angle) * size;
+	tip.y = cub->player_px.y + sinf(angle) * size;
+	left.x = cub->player_px.x + cosf(angle + PI * 0.75f) * size * 0.7f;
+	left.y = cub->player_px.y + sinf(angle + PI * 0.75f) * size * 0.7f;
+	right.x = cub->player_px.x + cosf(angle - PI * 0.75f) * size * 0.7f;
+	right.y = cub->player_px.y + sinf(angle - PI * 0.75f) * size * 0.7f;
+	draw_line(cub, cub->player_px, tip, color);
+	draw_line(cub, tip, left, color);
+	draw_line(cub, left, right, color);
+	draw_line(cub, right, tip, color);
 }
 
-void cast_rays(t_cub *cub)  //todo block peaking??
+void	cast_rays(t_cub *cub) //todo block peaking??
 {
-   t_pos ray_px;
-   float start_angle;
-   int i;
+	t_pos	ray_px;
+	float	start_angle;
+	int		i;
 
-   start_angle = cub->player_angle - (cub->player_fov / 2);
-   i = 0;
-   while(i < cub->mlx_data.win_width)
-   {
-      ray_px =  cub->player_px;
-      set_last_ray_point(cub, start_angle, &ray_px);
-      if(!DEBUG) //  3D version
-         draw_vertical_slices(cub, i, &ray_px, start_angle, 0x444444);
-      start_angle += cub->fraction_ray_angle;
-      i++;
-   }
+	start_angle = cub->player_angle - (cub->player_fov / 2);
+	i = 0;
+	while (i < cub->mlx_data.win_width)
+	{
+		ray_px = cub->player_px;
+		set_last_ray_point(cub, start_angle, &ray_px);
+		if (!DEBUG) //  3D version
+			draw_vertical_slices(cub, i, &ray_px, start_angle);
+		start_angle += cub->fraction_ray_angle;
+		i++;
+	}
 }
 
-int render(t_cub *cub)
+int	render(t_cub *cub)
 {
-   //mlx_do_sync(cub->mlx);
-   player_move(cub);
-   clean_img(cub, 0x000000);
-   if (DEBUG)
-      draw_player_in_minimap(cub, 0x444444, 0xFFFFFF);
-   cast_rays(cub);
-   mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);
-   return(0);
+	//mlx_do_sync(cub->mlx);
+	player_move(cub);
+	clean_img(cub, 0x000000);
+	if (DEBUG)
+		draw_player_in_minimap(cub, 0x444444, 0xFFFFFF);
+	cast_rays(cub);
+	mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);
+	return (0);
 }
 
 void	make_window(t_cub *cub)
 {
-   cub->win = mlx_new_window(cub->mlx, cub->mlx_data.win_width,
-         cub->mlx_data.win_height, "cub3D");
-   if (!cub->win)
-      error_exit(cub, "Failed to create window\n", NULL);
-   cub->img = mlx_new_image(cub->mlx, cub->mlx_data.win_width, cub->mlx_data.win_height);
-   if (!cub->img)
-      error_exit(cub, "Failed to create image\n", NULL);
-   cub->pxl_arr = mlx_get_data_addr(
-      cub->img,
-      &cub->mlx_data.bits_per_pixel,
-      &cub->mlx_data.line_length,
-      &cub->mlx_data.endian
-   );
-   mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);
+	cub->win = mlx_new_window(cub->mlx, cub->mlx_data.win_width,
+			cub->mlx_data.win_height, "cub3D");
+	if (!cub->win)
+		error_exit(cub, "Failed to create window\n", NULL);
+	cub->img = mlx_new_image(cub->mlx, cub->mlx_data.win_width,
+			cub->mlx_data.win_height);
+	if (!cub->img)
+		error_exit(cub, "Failed to create image\n", NULL);
+	cub->pxl_arr = mlx_get_data_addr(
+		cub->img, &cub->mlx_data.bits_per_pixel, &cub->mlx_data.line_length,
+			&cub->mlx_data.endian);
+	mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);
 }
-
 
 /*
 CHECKING intersections (Permadi, 1996)
 
-Note: remember the Cartesian coordinate is increasing downward (as in page 3), and any fractional values will be rounded down.
+Note: remember the Cartesian coordinate is increasing downward (as in page 3),
+	and any fractional values will be rounded down.
 
 ======Finding horizontal intersection ======
 

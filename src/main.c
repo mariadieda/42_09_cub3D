@@ -12,59 +12,66 @@
 
 #include "../inc/cub3d.h"
 
-void init_cub_for_rendering(t_cub *cub)
+/*
+ * Set graphics params (e.g. tile size, window dims) and player const settings,
+ * such as player angle, FOV (to 60 deg) +
+ * convert tile player pos to px pos
+ */
+void	init_cub_for_rendering(t_cub *cub)
 {
-	cub->mlx_data.bits_per_pixel = 24;
-	cub->mlx_data.endian = 0;
-
 	cub->mlx = mlx_init();
 	if (!cub->mlx)
 		error_exit(cub, "Failed to initialize MLX\n", NULL);
-	printf("map w=%d h=%d\n", cub->map->width, cub->map->height); //todo rm debug
-	mlx_get_screen_size( cub->mlx, &cub->mlx_data.screen_width, &cub->mlx_data.screen_height);
-	cub->tile_size = (int)ft_fmin(
-		cub->mlx_data.screen_width  / cub->map->width,
-		cub->mlx_data.screen_height / cub->map->height
-	);
+	mlx_get_screen_size(cub->mlx, &cub->mlx_data.screen_width,
+			&cub->mlx_data.screen_height);
+	cub->tile_size = ft_fmin(
+		(double)cub->mlx_data.screen_width / cub->map->width,
+		(double)cub->mlx_data.screen_height / cub->map->height);
 	if (cub->tile_size < 1)
-		error_exit(cub, "Map too large for screen\n", NULL);
-	cub->mlx_data.win_width  = cub->tile_size * cub->map->width;
+		error_exit(cub, "Error\nMap too large for screen\n", NULL);
+	cub->mlx_data.win_width = cub->tile_size * cub->map->width;
 	cub->mlx_data.win_height = cub->tile_size * cub->map->height;
-
-	printf("window w=%d h=%d, map w*CUBE %d, map h*CUBE %d\n",
-		cub->mlx_data.win_width, cub->mlx_data.win_height,
-		cub->map->width * cub->tile_size,
-		cub->map->height * cub->tile_size);  //todo rm debug
-	cub->player_px.x = (float)cub->tile_size * cub->player_tile.x; //convert from read in tile position to px
-	cub->player_px.y = (float)cub->tile_size * cub->player_tile.y; //convert from read in tile position to px
+	cub->player_px.x = (float)cub->tile_size * cub->player_tile.x;
+	cub->player_px.y = (float)cub->tile_size * cub->player_tile.y;
 	cub->player_angle = PI / 2;
-	cub->player_fov = PI / 3; //60 deg
+	cub->player_fov = PI / 3;
 	cub->fraction_ray_angle = cub->player_fov / (float)cub->mlx_data.win_width;
-	cub->screen_dist = ((float) cub->mlx_data.win_width / 2.00f) / tanf(cub->player_fov / 2.00f);
+	cub->screen_dist = ((float)cub->mlx_data.win_width / 2.00f)
+		/ tanf(cub->player_fov / 2.00f);
 }
+/*
+* 	printf("window w=%d h=%d, map w*CUBE %d, map h*CUBE %d\n",
+			cub->mlx_data.win_width,
+			cub->mlx_data.win_height,
+			cub->map->width * cub->tile_size,
+			cub->map->height * cub->tile_size);
+			//todo rm debug
+ */
 
 int	has_cub_extension(char *cub_fn)
 {
-	char * extension;
+	char	*extension;
 
 	if (!cub_fn)
 		return (0);
-	extension = ft_strrchr(cub_fn, '.');	
-	if(!extension || ft_strncmp(extension, ".cub", 4) != 0)
+	extension = ft_strrchr(cub_fn, '.');
+	if (!extension || ft_strncmp(extension, ".cub", 4) != 0)
 		return (0);
 	return (1);
 }
 
-void normalize_map(t_cub *cub)
+void	normalize_map(t_cub *cub)
 {
-	int i;
-	int j;
+	int		i;
+	int		j;
+	char	*old;
+	char	*new;
 
-	for (i = 0; i < cub->map->height; i++)
+	i = 0;
+	while (i < cub->map->height)
 	{
-		char *old = cub->map->grid[i];
-		char *new = ft_calloc(cub->map->width + 1, 1);
-
+		old = cub->map->grid[i];
+		new = ft_calloc(cub->map->width + 1, 1);
 		j = 0;
 		while (old[j])
 		{
@@ -73,12 +80,11 @@ void normalize_map(t_cub *cub)
 		}
 		while (j < cub->map->width)
 			new[j++] = ' ';
-
 		free(old);
 		cub->map->grid[i] = new;
+		i++;
 	}
 }
-
 
 int	main(int argc, char **argv)
 {
@@ -86,14 +92,15 @@ int	main(int argc, char **argv)
 
 	ft_memset(&cub, 0, sizeof(t_cub));
 	if (argc != 2 || !has_cub_extension(argv[1]))
-		error_exit(&cub,"Please provide exactly one valid .cub file as an argument\n", NULL);
+	{
+		error_exit(&cub, "Please provide exactly one "
+			"valid .cub file as an argument\n", NULL);
+	}
 	parse_file(argv[1], &cub);
 	printf("map w=%d h=%d\n", cub.map->width, cub.map->height);
-
 	//normalize_map(&cub);
 	// todo rotate_map(&cub); ??
 	print_map(&cub); //todo rm debug
-
 	init_cub_for_rendering(&cub);
 	make_window(&cub);
 	mlx_hook(cub.win, 2, 1L << 0, handle_keypress, &cub);
