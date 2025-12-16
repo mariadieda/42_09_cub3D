@@ -1,0 +1,3 @@
+
+Duplicate color has a leak currently:
+valgrind  --leak-check=full  --show-leak-kinds=all ./cub3D maps/map_double_color.cub

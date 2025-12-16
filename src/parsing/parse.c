@@ -124,32 +124,32 @@ char*   trim_the_line(char *line, t_cub* cub)
 
 void    populate_color(char **bufs, char *ident, int* header_cnt, t_cub* cub)
 {
-    char* color;
+    char* color_str;
     char* trimd;
 
     trimd = bufs[1];
-    color = second_part(ident, trimd, cub);
-    if(validate_color(color, cub))
+    color_str = second_part(ident, trimd, cub);
+    if(validate_color(color_str, cub))
     {
         if(*ident == 'F')
         {
             if(cub->col->has_floor)
-                error_exit(cub, "Error\nDouble color definition for Floor\n", (char*[]){bufs[0], trimd, color, NULL});
-            cub->col->floor = get_int_color_from_str(color);
+                error_exit(cub, "Error\nDuplicate floor color definition.\n", (char*[]){bufs[0], trimd, color_str, NULL});
+            cub->col->floor = get_int_color_from_str(color_str);
             cub->col->has_floor = 1;
             (*header_cnt)++;
         }
         else if(*ident == 'C')
         {
             if(cub->col->has_ceil)
-                error_exit(cub, "Error\nDouble color definition for Ceil\n", (char*[]){bufs[0], trimd, color, NULL});
-            cub->col->ceil = get_int_color_from_str(color);
+                error_exit(cub, "Error\nDuplicate ceiling color definition.\n", (char*[]){bufs[0], trimd, color_str, NULL});
+            cub->col->ceil = get_int_color_from_str(color_str);
             cub->col->has_ceil = 1;
             (*header_cnt)++;
-        }      
-    }        
+        }
+    }
     else    
-        error_exit(cub, "Error\nInvalid Color Format\n", (char*[]){bufs[0], color, trimd, NULL});
+        error_exit(cub, "Error\nInvalid Color Format\n", (char*[]){bufs[0], color_str, trimd, NULL});
 }
 
 int     validate_address(char* token)
@@ -265,7 +265,7 @@ void    parse_text_col_line(char *line, int* header_cnt, t_cub* cub)
     else if(validate_identifier("C", trimd))
         populate_color(bufs, "C", header_cnt, cub);
     else
-        error_exit(cub,  "Error\nInvalid/Missing texture/color header!\n",(char*[]){line, NULL});
+        error_exit(cub,  "Error\nInvalid/Missing texture/color header!\n",(char*[]){line, trimd, NULL});
     free(trimd);
 }
 
@@ -521,7 +521,6 @@ int     parse_file(char* filename, t_cub* cub)
         line = get_next_line(fd);
         if (!line)
             break;
-        
         if(header_cnt < 6)
         {
             if(is_blank_line(line))
