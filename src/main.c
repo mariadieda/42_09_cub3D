@@ -22,7 +22,7 @@ void init_cub_for_rendering(t_cub *cub)
 		error_exit(cub, "Failed to initialize MLX\n", NULL);
 	printf("map w=%d h=%d\n", cub->map->width, cub->map->height); //todo rm debug
 	mlx_get_screen_size( cub->mlx, &cub->mlx_data.screen_width, &cub->mlx_data.screen_height);
-	cub->tile_size = ft_fmin(
+	cub->tile_size = (int)ft_fmin(
 		cub->mlx_data.screen_width  / cub->map->width,
 		cub->mlx_data.screen_height / cub->map->height
 	);
@@ -35,10 +35,12 @@ void init_cub_for_rendering(t_cub *cub)
 		cub->mlx_data.win_width, cub->mlx_data.win_height,
 		cub->map->width * cub->tile_size,
 		cub->map->height * cub->tile_size);  //todo rm debug
-	cub->player_px.x = cub->tile_size * cub->player_tile.x; //convert from read in tile position to px
-	cub->player_px.y = cub->tile_size * cub->player_tile.y; //convert from read in tile position to px
+	cub->player_px.x = (float)cub->tile_size * cub->player_tile.x; //convert from read in tile position to px
+	cub->player_px.y = (float)cub->tile_size * cub->player_tile.y; //convert from read in tile position to px
 	cub->player_angle = PI / 2;
 	cub->player_fov = PI / 3; //60 deg
+	cub->fraction_ray_angle = cub->player_fov / (float)cub->mlx_data.win_width;
+	cub->screen_dist = ((float) cub->mlx_data.win_width / 2.00f) / tanf(cub->player_fov / 2.00f);
 }
 
 int	has_cub_extension(char *cub_fn)

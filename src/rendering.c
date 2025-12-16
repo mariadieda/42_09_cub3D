@@ -126,11 +126,9 @@ void draw_player_triangle(t_cub *cub, float angle, float size, int color)
 void cast_rays(t_cub *cub)  //todo block peaking??
 {
    t_pos ray_px;
-   float fraction;
    float start_angle;
    int i;
 
-   fraction = cub->player_fov / cub->mlx_data.win_width;
    start_angle = cub->player_angle - (cub->player_fov / 2);
    i = 0;
    while(i < cub->mlx_data.win_width)
@@ -138,8 +136,8 @@ void cast_rays(t_cub *cub)  //todo block peaking??
       ray_px =  cub->player_px;
       set_last_ray_point(cub, start_angle, &ray_px);
       if(!DEBUG) //  3D version
-         draw_obstacles_per_px_col(cub, i, &ray_px, 0x444444);
-      start_angle += fraction;
+         draw_vertical_slices(cub, i, &ray_px, start_angle, 0x444444);
+      start_angle += cub->fraction_ray_angle;
       i++;
    }
 }

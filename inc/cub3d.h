@@ -123,6 +123,8 @@ typedef struct s_cub
     struct s_pos    player_px;
     float           player_angle;
     float           player_fov;
+    float           fraction_ray_angle;
+    float           screen_dist;
     struct s_move   move;
     int             tile_size;
 
@@ -145,7 +147,6 @@ int     check_screen_bounds_px(t_cub *cub, float x_px, float y_px);
 //int     check_walkable_pos(t_cub *cub, float new_x, float new_y);
 int     check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile);
 int     check_walkable_pos(t_cub *cub, float new_x_px, float new_y_px);
-float   fixed_dist(t_cub *cub, float x1, float y1, float x2, float y2);
 void    draw_player_triangle(t_cub *cub, float angle, float size, int color);
 
 //2D debug
@@ -159,7 +160,7 @@ void    draw_ray(t_cub *cub, float start_angle, int i);
 void    draw_line(t_cub *cub, t_pos start_pos_px, t_pos end_pos_px, int color);
 void    set_last_ray_point(t_cub *cub, float start_angle, t_pos *ray_px);
 void    try_put_pixel(t_cub *cub, float x_px, float y_px, int color);
-void    draw_obstacles_per_px_col(t_cub *cub, int i, t_pos *ray_px, int obj_color);
+void    draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px, float ray_angle, int obj_color);
 
 
 //clean up

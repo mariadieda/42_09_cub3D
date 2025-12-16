@@ -139,26 +139,34 @@ void set_last_ray_point(t_cub *cub, float start_angle, t_pos *ray_px)
     }
 }
 
-float get_point_distance(t_cub *cub, t_pos start_pos_px, t_pos *end_pos_px)
+float get_point_distance(t_cub *cub, t_pos start_pos_px, t_pos *end_pos_px, float ray_angle)
 {
     float diff_x = end_pos_px->x - start_pos_px.x; //any precaution to ensure not going neg?
     float diff_y = end_pos_px->y - start_pos_px.y;
-    float simple_dist = sqrt(diff_x * diff_x + diff_y * diff_y);
-    float corrected_dist = (float)(simple_dist * cos(atan2(diff_y, diff_x) - cub->player_angle));
+    float simple_dist = sqrtf(diff_x * diff_x + diff_y * diff_y);
+    float corrected_dist = simple_dist * cosf(ray_angle - cub->player_angle);
+    if (corrected_dist < 0.001f)
+        corrected_dist = 0.001f;
     return corrected_dist;
 }
 
-void draw_obstacles_per_px_col(t_cub *cub, int i, t_pos *ray_px, int obj_color)
+void draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px, float ray_angle, int obj_color)
 {
-    float dist = get_point_distance(cub, cub->player_px, ray_px);
-    float height = (cub->tile_size / dist) * (cub->mlx_data.win_width / 2);
-    int start_y = (cub->mlx_data.win_height - height ) / 2;
-    int end = start_y + height;
-    while(start_y < end)
+    const float dist = get_point_distance(cub, cub->player_px, ray_px, ray_angle);
+    const float wall_height = ((float)cub->tile_size / dist) * cub->screen_dist;
+    int wall_start_y = (cub->mlx_data.win_height - (int)wall_height ) / 2;
+    int wall_end_y = wall_start_y + (int)wall_height;
+    if (wall_start_y < 0)
+        wall_start_y = 0;
+    if (wall_end_y > cub->mlx_data.win_height)
+        wall_end_y = cub->mlx_data.win_height;
+    // draw ceiling
+    while(wall_start_y < wall_end_y) //draw walls
     {
-        try_put_pixel(cub, i, start_y, obj_color);
-        start_y++;
+        try_put_pixel(cub, i, wall_start_y, obj_color);
+        wall_start_y++;
     }
+    //draw floor
 }
 
 void player_move(t_cub *cub)
