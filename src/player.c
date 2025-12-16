@@ -156,15 +156,21 @@ void draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px, float ray_angle, int
     const float wall_height = ((float)cub->tile_size / dist) * cub->screen_dist;
     int wall_start_y = (cub->mlx_data.win_height - (int)wall_height ) / 2;
     int wall_end_y = wall_start_y + (int)wall_height;
+    int y = 0;
     if (wall_start_y < 0)
         wall_start_y = 0;
     if (wall_end_y > cub->mlx_data.win_height)
         wall_end_y = cub->mlx_data.win_height;
     // draw ceiling
-    while(wall_start_y < wall_end_y) //draw walls
+    while(y < cub->mlx_data.win_height) //draw walls
     {
-        try_put_pixel(cub, i, wall_start_y, obj_color);
-        wall_start_y++;
+        if (y < wall_start_y)
+            try_put_pixel(cub, i, y, cub->col->ceil);
+        else if (y >= wall_start_y && y < wall_end_y)
+            try_put_pixel(cub, i, y, obj_color);
+        else
+            try_put_pixel(cub, i, y, cub->col->floor);
+        y++;
     }
     //draw floor
 }

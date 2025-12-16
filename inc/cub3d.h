@@ -40,23 +40,14 @@ typedef struct s_mlx_data
     int				win_height;
 }					t_mlx_data;
 
-typedef struct s_rgb
-{
-    int				r;
-    int				g;
-    int				b;
-}					t_rgb;
-
 typedef struct s_col
 {
     char			*no_tex_p;
     char		    *so_tex_p;
     char			*we_tex_p;
     char			*ea_tex_p;
-    int             floor_color;
-    int             ceil_color;
-    struct s_rgb	floor;
-    struct s_rgb	ceil;
+    int             floor;
+    int             ceil;
     int has_floor;
     int has_ceil;
       

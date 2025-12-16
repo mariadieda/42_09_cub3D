@@ -1,11 +1,5 @@
 #include "cub3d.h"
 
-
-static int rgb_to_int(t_rgb c)
-{
-    return ((c.r << 16) | (c.g << 8) | c.b);
-}
-
 int     ft_isspace(unsigned char c)
 {
     if (c == ' ' || c == '\n' || c == '\t'
@@ -81,18 +75,22 @@ int     validate_color(char *s, t_cub* cub)
     return(1);
 }
 
-t_rgb   int_color(char* s)
+int get_int_color_from_str(char* s)
 {
-    t_rgb colors;
-    char **nums;
+    int		r;
+    int		g;
+    int		b;
+    int     color;
+    char    **nums;
 
     nums = ft_split(s, ','); //always has 3 parts because of validate_color called before
-    colors.r = ft_atoi(nums[0]);
-    colors.g = ft_atoi(nums[1]);
-    colors.b = ft_atoi(nums[2]);
+    r = ft_atoi(nums[0]);
+    g = ft_atoi(nums[1]);
+    b = ft_atoi(nums[2]);
+    color = ((r << 16) | (g << 8) | b);
     free_array(nums, 3);
     free(s);
-    return (colors);
+    return (color);
 }
 
 char*    second_part(char *ident, char* trimd, t_cub* cub)
@@ -137,8 +135,7 @@ void    populate_color(char **bufs, char *ident, int* header_cnt, t_cub* cub)
         {
             if(cub->col->has_floor)
                 error_exit(cub, "Error\nDouble color definition for Floor\n", (char*[]){bufs[0], trimd, color, NULL});
-            cub->col->floor = int_color(color);
-            cub->col->floor_color = rgb_to_int(cub->col->floor);
+            cub->col->floor = get_int_color_from_str(color);
             cub->col->has_floor = 1;
             (*header_cnt)++;
         }
@@ -146,8 +143,7 @@ void    populate_color(char **bufs, char *ident, int* header_cnt, t_cub* cub)
         {
             if(cub->col->has_ceil)
                 error_exit(cub, "Error\nDouble color definition for Ceil\n", (char*[]){bufs[0], trimd, color, NULL});
-            cub->col->ceil = int_color(color);
-            cub->col->ceil_color = rgb_to_int(cub->col->ceil);
+            cub->col->ceil = get_int_color_from_str(color);
             cub->col->has_ceil = 1;
             (*header_cnt)++;
         }      
