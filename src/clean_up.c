@@ -27,45 +27,46 @@ void	free_n_array(char **arr, int grid_height)
 	free(arr);
 }
 
+void	free_textures(t_cub *cub)
+{
+	if (cub->col->no_tex_p)
+		free(cub->col->no_tex_p);
+	if (cub->col->so_tex_p)
+		free(cub->col->so_tex_p);
+	if (cub->col->we_tex_p)
+		free(cub->col->we_tex_p);
+	if (cub->col->ea_tex_p)
+		free(cub->col->ea_tex_p);
+	free(cub->col);
+}
+
 void	clean_up(t_cub *cub)
 {
+	if (!cub)
+		return ;
+	if (cub->mlx)
 	{
-		if (!cub)
-			return ;
-		if (cub->mlx)
-		{
-			if (cub->img)
-				mlx_destroy_image(cub->mlx, cub->img);
-			if (cub->win)
-				mlx_destroy_window(cub->mlx, cub->win);
-			mlx_destroy_display(cub->mlx);
-			free(cub->mlx);
-		}
-		if (cub->map)
-		{
-			free_n_array(cub->map->grid, cub->map->height);
-			free(cub->map);
-		}
-		if (cub->col)
-		{
-			if (cub->col->no_tex_p)
-				free(cub->col->no_tex_p);
-			if (cub->col->so_tex_p)
-				free(cub->col->so_tex_p);
-			if (cub->col->we_tex_p)
-				free(cub->col->we_tex_p);
-			if (cub->col->ea_tex_p)
-				free(cub->col->ea_tex_p);
-			free(cub->col);
-		}
+		if (cub->img)
+			mlx_destroy_image(cub->mlx, cub->img);
+		if (cub->win)
+			mlx_destroy_window(cub->mlx, cub->win);
+		mlx_destroy_display(cub->mlx);
+		free(cub->mlx);
 	}
+	if (cub->map)
+	{
+		free_n_array(cub->map->grid, cub->map->height);
+		free(cub->map);
+	}
+	if (cub->col)
+		free_textures(cub);
 }
 
 /* only for usage when calling with array on stack: error_exit(cub,
 "Error\nMalloc failed!\n", (char*[]){trimd, NULL});*/
 void	free_array(char **arr)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!arr)

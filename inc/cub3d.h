@@ -160,8 +160,8 @@ void				draw_player_triangle(t_cub *cub, float angle, float size,
 						int color);
 
 //2D debug
-void				draw_tile(t_cub *cub, float x_start_px, float y_start_px,
-						float size_factor, int color);
+void				draw_tile(t_cub *cub, t_pos start_px,
+				              float size_factor, int color);
 void				draw_map(t_cub *cub, int color);
 void				draw_player_in_minimap(t_cub *cub, int wall_color,
 						int triangle_color);
