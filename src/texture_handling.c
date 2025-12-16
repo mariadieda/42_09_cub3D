@@ -9,3 +9,28 @@
 /*   Updated: 2025/12/16 10:17:15 by mdiederi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "../inc/cub3d.h"
+
+void create_texture_imgs(t_cub *cub)
+{
+    int i;
+    char *file_paths[4];
+    t_tex wall_tex;
+
+    file_paths[0] = cub->col->no_tex_p;
+    file_paths[1] = cub->col->ea_tex_p;
+    file_paths[2] = cub->col->so_tex_p;
+    file_paths[3] = cub->col->we_tex_p;
+    i = 0;
+    while (i < 4)
+    {
+        wall_tex.img = mlx_xpm_file_to_image(cub->mlx, file_paths[i],
+                            &wall_tex.width, &wall_tex.height);
+        if (!wall_tex.img)
+            error_exit(cub, "Error\nFailed to load texture", NULL);
+        wall_tex.pxl_arr = mlx_get_data_addr(wall_tex.img, &wall_tex.bpp, &wall_tex.line_len, &wall_tex.endian);
+        cub->col->wall_tex[i] = wall_tex;
+        i++;
+    }
+}

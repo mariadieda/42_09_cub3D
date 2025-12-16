@@ -11,20 +11,8 @@
 /* ************************************************************************** */
 #include "../inc/cub3d.h"
 
-/*
-//todo also consider player width?
-int	check_walkable_pos(t_cub *cub, float new_x, float new_y)
+int	check_walkable_pos(t_cub *cub, float new_x_px, float new_y_px)
 {
-	int			mx;
-	int			my;
-	float		radius;
-	const float	eps;
-	int			left;
-	int			right;
-	int			top;
-	int			bottom;
-	int			y;
-	int			x;
 	float		radius;
 	float		eps;
 	int			left;
@@ -34,25 +22,6 @@ int	check_walkable_pos(t_cub *cub, float new_x, float new_y)
 	int			y;
 	int			x;
 
-   mx = (int)new_x;
-   my = (int)new_y;
-   // Check map bounds
-   if (mx < 0 || my < 0 || mx >= cub->map->width || my >= cub->map->height)
-   {
-      printf("!!! out of map bounds for:%f, %f max width, height:%d, %d\n",
-		cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width,
-		cub->mlx_data.win_height);
-      return (0);
-   }
-   if (cub->map->grid[my][mx] != '1')    //Check walls
-      return (1);
-   printf("!!! running into wall at :%f, %f max width, height:%d, %d\n",
-		cub->player_pos.x, cub->player_pos.y, cub->mlx_data.win_width,
-		cub->mlx_data.win_height);
-   return (0);
-}*/
-int	check_walkable_pos(t_cub *cub, float new_x_px, float new_y_px)
-{
 	radius = 0.3f * cub->tile_size;
 	eps = 0.0001f;
 	left = (int)floorf((new_x_px - radius - eps) / cub->tile_size);

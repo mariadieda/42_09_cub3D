@@ -54,12 +54,23 @@ typedef struct s_mlx_data
 	int				win_height;
 }					t_mlx_data;
 
+typedef struct s_tex {
+	void *img;
+	char *pxl_arr;
+	int width;
+	int height;
+	int bpp;
+	int line_len;
+	int endian;
+} t_tex;
+
 typedef struct s_col
 {
 	char			*no_tex_p;
+	char			*ea_tex_p;
 	char			*so_tex_p;
 	char			*we_tex_p;
-	char			*ea_tex_p;
+	struct s_tex	wall_tex[4];
 	int				floor;
 	int				ceil;
 	int				has_floor;
@@ -108,14 +119,6 @@ typedef struct s_line
 	double			y_diff;
 }					t_line;
 
-/*
-typedef struct s_player
-{
-    struct s_pos	tile_pos;
-    //struct s_pos    px_pos;
-
-} t_player;*/
-
 typedef struct s_cub
 {
 	struct s_map	*map;
@@ -152,7 +155,6 @@ int					handle_close(t_cub *cub);
 //rendering
 int					render(t_cub *cub);
 int					check_screen_bounds_px(t_cub *cub, float x_px, float y_px);
-//int     check_walkable_pos(t_cub *cub, float new_x, float new_y);
 int					check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile);
 int					check_walkable_pos(t_cub *cub, float new_x_px,
 						float new_y_px);
@@ -177,6 +179,9 @@ void				try_put_pixel(t_cub *cub, float x_px, float y_px,
 						int color);
 void				draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px,
 				                         float ray_angle);
+
+// texture handling
+void				create_texture_imgs(t_cub *cub);
 
 //clean up
 void				clean_up(t_cub *cub);

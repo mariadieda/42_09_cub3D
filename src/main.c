@@ -40,7 +40,8 @@ void	init_cub_for_rendering(t_cub *cub)
 		/ tanf(cub->player_fov / 2.00f);
 }
 /*
-* 	printf("window w=%d h=%d, map w*CUBE %d, map h*CUBE %d\n",
+* 	printf("map w=%d h=%d\nwindow w=%d h=%d, map w*CUBE %d, map h*CUBE %d\n",
+* 			cub->map->width, cub->map->height
 			cub->mlx_data.win_width,
 			cub->mlx_data.win_height,
 			cub->map->width * cub->tile_size,
@@ -60,32 +61,6 @@ int	has_cub_extension(char *cub_fn)
 	return (1);
 }
 
-void	normalize_map(t_cub *cub)
-{
-	int		i;
-	int		j;
-	char	*old;
-	char	*new;
-
-	i = 0;
-	while (i < cub->map->height)
-	{
-		old = cub->map->grid[i];
-		new = ft_calloc(cub->map->width + 1, 1);
-		j = 0;
-		while (old[j])
-		{
-			new[j] = old[j];
-			j++;
-		}
-		while (j < cub->map->width)
-			new[j++] = ' ';
-		free(old);
-		cub->map->grid[i] = new;
-		i++;
-	}
-}
-
 int	main(int argc, char **argv)
 {
 	t_cub	cub;
@@ -97,9 +72,6 @@ int	main(int argc, char **argv)
 			"valid .cub file as an argument\n", NULL);
 	}
 	parse_file(argv[1], &cub);
-	printf("map w=%d h=%d\n", cub.map->width, cub.map->height);
-	//normalize_map(&cub);
-	// todo rotate_map(&cub); ??
 	print_map(&cub); //todo rm debug
 	init_cub_for_rendering(&cub);
 	make_window(&cub);
@@ -108,6 +80,5 @@ int	main(int argc, char **argv)
 	mlx_hook(cub.win, 17, 0, handle_close, &cub);
 	mlx_loop_hook(cub.mlx, render, &cub);
 	mlx_loop(cub.mlx);
-	//clean_up(&cub); //after mlx_loop nothing runs
 	return (0);
 }
