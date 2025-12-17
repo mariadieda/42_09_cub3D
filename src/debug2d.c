@@ -40,6 +40,27 @@ void	draw_tile(t_cub *cub, t_pos start_px, float size_factor, int color)
 	}
 }
 
+/* add size to player pos to find tip, [-size/2 forward
+	+ size/2 left] to find left
+ * [-size/2 forward - size/2 left] to find right */
+void	draw_player_triangle(t_cub *cub, float angle, float size, int color)
+{
+	t_pos	tip;
+	t_pos	left;
+	t_pos	right;
+
+	tip.x = cub->player_px.x + cosf(angle) * size;
+	tip.y = cub->player_px.y + sinf(angle) * size;
+	left.x = cub->player_px.x + cosf(angle + PI * 0.75f) * size * 0.7f;
+	left.y = cub->player_px.y + sinf(angle + PI * 0.75f) * size * 0.7f;
+	right.x = cub->player_px.x + cosf(angle - PI * 0.75f) * size * 0.7f;
+	right.y = cub->player_px.y + sinf(angle - PI * 0.75f) * size * 0.7f;
+	draw_line(cub, cub->player_px, tip, color);
+	draw_line(cub, tip, left, color);
+	draw_line(cub, left, right, color);
+	draw_line(cub, right, tip, color);
+}
+
 void	draw_player_in_minimap(t_cub *cub, int wall_color, int triangle_color)
 {
 	draw_map(cub, wall_color);

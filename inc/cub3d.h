@@ -154,12 +154,13 @@ int					handle_close(t_cub *cub);
 
 //rendering
 int					render(t_cub *cub);
+
+
+// collision handling
 int					check_screen_bounds_px(t_cub *cub, float x_px, float y_px);
 int					check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile);
 int					check_walkable_pos(t_cub *cub, float new_x_px,
 						float new_y_px);
-void				draw_player_triangle(t_cub *cub, float angle, float size,
-						int color);
 
 //2D debug
 void				draw_tile(t_cub *cub, t_pos start_px,
@@ -167,6 +168,8 @@ void				draw_tile(t_cub *cub, t_pos start_px,
 void				draw_map(t_cub *cub, int color);
 void				draw_player_in_minimap(t_cub *cub, int wall_color,
 						int triangle_color);
+void				draw_player_triangle(t_cub *cub, float angle, float size,
+						int color);
 
 //player
 void				player_move(t_cub *cub);
