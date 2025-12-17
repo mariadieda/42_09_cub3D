@@ -37,17 +37,27 @@ void create_texture_imgs(t_cub *cub)
 }
 
 //todo how to get right tile ?
-/*
-get_texture_px_color(t_cub *cub, float wall_height, t_pos pos)
-{
-    t_tex sample_tex = cub->col->wall_tex[0];
 
+int get_texture_px_color(t_cub *cub, float wall_height, t_pos pos)
+{
+    t_tex sample_tex;
+    int color;
+    int rel_pos_x;
+    int rel_pos_y;
+
+    color = 0;
+    rel_pos_x = pos.x/sample_tex.width;
+    rel_pos_y = pos.y/sample_tex.height;
+    sample_tex = cub->col->wall_tex[0];
     if (cub->tile_size == sample_tex.height)
     {
-
+        color = sample_tex.pxl_arr[rel_pos_y][rel_pos_x];
+        color = cub->pxl_arr + (y * cub->mlx_data.line_length) + (x
+                * (cub->mlx_data.bits_per_pixel / 8));
     }
     else
     {
 
     }
-}*/
+    return color;
+}
