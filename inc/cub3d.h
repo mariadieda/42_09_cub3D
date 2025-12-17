@@ -28,7 +28,7 @@
 # define D 100
 # define LEFT 65361
 # define RIGHT 65363
-# define DEBUG 0
+# define DEBUG 1
 
 # include "../gnl/get_next_line.h"
 # include "../libft/ft_printf.h"
@@ -179,6 +179,7 @@ void				try_put_pixel(t_cub *cub, float x_px, float y_px,
 						int color);
 void				draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px,
 				                         float ray_angle);
+float				set_player_spawn_dir(char c);
 
 // texture handling
 void				create_texture_imgs(t_cub *cub);

@@ -12,6 +12,29 @@
 
 #include "../inc/cub3d.h"
 
+float set_player_spawn_dir(const char c)
+{
+	int i;
+	char dirs[5];
+
+	dirs[0] = 'E';
+	dirs[1] = 'S';
+	dirs[2] = 'W';
+	dirs[3] = 'N';
+	dirs[4] = '\0';
+	i = 0;
+	while (dirs[i] != '\0')
+	{
+		printf("dir: %c i = %d\n", dirs[i], i);
+		if (dirs[i] == c)
+		{
+			return (((float)i / 2.00f) * PI);
+		}
+		i++;
+	}
+	return (0);
+}
+
 float	set_rot_angle(float current_angle, int decrease)
 {
 	float	rotate_speed;
@@ -202,6 +225,7 @@ void	player_move(t_cub *cub)
 		cub->player_angle = set_rot_angle(cub->player_angle, 1);
 	if (cub->move.rotate_right)
 		cub->player_angle = set_rot_angle(cub->player_angle, 0);
+	printf("angloe: %f\n", cub->player_angle);
 	cos_angle = cosf(cub->player_angle) * PLAYER_SPEED;
 	sin_angle = sinf(cub->player_angle) * PLAYER_SPEED;
 	x = cub->player_px.x;

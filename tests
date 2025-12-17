@@ -2,6 +2,11 @@
 1. Duplicate color has a leak currently:
 valgrind  --leak-check=full  --show-leak-kinds=all ./cub3D maps/map_double_color.cub
 
+2. invalid Player direction has leak (replaced N with H in map):
+==127929== Command: ./cub3D maps/map.cub
+==127929==
+Error
+Invalid map character or Multiple players present
 
 2. stop peeking!
 

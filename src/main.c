@@ -33,7 +33,8 @@ void	init_cub_for_rendering(t_cub *cub)
 	cub->mlx_data.win_height = cub->tile_size * cub->map->height;
 	cub->player_px.x = (float)cub->tile_size * cub->player_tile.x;
 	cub->player_px.y = (float)cub->tile_size * cub->player_tile.y;
-	cub->player_angle = PI / 2;
+	printf("spanw dir: %c\n", cub->spawn_dir);
+	cub->player_angle = set_player_spawn_dir(cub->spawn_dir);
 	cub->player_fov = PI / 3;
 	cub->fraction_ray_angle = cub->player_fov / (float)cub->mlx_data.win_width;
 	cub->screen_dist = ((float)cub->mlx_data.win_width / 2.00f)

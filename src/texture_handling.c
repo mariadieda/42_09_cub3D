@@ -29,8 +29,15 @@ void create_texture_imgs(t_cub *cub)
                             &wall_tex.width, &wall_tex.height);
         if (!wall_tex.img)
             error_exit(cub, "Error\nFailed to load texture", NULL);
-        wall_tex.pxl_arr = mlx_get_data_addr(wall_tex.img, &wall_tex.bpp, &wall_tex.line_len, &wall_tex.endian);
+        wall_tex.pxl_arr = mlx_get_data_addr(wall_tex.img, &wall_tex.bpp,
+            &wall_tex.line_len, &wall_tex.endian);
         cub->col->wall_tex[i] = wall_tex;
         i++;
     }
 }
+
+/*
+get_texture_px_color(t_cub *cub)
+{
+    if (cub->col->wall_tex[0].cub->tile_size
+}*/
