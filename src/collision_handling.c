@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 #include "../inc/cub3d.h"
 
+// models player as a circle/spere with radius of 30% size of a tile
+// add small number to prevent tile boundary pos edge cases
 int	check_walkable_pos(t_cub *cub, float new_x_px, float new_y_px)
 {
     float		radius;

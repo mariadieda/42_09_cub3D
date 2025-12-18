@@ -39,6 +39,7 @@ void	init_cub_for_rendering(t_cub *cub)
 	cub->fraction_ray_angle = cub->player_fov / (float)cub->mlx_data.win_width;
 	cub->screen_dist = ((float)cub->mlx_data.win_width / 2.00f)
 		/ tanf(cub->player_fov / 2.00f);
+	create_texture_imgs(cub);
 }
 /*
 * 	printf("map w=%d h=%d\nwindow w=%d h=%d, map w*CUBE %d, map h*CUBE %d\n",

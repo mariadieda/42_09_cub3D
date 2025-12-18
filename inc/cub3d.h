@@ -28,7 +28,7 @@
 # define D 100
 # define LEFT 65361
 # define RIGHT 65363
-# define DEBUG 1
+# define DEBUG 0
 
 # include "../gnl/get_next_line.h"
 # include "../libft/ft_printf.h"
@@ -186,6 +186,7 @@ float				set_player_spawn_dir(char c);
 
 // texture handling
 void				create_texture_imgs(t_cub *cub);
+int					get_texture_px_color(t_cub *cub, float wall_height, t_pos pos);
 
 //clean up
 void				clean_up(t_cub *cub);

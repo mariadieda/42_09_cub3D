@@ -202,10 +202,11 @@ void	draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px, float ray_angle)
 		wall_end_y = cub->mlx_data.win_height;
 	while (y < cub->mlx_data.win_height)
 	{
+		t_pos pos = {.x= i, .y= wall_start_y };
 		if (y < wall_start_y)
 			try_put_pixel(cub, i, y, cub->col->ceil);
 		else if (y >= wall_start_y && y < wall_end_y)
-			try_put_pixel(cub, i, y, 0x444444); // todo to be replaced by textures
+			try_put_pixel(cub, i, y, get_texture_px_color(cub, wall_height, pos)); // todo 0x444444 to be replaced by textures
 		else
 			try_put_pixel(cub, i, y, cub->col->floor);
 		y++;

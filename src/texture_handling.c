@@ -36,28 +36,58 @@ void create_texture_imgs(t_cub *cub)
     }
 }
 
-//todo how to get right tile ?
+t_tex select_texture(t_cub *cub, t_pos ray_dir, int is_vertical_hit)
+{
+    t_tex wall_tex;
+
+    if (!is_vertical_hit)
+    {
+        if (ray_dir.x > 0)
+            wall_tex = cub->col->wall_tex[1];
+        else
+            wall_tex = cub->col->wall_tex[3];
+    }
+    else
+    {
+        if (ray_dir.y > 0)
+            wall_tex = cub->col->wall_tex[2];
+        else
+            wall_tex = cub->col->wall_tex[0];
+    }
+    return (wall_tex);
+}
 
 int get_texture_px_color(t_cub *cub, float wall_height, t_pos pos)
 {
-    t_tex sample_tex;
-    int color;
+    t_tex texture;
+    char	*pixel;
     int rel_pos_x;
     int rel_pos_y;
+    float height_ratio;
 
-    color = 0;
-    rel_pos_x = pos.x/sample_tex.width;
-    rel_pos_y = pos.y/sample_tex.height;
-    sample_tex = cub->col->wall_tex[0];
+    texture = select_texture(cub, pos, 0);
+    height_ratio = wall_height/texture.height;
+    rel_pos_x = 0;
+    rel_pos_y = 0;
+    if (pos.x > 0)
+        rel_pos_x = (pos.x/cub->tile_size) * texture.width;
+    if (pos.y > 0)
+        rel_pos_y = (int) (pos.y*height_ratio);
+    printf("rel_pos_x: %d\nrel_pos y : %d\ntile width: %d\ntile height: %d\n", rel_pos_x, rel_pos_y, texture.width, texture.height);
+    if (rel_pos_y < texture.height && rel_pos_x < texture.width)
+    {
+        pixel = texture.pxl_arr + (rel_pos_y * texture.line_len) + (rel_pos_x
+    * (texture.bpp / 8));
+    }
+
+    /*
     if (cub->tile_size == sample_tex.height)
     {
-        color = sample_tex.pxl_arr[rel_pos_y][rel_pos_x];
-        color = cub->pxl_arr + (y * cub->mlx_data.line_length) + (x
-                * (cub->mlx_data.bits_per_pixel / 8));
+
     }
     else
     {
 
-    }
-    return color;
+    }*/
+    return *(int *)pixel;
 }
