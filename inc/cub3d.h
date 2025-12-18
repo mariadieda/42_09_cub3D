@@ -92,6 +92,12 @@ typedef struct s_pos
 	float			y;
 }					t_pos;
 
+typedef struct s_int_pos
+{
+	int				x;
+	int				y;
+}					t_int_pos;
+
 typedef struct s_dir
 {
 	double			dir_x;
@@ -183,6 +189,8 @@ void				try_put_pixel(t_cub *cub, float x_px, float y_px,
 void				draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px,
 				                         float ray_angle);
 float				set_player_spawn_dir(char c);
+int					touches_wall(t_cub *cub, int x_tile, int y_tile);
+int					check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile);
 
 // texture handling
 void				create_texture_imgs(t_cub *cub);
@@ -196,5 +204,6 @@ void				free_n_array(char **arr, int grid_height);
 //utils
 void				print_map(t_cub *cub);
 int					ft_fmin(double x, double y);
-
+t_int_pos			get_map_tile_int_pos(t_cub *cub, t_pos px_pos);
+t_pos				get_map_tile_px_pos(t_cub *cub, t_pos px_pos);
 #endif //INC_42_09_CUBE3D_CUBE3D_H

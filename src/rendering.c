@@ -35,6 +35,111 @@ void	clean_img(t_cub *cub, int color)
 	}
 }
 
+typedef struct s_dda
+{
+	int map_x;       // tile X
+	int map_y;       // tile Y
+	int side;        // 0 = vertical, 1 = horizontal
+	float perp_dist; // distance from player to wall
+	float hit_x;     // exact hit position in tile (for texture)
+	float hit_y;
+} t_dda;
+
+
+/*
+ *
+* ray_dir	step
+ray_dir.x < 0	go left
+ray_dir.x > 0	go right
+ray_dir.y < 0	go up
+ray_dir.y > 0	go down
+ */
+t_dda dda_ray(t_cub *cub, float ray_angle)
+{
+    t_dda hit;
+	t_int_pos map_pos;
+	t_int_pos step;
+	t_pos player_float_map_pos;
+	t_pos ray_dir;
+	t_pos delta_dist;
+	t_pos side_dist;
+
+	map_pos = get_map_tile_int_pos(cub, cub->player_px);
+	player_float_map_pos = get_map_tile_px_pos(cub, cub->player_px);
+	ray_dir.x = cosf(ray_angle);
+    ray_dir.y = sinf(ray_angle);
+    delta_dist.x = fabsf(1.0f / ray_dir.x);
+    delta_dist.y = fabsf(1.0f / ray_dir.y);
+
+
+    if (ray_dir.x < 0)
+    {
+        step.x = -1;
+        side_dist.x = (player_float_map_pos.x - (float)map_pos.x) * delta_dist.x;
+    }
+    else
+    {
+        step.x = 1;
+        side_dist.x = ((float)map_pos.x + 1.0f - player_float_map_pos.x) * delta_dist.x;
+    }
+
+    if (ray_dir.y < 0)
+    {
+        step.y = -1;
+        side_dist.y = (player_float_map_pos.y - (float)map_pos.y) * delta_dist.y;
+    }
+    else
+    {
+        step.y = 1;
+        side_dist.y = ((float)map_pos.y + 1.0f - player_float_map_pos.y) * delta_dist.y;
+    }
+
+    int is_horiz = 0; // vertical=0, horizontal=1
+
+    //while (!hit_flag)
+    while (!touches_wall(cub, map_pos.x, map_pos.y) && check_map_bounds_tiles(cub, map_pos.x, map_pos.y))
+    {
+        if (side_dist.x < side_dist.y)
+        {
+            side_dist.x += delta_dist.x;
+            map_pos.x += step.x;
+            is_horiz = 0;
+        }
+        else
+        {
+            side_dist.y += delta_dist.y;
+            map_pos.y += step.y;
+            is_horiz = 1;
+        }
+    }
+
+	t_int_pos hit_tile;
+	t_int_pos hit_pos;
+	t_int_pos hit_map;
+	hit_tile = map_pos;
+	hit_pos = map_pos;
+
+    float perp_dist;
+
+    if (is_horiz == 0)
+        perp_dist = (side_dist.x - delta_dist.x) * cub->tile_size;
+    else
+        perp_dist = (side_dist.y - delta_dist.y) * cub->tile_size;
+
+    hit.side = is_horiz;
+    hit.perp_dist = perp_dist;
+
+    // exact hit position for textures
+    if (is_horiz == 0)
+        hit_pos.y = player_float_map_pos.y + (perp_dist / cub->tile_size) * ray_dir.y;
+    else
+        hit_pos.x = player_float_map_pos.x + (perp_dist / cub->tile_size) * ray_dir.x;
+
+    return hit;
+}
+
+
+
 void	cast_rays(t_cub *cub) //todo block peaking??
 {
 	t_pos	ray_px;
@@ -45,8 +150,8 @@ void	cast_rays(t_cub *cub) //todo block peaking??
 	i = 0;
 	while (i < cub->mlx_data.win_width)
 	{
-		ray_px = cub->player_px;
-		set_last_ray_point(cub, start_angle, &ray_px);
+		ray_px = cub->player_px; //todo replace with dda
+		set_last_ray_point(cub, start_angle, &ray_px); //todo replace with dda
 		if (!DEBUG) //  3D version
 			draw_vertical_slices(cub, i, &ray_px, start_angle);
 		start_angle += cub->fraction_ray_angle;
