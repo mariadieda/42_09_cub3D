@@ -77,7 +77,7 @@ void set_step_direction_side_dist(t_hit *hit, float ray_angle)
 void find_hit(t_cub *cub, t_hit *hit)
 {
 	hit->is_horiz = 0;
-	while (!hit->is_horiz && !touches_wall(cub, hit->map_pos.x, hit->map_pos.y) && check_map_bounds_tiles(cub, hit->map_pos.x, hit->map_pos.y))
+	while (!touches_wall(cub, hit->map_pos.x, hit->map_pos.y) && check_map_bounds_tiles(cub, hit->map_pos.x, hit->map_pos.y))
 	{
 		if (hit->side_dist.x < hit->side_dist.y)
 		{
@@ -120,7 +120,7 @@ t_hit dda_ray(t_cub *cub, float ray_angle)
     return hit;
 }
 
-void	draw_vertical_slices(t_cub *cub, int i, t_hit *hit)
+void	draw_vertical_slices(t_cub *cub, int i, t_hit *hit, float start_angle)
 {
 	float	wall_height;
 	int		wall_start_y;
@@ -128,7 +128,10 @@ void	draw_vertical_slices(t_cub *cub, int i, t_hit *hit)
 	int		y;
 	int		clipped;
 
-	wall_height = ((float)cub->tile_size / hit->perp_dist) * cub->screen_dist;
+	float corrected_dist = hit->perp_dist * cosf(start_angle - cub->player_angle);
+	if (corrected_dist < 0.001f)
+		corrected_dist = 0.001f;
+	wall_height = ((float)cub->tile_size / corrected_dist) * cub->screen_dist;
 	wall_start_y = (cub->mlx_data.win_height - (int)wall_height) / 2;
 	wall_end_y = wall_start_y + (int)wall_height;
 	y = 0;
@@ -163,7 +166,7 @@ void	cast_rays(t_cub *cub) //todo block peaking??
 	{
 		hit = dda_ray(cub, start_angle);
 		if (!DEBUG) //  3D version
-			draw_vertical_slices(cub, i, &hit);
+			draw_vertical_slices(cub, i, &hit, start_angle);
 		start_angle += cub->fraction_ray_angle;
 		i++;
 	}

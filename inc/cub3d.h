@@ -193,7 +193,7 @@ void				set_last_ray_point(t_cub *cub, float start_angle,
 						t_pos *ray_px);
 void				try_put_pixel(t_cub *cub, float x_px, float y_px,
 						int color);
-void				draw_vertical_slices(t_cub *cub, int i, t_hit *hit);
+void				draw_vertical_slices(t_cub *cub, int i, t_hit *hit, float start_angle);
 /*void				draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px,
 				                         float ray_angle);*/
 float				set_player_spawn_dir(char c);
