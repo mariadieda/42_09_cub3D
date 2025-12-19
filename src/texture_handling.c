@@ -36,6 +36,7 @@ void create_texture_imgs(t_cub *cub)
     }
 }
 
+/*
 t_tex select_texture(t_cub *cub, t_pos ray_dir, int is_horiz_hit)
 {
     t_tex wall_tex;
@@ -55,7 +56,26 @@ t_tex select_texture(t_cub *cub, t_pos ray_dir, int is_horiz_hit)
             wall_tex = cub->col->wall_tex[0];
     }
     return (wall_tex);
+}*/
+
+t_tex select_texture(t_cub *cub, t_pos ray_dir, int is_horiz_hit)
+{
+    if (is_horiz_hit) // horizontal wall (north/south)
+    {
+        if (ray_dir.y > 0)
+            return cub->col->wall_tex[2];
+        else
+            return cub->col->wall_tex[0];
+    }
+    else // vertical wall (east/west)
+    {
+        if (ray_dir.x > 0)
+            return cub->col->wall_tex[1];
+        else
+            return cub->col->wall_tex[3];
+    }
 }
+
 
 /* todo ?
 void flip_texture(t_cub *cub, t_hit *hit, t_tex texture)
@@ -71,7 +91,7 @@ void flip_texture(t_cub *cub, t_hit *hit, t_tex texture)
 
 //Texture X = hit->wall_x * texture.width
 //Texture Y = (screen_y - wall_start) / wall_height * texture.height
-int get_texture_px_color(t_cub *cub, t_hit *hit, float wall_height, int wall_start, int y)
+int get_texture_px_color(t_cub *cub, t_hit *hit, float wall_height, int wall_start, int y, int clipped)
 {
     t_tex texture;
     char	*pixel;
@@ -85,15 +105,13 @@ int get_texture_px_color(t_cub *cub, t_hit *hit, float wall_height, int wall_sta
     else                  // horizontal wall
         wall_x = hit->hit_point.x - floorf(hit->hit_point.x);
     rel_pos_x = wall_x * texture.width;
-    if (rel_pos_x < 0)
-        rel_pos_x = 0;
-    if (rel_pos_x >= texture.width)
-        rel_pos_x = texture.width - 1;
-    rel_pos_y =  (int)(((float)(y - wall_start) / wall_height ) * texture.height);
-    if (rel_pos_y < 0)
-        rel_pos_y = 0;
-    if (rel_pos_y >= texture.height)
-        rel_pos_y = texture.height - 1;
+    if (!hit->is_horiz && hit->ray_dir.x < 0)
+        rel_pos_x = texture.width - rel_pos_x - 1;
+    if (hit->is_horiz && hit->ray_dir.y > 0)
+        rel_pos_x = texture.width - rel_pos_x - 1;
+    rel_pos_x = fmin(fmax(rel_pos_x, 0), texture.width-1);
+    rel_pos_y =  (int)(((float)(y + clipped - wall_start) / wall_height ) * texture.height);
+    rel_pos_y = fmin(fmax(rel_pos_y, 0), texture.height-1);
     //printf("wall_x=%f tex_x=%d tex_y=%d\n", wall_x, rel_pos_x, rel_pos_y);
 
     //printf("rel_pos_x: %d\nrel_pos y : %d\ntile width: %d\ntile height: %d\n", rel_pos_x, rel_pos_y, texture.width, texture.height);

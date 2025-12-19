@@ -203,7 +203,7 @@ int					check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile);
 // texture handling
 void				create_texture_imgs(t_cub *cub);
 //int					get_texture_px_color(t_cub *cub, float wall_height, t_pos pos);
-int					get_texture_px_color(t_cub *cub, t_hit *hit, float wall_height, int wall_start, int y);
+int					get_texture_px_color(t_cub *cub, t_hit *hit, float wall_height, int wall_start, int y, int clipped);
 
 //clean up
 void				clean_up(t_cub *cub);

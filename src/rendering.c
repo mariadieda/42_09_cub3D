@@ -35,7 +35,6 @@ void	clean_img(t_cub *cub, int color)
 	}
 }
 
-
 /*
  *
 * ray_dir	step
@@ -127,13 +126,17 @@ void	draw_vertical_slices(t_cub *cub, int i, t_hit *hit)
 	int		wall_start_y;
 	int		wall_end_y;
 	int		y;
+	int		clipped;
 
 	wall_height = ((float)cub->tile_size / hit->perp_dist) * cub->screen_dist;
 	wall_start_y = (cub->mlx_data.win_height - (int)wall_height) / 2;
 	wall_end_y = wall_start_y + (int)wall_height;
 	y = 0;
-	if (wall_start_y < 0)
+	clipped = 0;
+	if (wall_start_y < 0){
+		clipped = abs(wall_start_y);
 		wall_start_y = 0;
+	}
 	if (wall_end_y > cub->mlx_data.win_height)
 		wall_end_y = cub->mlx_data.win_height;
 	while (y < cub->mlx_data.win_height)
@@ -141,7 +144,7 @@ void	draw_vertical_slices(t_cub *cub, int i, t_hit *hit)
 		if (y < wall_start_y)
 			try_put_pixel(cub, i, y, cub->col->ceil);
 		else if (y >= wall_start_y && y < wall_end_y)
-			try_put_pixel(cub, i, y, get_texture_px_color(cub, hit, wall_height, wall_start_y, y)); // todo 0x444444 to be replaced by textures
+			try_put_pixel(cub, i, y, get_texture_px_color(cub, hit, wall_height, wall_start_y, y, clipped)); // todo 0x444444 to be replaced by textures
 		else
 			try_put_pixel(cub, i, y, cub->col->floor);
 		y++;
