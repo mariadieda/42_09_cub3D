@@ -43,6 +43,7 @@
 # include <stdlib.h> // malloc, free, exit
 # include <unistd.h> // close, read, write
 
+
 typedef struct s_mlx_data
 {
 	int				bits_per_pixel;
@@ -98,13 +99,19 @@ typedef struct s_int_pos
 	int				y;
 }					t_int_pos;
 
-typedef struct s_dir
+
+typedef struct s_hit
 {
-	double			dir_x;
-	double			dir_y;
-	double			plane_x;
-	double			plane_y;
-}					t_dir;
+	struct s_int_pos step;
+	struct s_int_pos map_pos;
+	struct s_pos player_float_map_pos;
+	struct s_pos ray_dir;
+	struct s_pos delta_dist;
+	struct s_pos side_dist;
+	int is_horiz ;  // 0 = vertical, 1 = horizontal
+	float perp_dist; // distance from player to wall
+	struct s_pos hit_point;     // exact hit position in tile (for texture)
+} t_hit;
 
 typedef struct s_move
 {
@@ -186,7 +193,7 @@ void				set_last_ray_point(t_cub *cub, float start_angle,
 						t_pos *ray_px);
 void				try_put_pixel(t_cub *cub, float x_px, float y_px,
 						int color);
-void				draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px, float ray_angle);
+void				draw_vertical_slices(t_cub *cub, int i, t_hit *hit);
 /*void				draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px,
 				                         float ray_angle);*/
 float				set_player_spawn_dir(char c);
@@ -195,7 +202,8 @@ int					check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile);
 
 // texture handling
 void				create_texture_imgs(t_cub *cub);
-int					get_texture_px_color(t_cub *cub, float wall_height, t_pos pos);
+//int					get_texture_px_color(t_cub *cub, float wall_height, t_pos pos);
+int					get_texture_px_color(t_cub *cub, t_hit *hit, float wall_height, int wall_start, int y);
 
 //clean up
 void				clean_up(t_cub *cub);

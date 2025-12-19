@@ -36,11 +36,11 @@ void create_texture_imgs(t_cub *cub)
     }
 }
 
-t_tex select_texture(t_cub *cub, t_pos ray_dir, int is_vertical_hit)
+t_tex select_texture(t_cub *cub, t_pos ray_dir, int is_horiz_hit)
 {
     t_tex wall_tex;
 
-    if (!is_vertical_hit)
+    if (is_horiz_hit)
     {
         if (ray_dir.x > 0)
             wall_tex = cub->col->wall_tex[1];
@@ -57,6 +57,55 @@ t_tex select_texture(t_cub *cub, t_pos ray_dir, int is_vertical_hit)
     return (wall_tex);
 }
 
+/* todo ?
+void flip_texture(t_cub *cub, t_hit *hit, t_tex texture)
+{
+    if ((hit->is_horiz == 0 && hit->ray_dir.x < 0) ||
+    (hit->is_horiz == 1 && hit->ray_dir.y > 0))
+    {
+        texture = texture.width - texture. - 1;
+    }
+
+}*/
+
+
+//Texture X = hit->wall_x * texture.width
+//Texture Y = (screen_y - wall_start) / wall_height * texture.height
+int get_texture_px_color(t_cub *cub, t_hit *hit, float wall_height, int wall_start, int y)
+{
+    t_tex texture;
+    char	*pixel;
+    int rel_pos_x;
+    int rel_pos_y;
+    double wall_x;
+
+    texture = select_texture(cub, hit->ray_dir, hit->is_horiz);
+    if (hit->is_horiz == 0) // vertical wall
+        wall_x = hit->hit_point.y - floorf(hit->hit_point.y);
+    else                  // horizontal wall
+        wall_x = hit->hit_point.x - floorf(hit->hit_point.x);
+    rel_pos_x = wall_x * texture.width;
+    if (rel_pos_x < 0)
+        rel_pos_x = 0;
+    if (rel_pos_x >= texture.width)
+        rel_pos_x = texture.width - 1;
+    rel_pos_y =  (int)(((float)(y - wall_start) / wall_height ) * texture.height);
+    if (rel_pos_y < 0)
+        rel_pos_y = 0;
+    if (rel_pos_y >= texture.height)
+        rel_pos_y = texture.height - 1;
+    //printf("wall_x=%f tex_x=%d tex_y=%d\n", wall_x, rel_pos_x, rel_pos_y);
+
+    //printf("rel_pos_x: %d\nrel_pos y : %d\ntile width: %d\ntile height: %d\n", rel_pos_x, rel_pos_y, texture.width, texture.height);
+    //if (rel_pos_y < texture.height && rel_pos_x < texture.width)
+    pixel = texture.pxl_arr + (rel_pos_y * texture.line_len) + (rel_pos_x
+    * (texture.bpp / 8));
+    //printf("texture color found: %d\n", *(int *)pixel);
+    return *(int *)pixel;
+}
+
+
+/*
 int get_texture_px_color(t_cub *cub, float wall_height, t_pos pos)
 {
     t_tex texture;
@@ -80,7 +129,7 @@ int get_texture_px_color(t_cub *cub, float wall_height, t_pos pos)
     * (texture.bpp / 8));
     }
 
-    /*
+
     if (cub->tile_size == sample_tex.height)
     {
 
@@ -88,6 +137,6 @@ int get_texture_px_color(t_cub *cub, float wall_height, t_pos pos)
     else
     {
 
-    }*/
+    }
     return *(int *)pixel;
-}
+}*/

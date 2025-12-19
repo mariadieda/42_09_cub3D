@@ -35,18 +35,6 @@ void	clean_img(t_cub *cub, int color)
 	}
 }
 
-typedef struct s_hit
-{
-	struct s_int_pos step;
-	struct s_int_pos map_pos;
-	struct s_pos player_float_map_pos;
-	struct s_pos ray_dir;
-	struct s_pos delta_dist;
-	struct s_pos side_dist;
-	int is_horiz ;  // 0 = vertical, 1 = horizontal
-	float perp_dist; // distance from player to wall
-	struct s_pos hit_point;     // exact hit position in tile (for texture)
-} t_hit;
 
 /*
  *
@@ -104,41 +92,43 @@ void find_hit(t_cub *cub, t_hit *hit)
 			hit->map_pos.y += hit->step.y;
 			hit->is_horiz = 1;
 		}
+		if (DEBUG)
+			try_put_pixel(cub, hit->map_pos.x, hit->map_pos.x, 0xFF0000);
+
 	}
 }
 
 t_hit dda_ray(t_cub *cub, float ray_angle)
 {
-    t_hit hit;
+	t_hit hit;
 
 	hit.map_pos = get_map_tile_int_pos(cub, cub->player_px);
 	hit.player_float_map_pos = get_map_tile_px_pos(cub, cub->player_px);
 	set_step_direction_side_dist(&hit, ray_angle);
 	find_hit(cub, &hit);
+	hit.hit_point.x = hit.map_pos.x;
+	hit.hit_point.y = hit.map_pos.y;
 
-    if (hit.is_horiz == 0)
-        hit.perp_dist = (hit.side_dist.x - hit.delta_dist.x) * cub->tile_size;
-    else
-        hit.perp_dist = (hit.side_dist.y - hit.delta_dist.y) * cub->tile_size;
+	if (hit.is_horiz == 0)
+		hit.perp_dist = (hit.side_dist.x - hit.delta_dist.x) * cub->tile_size;
+	else
+		hit.perp_dist = (hit.side_dist.y - hit.delta_dist.y) * cub->tile_size;
 
-    if (hit.is_horiz == 0)
-        hit.hit_point.y = hit.player_float_map_pos.y + (hit.perp_dist / cub->tile_size) * hit.ray_dir.y;
-    else
-        hit.hit_point.x = hit.player_float_map_pos.x + (hit.perp_dist / cub->tile_size) * hit.ray_dir.x;
-
+	if (hit.is_horiz == 0)
+		hit.hit_point.y = hit.player_float_map_pos.y + (hit.perp_dist / cub->tile_size) * hit.ray_dir.y;
+	else
+		hit.hit_point.x = hit.player_float_map_pos.x + (hit.perp_dist / cub->tile_size) * hit.ray_dir.x;
     return hit;
 }
 
-void	draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px, float ray_angle)
+void	draw_vertical_slices(t_cub *cub, int i, t_hit *hit)
 {
-	float	dist;
 	float	wall_height;
 	int		wall_start_y;
 	int		wall_end_y;
 	int		y;
 
-	dist = get_point_distance(cub, cub->player_px, ray_px, ray_angle);
-	wall_height = ((float)cub->tile_size / dist) * cub->screen_dist;
+	wall_height = ((float)cub->tile_size / hit->perp_dist) * cub->screen_dist;
 	wall_start_y = (cub->mlx_data.win_height - (int)wall_height) / 2;
 	wall_end_y = wall_start_y + (int)wall_height;
 	y = 0;
@@ -148,11 +138,10 @@ void	draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px, float ray_angle)
 		wall_end_y = cub->mlx_data.win_height;
 	while (y < cub->mlx_data.win_height)
 	{
-		t_pos pos = {.x= i, .y= wall_start_y };
 		if (y < wall_start_y)
 			try_put_pixel(cub, i, y, cub->col->ceil);
 		else if (y >= wall_start_y && y < wall_end_y)
-			try_put_pixel(cub, i, y, get_texture_px_color(cub, wall_height, pos)); // todo 0x444444 to be replaced by textures
+			try_put_pixel(cub, i, y, get_texture_px_color(cub, hit, wall_height, wall_start_y, y)); // todo 0x444444 to be replaced by textures
 		else
 			try_put_pixel(cub, i, y, cub->col->floor);
 		y++;
@@ -161,7 +150,7 @@ void	draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px, float ray_angle)
 
 void	cast_rays(t_cub *cub) //todo block peaking??
 {
-	t_pos	ray_px;
+	t_hit	hit;
 	float	start_angle;
 	int		i;
 
@@ -169,8 +158,9 @@ void	cast_rays(t_cub *cub) //todo block peaking??
 	i = 0;
 	while (i < cub->mlx_data.win_width)
 	{
+		hit = dda_ray(cub, start_angle);
 		if (!DEBUG) //  3D version
-			draw_vertical_slices(cub, i, &ray_px, start_angle);
+			draw_vertical_slices(cub, i, &hit);
 		start_angle += cub->fraction_ray_angle;
 		i++;
 	}
