@@ -143,6 +143,7 @@ void	draw_line(t_cub *cub, t_pos start_pos_px, t_pos end_pos_px, int color)
     }*/
 }
 
+/*
 void	set_last_ray_point(t_cub *cub, float start_angle, t_pos *ray_px)
 {
 	float	cos_angle;
@@ -211,7 +212,7 @@ void	draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px, float ray_angle)
 			try_put_pixel(cub, i, y, cub->col->floor);
 		y++;
 	}
-}
+}*/
 
 // rotation = viewer perspective, not actual position change
 // rotation should always be possible
