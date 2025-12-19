@@ -227,7 +227,7 @@ void	player_move(t_cub *cub)
 		cub->player_angle = set_rot_angle(cub->player_angle, 1);
 	if (cub->move.rotate_right)
 		cub->player_angle = set_rot_angle(cub->player_angle, 0);
-	printf("angloe: %f\n", cub->player_angle);
+	//printf("angloe: %f\n", cub->player_angle);
 	cos_angle = cosf(cub->player_angle) * PLAYER_SPEED;
 	sin_angle = sinf(cub->player_angle) * PLAYER_SPEED;
 	x = cub->player_px.x;

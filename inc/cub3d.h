@@ -108,6 +108,9 @@ typedef struct s_hit
 	struct s_pos ray_dir;
 	struct s_pos delta_dist;
 	struct s_pos side_dist;
+	struct s_tex tex;
+	double wall_x;
+	int rel_pos_x;
 	int is_horiz ;  // 0 = vertical, 1 = horizontal
 	float perp_dist; // distance from player to wall
 	struct s_pos hit_point;     // exact hit position in tile (for texture)
@@ -201,9 +204,10 @@ int					touches_wall(t_cub *cub, int x_tile, int y_tile);
 int					check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile);
 
 // texture handling
+t_tex				select_texture(t_cub *cub, t_pos ray_dir, int is_horiz_hit);
 void				create_texture_imgs(t_cub *cub);
 //int					get_texture_px_color(t_cub *cub, float wall_height, t_pos pos);
-int					get_texture_px_color(t_cub *cub, t_hit *hit, float wall_height, int wall_start, int y, int clipped);
+int					get_texture_px_color(t_hit *hit, float wall_height, int wall_start, int y, int clipped);
 
 //clean up
 void				clean_up(t_cub *cub);

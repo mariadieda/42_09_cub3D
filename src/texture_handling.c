@@ -91,34 +91,16 @@ void flip_texture(t_cub *cub, t_hit *hit, t_tex texture)
 
 //Texture X = hit->wall_x * texture.width
 //Texture Y = (screen_y - wall_start) / wall_height * texture.height
-int get_texture_px_color(t_cub *cub, t_hit *hit, float wall_height, int wall_start, int y, int clipped)
+int get_texture_px_color(t_hit *hit, float wall_height, int wall_start, int y, int clipped)
 {
-    t_tex texture;
     char	*pixel;
-    int rel_pos_x;
+
     int rel_pos_y;
-    double wall_x;
 
-    texture = select_texture(cub, hit->ray_dir, hit->is_horiz);
-    if (hit->is_horiz == 0) // vertical wall
-        wall_x = hit->hit_point.y - floorf(hit->hit_point.y);
-    else                  // horizontal wall
-        wall_x = hit->hit_point.x - floorf(hit->hit_point.x);
-    rel_pos_x = wall_x * texture.width;
-    if (!hit->is_horiz && hit->ray_dir.x < 0)
-        rel_pos_x = texture.width - rel_pos_x - 1;
-    if (hit->is_horiz && hit->ray_dir.y > 0)
-        rel_pos_x = texture.width - rel_pos_x - 1;
-    rel_pos_x = fmin(fmax(rel_pos_x, 0), texture.width-1);
-    rel_pos_y =  (int)(((float)(y + clipped - wall_start) / wall_height ) * texture.height);
-    rel_pos_y = fmin(fmax(rel_pos_y, 0), texture.height-1);
-    //printf("wall_x=%f tex_x=%d tex_y=%d\n", wall_x, rel_pos_x, rel_pos_y);
-
-    //printf("rel_pos_x: %d\nrel_pos y : %d\ntile width: %d\ntile height: %d\n", rel_pos_x, rel_pos_y, texture.width, texture.height);
-    //if (rel_pos_y < texture.height && rel_pos_x < texture.width)
-    pixel = texture.pxl_arr + (rel_pos_y * texture.line_len) + (rel_pos_x
-    * (texture.bpp / 8));
-    //printf("texture color found: %d\n", *(int *)pixel);
+    rel_pos_y =  (int)(((float)(y + clipped - wall_start) / wall_height ) * hit->tex.height);
+    rel_pos_y = fmin(fmax(rel_pos_y, 0), hit->tex.height-1);
+    char *line_start = hit->tex.pxl_arr + rel_pos_y * hit->tex.line_len;
+    pixel = line_start + (hit->rel_pos_x * (hit->tex.bpp / 8));
     return *(int *)pixel;
 }
 

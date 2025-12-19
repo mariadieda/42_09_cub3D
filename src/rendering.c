@@ -105,19 +105,30 @@ t_hit dda_ray(t_cub *cub, float ray_angle)
 	hit.player_float_map_pos = get_map_tile_px_pos(cub, cub->player_px);
 	set_step_direction_side_dist(&hit, ray_angle);
 	find_hit(cub, &hit);
-	hit.hit_point.x = hit.map_pos.x;
-	hit.hit_point.y = hit.map_pos.y;
-
+	hit.hit_point.x = (float)hit.map_pos.x;
+	hit.hit_point.y = (float)hit.map_pos.y;
 	if (hit.is_horiz == 0)
+	{
 		hit.perp_dist = (hit.side_dist.x - hit.delta_dist.x) * cub->tile_size;
-	else
-		hit.perp_dist = (hit.side_dist.y - hit.delta_dist.y) * cub->tile_size;
-
-	if (hit.is_horiz == 0)
 		hit.hit_point.y = hit.player_float_map_pos.y + (hit.perp_dist / cub->tile_size) * hit.ray_dir.y;
-	else
-		hit.hit_point.x = hit.player_float_map_pos.x + (hit.perp_dist / cub->tile_size) * hit.ray_dir.x;
-    return hit;
+		hit.wall_x = hit.hit_point.y - floorf(hit.hit_point.y);
+	}
+	else{
+	hit.perp_dist = (hit.side_dist.y - hit.delta_dist.y) * cub->tile_size;
+	hit.hit_point.x = hit.player_float_map_pos.x + (hit.perp_dist / cub->tile_size) * hit.ray_dir.x;
+	hit.wall_x = hit.hit_point.x - floorf(hit.hit_point.x);
+	}
+	return hit;
+}
+
+void set_rel_x_tile_pos(t_hit *hit)
+{
+	hit->rel_pos_x = (int)(hit->wall_x * hit->tex.width);
+	if (!hit->is_horiz && hit->ray_dir.x < 0)
+		hit->rel_pos_x = hit->tex.width - hit->rel_pos_x - 1;
+	if (hit->is_horiz && hit->ray_dir.y > 0)
+		hit->rel_pos_x = hit->tex.width - hit->rel_pos_x - 1;
+	hit->rel_pos_x = (int)fmin(fmax(hit->rel_pos_x, 0), hit->tex.width-1);
 }
 
 void	draw_vertical_slices(t_cub *cub, int i, t_hit *hit, float start_angle)
@@ -147,7 +158,16 @@ void	draw_vertical_slices(t_cub *cub, int i, t_hit *hit, float start_angle)
 		if (y < wall_start_y)
 			try_put_pixel(cub, i, y, cub->col->ceil);
 		else if (y >= wall_start_y && y < wall_end_y)
-			try_put_pixel(cub, i, y, get_texture_px_color(cub, hit, wall_height, wall_start_y, y, clipped)); // todo 0x444444 to be replaced by textures
+		/*{
+			int tex_y = (int)tex_pos;
+			tex_pos += tex_step;
+
+			char *line_start = tex + tex_y * hit->tex.line_len;
+			int color = *(int *)(line_start + tex_x * bpp);
+
+			try_put_pixel(cub, i, y, color);
+		}*/
+			try_put_pixel(cub, i, y, get_texture_px_color(hit, wall_height, wall_start_y, y, clipped)); // todo 0x444444 to be replaced by textures
 		else
 			try_put_pixel(cub, i, y, cub->col->floor);
 		y++;
@@ -165,6 +185,8 @@ void	cast_rays(t_cub *cub) //todo block peaking??
 	while (i < cub->mlx_data.win_width)
 	{
 		hit = dda_ray(cub, start_angle);
+		hit.tex = select_texture(cub, hit.ray_dir, hit.is_horiz);
+		set_rel_x_tile_pos(&hit);
 		if (!DEBUG) //  3D version
 			draw_vertical_slices(cub, i, &hit, start_angle);
 		start_angle += cub->fraction_ray_angle;
