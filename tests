@@ -1,5 +1,9 @@
 
-1. Duplicate color has a leak currently:
+1. Leaks in map validation: test maps in maps/errorMaps
+- all have leaks (apart from "imagen_no_legible.cub", "noPlayers.cub", unclosedMap1.cub, unclosedMap2.cub, wrongExtension.txt)
+
+
+also Duplicate color has a leak currently:
 valgrind  --leak-check=full  --show-leak-kinds=all ./cub3D maps/map_double_color.cub
 
 2. invalid Player direction has leak (replaced N with H in map):
@@ -10,4 +14,4 @@ Invalid map character or Multiple players present
 
 2. stop peeking!
 
-3.
+3. LEAK on ESC key press!
