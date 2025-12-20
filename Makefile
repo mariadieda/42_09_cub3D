@@ -8,7 +8,7 @@ SRCS=src/main.c \
 	 src/keyhandlers.c \
 	 src/wall_texture_handling.c \
 	 src/collision_handling.c \
-	 src/debug2d.c \
+	 src/minimap.c \
 	 src/parsing/parse.c\
 	 gnl/get_next_line.c \
 	 gnl/get_next_line_utils.c

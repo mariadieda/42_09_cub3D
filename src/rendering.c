@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 #include "../inc/cub3d.h"
 
+// overwrite every pixel with one color
 void	clean_img(t_cub *cub, int color)
-//todo replace one color with true map pixel colors
 {
 	char *pixel;
 	int i;

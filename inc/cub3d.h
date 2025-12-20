@@ -10,25 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef CUB3D_H
+# define CUB3D_H
 
-#ifndef INC_42_09_CUBE3D_CUBE3D_H
-# define INC_42_09_CUBE3D_CUBE3D_H
-
-# define PLAYER_SPEED 5           
-	//how fast the player is moving (how many tile units per keypress)
-# define PLAYER_ROTATE_SPEED 0.02f //how fast the player is turning
-
-//# define PI 3.14159265359
-# define PI 3.1415926535897932384626
-	//whats highest precision possible/necessary?
-
-# define W 119
-# define A 97
-# define S 115
-# define D 100
-# define LEFT 65361
-# define RIGHT 65363
-# define DEBUG 0
+# define PLAYER_SPEED 5           //how fast the player is moving (how many tile units per keypress)
+# define PLAYER_ROTATE_SPEED 0.03f //how fast the player is turning
 
 # include "../gnl/get_next_line.h"
 # include "../libft/ft_printf.h"
@@ -42,7 +28,6 @@
 //# include "minilibx-linux/mlx.h"
 # include <stdlib.h> // malloc, free, exit
 # include <unistd.h> // close, read, write
-
 
 typedef struct s_mlx_data
 {
@@ -152,8 +137,9 @@ typedef struct s_line
 
 struct s_minimap
 {
-	t_pos offset;
+	t_int_pos offset;
 	float scale;
+	int   tile_px;
 	int player_color;
 	int wall_color;
 	int space_color;
@@ -242,4 +228,4 @@ void				print_map(t_cub *cub);
 int					ft_fmin(double x, double y);
 t_int_pos			get_map_tile_int_pos(t_cub *cub, t_pos px_pos);
 t_pos				get_map_tile_px_pos(t_cub *cub, t_pos px_pos);
-#endif //INC_42_09_CUBE3D_CUBE3D_H
+#endif //CUB3D_H

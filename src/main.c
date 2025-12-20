@@ -24,18 +24,17 @@ void	init_cub_for_rendering(t_cub *cub)
 		error_exit(cub, "Failed to initialize MLX\n", NULL);
 	mlx_get_screen_size(cub->mlx, &cub->mlx_data.screen_width,
 			&cub->mlx_data.screen_height);
-	cub->tile_size = ft_fmin(
-		(double)cub->mlx_data.screen_width / cub->map->width,
-		(double)cub->mlx_data.screen_height / cub->map->height);
+	cub->tile_size = (int)fminf(
+		cub->mlx_data.screen_width / cub->map->width,
+		cub->mlx_data.screen_height / cub->map->height);
 	if (cub->tile_size < 1)
 		error_exit(cub, "Error\nMap too large for screen\n", NULL);
 	cub->mlx_data.win_width = cub->tile_size * cub->map->width;
 	cub->mlx_data.win_height = cub->tile_size * cub->map->height;
 	cub->player_px.x = (float)cub->tile_size * cub->player_tile.x;
 	cub->player_px.y = (float)cub->tile_size * cub->player_tile.y;
-	printf("spanw dir: %c\n", cub->spawn_dir);
 	cub->player_angle = set_player_spawn_dir(cub->spawn_dir);
-	cub->player_fov = PI / 3;
+	cub->player_fov = M_PI / 3;
 	cub->fraction_ray_angle = cub->player_fov / (float)cub->mlx_data.win_width;
 	cub->screen_dist = ((float)cub->mlx_data.win_width / 2.00f)
 		/ tanf(cub->player_fov / 2.00f);
