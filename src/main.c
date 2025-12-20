@@ -19,14 +19,17 @@
  */
 void	init_cub_for_rendering(t_cub *cub)
 {
+	float	width_ratio;
+	float	height_ratio;
+
 	cub->mlx = mlx_init();
 	if (!cub->mlx)
 		error_exit(cub, "Failed to initialize MLX\n", NULL);
 	mlx_get_screen_size(cub->mlx, &cub->mlx_data.screen_width,
-			&cub->mlx_data.screen_height);
-	cub->tile_size = (int)fminf(
-		cub->mlx_data.screen_width / cub->map->width,
-		cub->mlx_data.screen_height / cub->map->height);
+		&cub->mlx_data.screen_height);
+	width_ratio = cub->mlx_data.screen_width / cub->map->width;
+	height_ratio = cub->mlx_data.screen_height / cub->map->height;
+	cub->tile_size = (int)fminf(width_ratio, height_ratio);
 	if (cub->tile_size < 1)
 		error_exit(cub, "Map too large for screen\n", NULL);
 	cub->mlx_data.win_width = cub->tile_size * cub->map->width;
@@ -60,8 +63,8 @@ int	main(int argc, char **argv)
 	ft_memset(&cub, 0, sizeof(t_cub));
 	if (argc != 2 || !has_cub_extension(argv[1]))
 	{
-		error_exit(&cub, "Please provide exactly one "
-			"valid .cub file as an argument\n", NULL);
+		error_exit(&cub, "Please provide exactly one valid .cub file as an "
+			"argument\n", NULL);
 	}
 	parse_file(argv[1], &cub);
 	init_cub_for_rendering(&cub);

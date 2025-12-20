@@ -15,7 +15,7 @@ void	put_line_pixels(t_cub *cub, t_line *line, int color)
 {
 	float	x_cord;
 	float	y_cord;
-	int	i;
+	int		i;
 
 	i = 0;
 	while (i <= (int)line->line_len)
@@ -24,8 +24,8 @@ void	put_line_pixels(t_cub *cub, t_line *line, int color)
 				* line->x_diff);
 		y_cord = (float)(line->start_point.y + (i / line->line_len)
 				* line->y_diff);
-		if (x_cord >= 0 && x_cord < (float)cub->mlx_data.win_width && y_cord >= 0
-			&& y_cord < (float)cub->mlx_data.win_height)
+		if (x_cord >= 0 && x_cord < (float)cub->mlx_data.win_width
+			&& y_cord >= 0 && y_cord < (float)cub->mlx_data.win_height)
 		{
 			try_put_pixel(cub, x_cord, y_cord, color);
 		}
@@ -47,7 +47,6 @@ void	draw_line(t_cub *cub, t_pos start_pos_px, t_pos end_pos_px, int color)
 		put_line_pixels(cub, &line, color);
 }
 
-
 void	draw_tile(t_cub *cub, t_minimap mm, t_pos map_px, int color)
 {
 	int	i;
@@ -63,8 +62,7 @@ void	draw_tile(t_cub *cub, t_minimap mm, t_pos map_px, int color)
 				cub,
 				map_px.x + i,
 				map_px.y + j,
-				color
-			);
+				color);
 			j++;
 		}
 		i++;
@@ -100,12 +98,15 @@ void	draw_map(t_cub *cub, t_minimap mm)
 // add size to player pos to find tip, [-size/2 forward
 //	+ size/2 left] to find left
 // [-size/2 forward - size/2 left] to find right
-void	draw_player_triangle(t_cub *cub, t_pos player_pos, float angle, float scale, t_minimap mm)
+void	draw_player_triangle(t_cub *cub, t_pos player_pos, float angle,
+		t_minimap mm)
 {
 	t_pos	tip;
 	t_pos	left;
 	t_pos	right;
+	float	scale;
 
+	scale = (float)mm.tile_px * 0.6f;
 	tip.x = player_pos.x + cosf(angle) * scale;
 	tip.y = player_pos.y + sinf(angle) * scale;
 	left.x = player_pos.x + cosf(angle + M_PI * 0.75f) * scale * 0.7f;
@@ -117,16 +118,17 @@ void	draw_player_triangle(t_cub *cub, t_pos player_pos, float angle, float scale
 	draw_line(cub, right, tip, mm.player_color);
 }
 
-void draw_minimap(t_cub *cub)
+void	draw_minimap(t_cub *cub)
 {
-	t_pos player_mm;
-	t_minimap minimap;
+	t_pos		player_mm;
+	t_minimap	minimap;
 
 	minimap.offset.x = 10;
 	minimap.offset.y = 10;
 	minimap.scale = fminf(
-		(cub->mlx_data.win_width  * 0.25f) / (cub->map->width * cub->tile_size),
-		(cub->mlx_data.win_height * 0.25f) / (cub->map->height * cub->tile_size));
+		(cub->mlx_data.win_width * 0.25f) / (cub->map->width * cub->tile_size),
+		(cub->mlx_data.win_height * 0.25f) / (cub->map->height
+				* cub->tile_size));
 	if (minimap.scale < 0.01f)
 		minimap.scale = 0.01f;
 	minimap.tile_px = (int)(cub->tile_size * minimap.scale);
@@ -137,11 +139,11 @@ void draw_minimap(t_cub *cub)
 	minimap.walk_color = 0x444444;
 	minimap.space_color = 0x222222;
 	draw_map(cub, minimap);
-	player_mm.x = minimap.offset.x
-		+ (cub->player_px.x / cub->tile_size) * minimap.tile_px;
-	player_mm.y = minimap.offset.y
-		+ (cub->player_px.y / cub->tile_size) * minimap.tile_px;
-	draw_player_triangle(cub, player_mm, cub->player_angle,minimap.tile_px * 0.6f, minimap);
+	player_mm.x = minimap.offset.x + (cub->player_px.x / cub->tile_size)
+		* minimap.tile_px;
+	player_mm.y = minimap.offset.y + (cub->player_px.y / cub->tile_size)
+		* minimap.tile_px;
+	draw_player_triangle(cub, player_mm, cub->player_angle, minimap);
 }
 
 //alternatively draw player cub

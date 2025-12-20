@@ -12,10 +12,10 @@
 
 #include "../inc/cub3d.h"
 
-float set_player_spawn_dir(const char c)
+float	set_player_spawn_dir(const char c)
 {
-	int i;
-	char dirs[5];
+	int		i;
+	char	dirs[5];
 
 	dirs[0] = 'E';
 	dirs[1] = 'S';
@@ -89,7 +89,6 @@ void	try_put_pixel(t_cub *cub, float x_px, float y_px, int color)
 		*(unsigned int *)pixel = color;
 	}
 }
-
 
 // rotation = viewer perspective, not actual position change
 // rotation should always be possible

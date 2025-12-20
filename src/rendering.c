@@ -14,9 +14,9 @@
 // overwrite every pixel with one color
 void	clean_img(t_cub *cub, int color)
 {
-	char *pixel;
-	int i;
-	int j;
+	char	*pixel;
+	int		i;
+	int		j;
 
 	i = 0;
 	while (i < cub->mlx_data.win_height)
@@ -134,7 +134,6 @@ void	set_rel_x_tile_pos(t_hit *hit)
 	hit->rel_pos_x = (int)fmin(fmax(hit->rel_pos_x, 0), hit->tex.width - 1);
 }
 
-
 /*
 	- set up values and clip as necessary for one vertical slice of the screen (determine wall dims) and determine
  * texture ratio
@@ -164,7 +163,8 @@ t_w_slice	set_up_wall_slice(t_cub *cub, t_hit *hit, float start_angle)
 	}
 	slice.tex_step = (float)hit->tex.height / slice.wall_height;
 	slice.tex_pos = slice.clipped * slice.tex_step;
-	slice.tex_px_wo_y = hit->tex.pxl_arr + hit->rel_pos_x * hit->tex.bytes_per_pixel;
+	slice.tex_px_wo_y = hit->tex.pxl_arr + hit->rel_pos_x
+		* hit->tex.bytes_per_pixel;
 	return (slice);
 }
 
@@ -196,15 +196,14 @@ void	draw_vertical_slices(t_cub *cub, int i, t_hit *hit, float start_angle)
 
 void	cast_rays(t_cub *cub) //todo block peaking??
 {
-	t_hit		hit;
-	float		start_angle;
-	int			i;
+	t_hit hit;
+	float start_angle;
+	int i;
 
 	start_angle = cub->player_angle - (cub->player_fov / 2);
 	i = 0;
 	while (i < cub->mlx_data.win_width)
 	{
-
 		hit = cast_dda_ray(cub, start_angle);
 		hit.tex = select_texture(cub, hit.ray_dir, hit.is_horiz);
 		set_rel_x_tile_pos(&hit);
