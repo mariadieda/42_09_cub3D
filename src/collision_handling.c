@@ -73,3 +73,10 @@ int	check_screen_bounds_px(t_cub *cub, float x_px, float y_px)
 		return (0);
 	return (1);
 }
+
+int	touches_wall(t_cub *cub, int x_tile, int y_tile)
+{
+	if (cub->map->grid[y_tile][x_tile] == '1')
+		return (1);
+	return (0);
+}

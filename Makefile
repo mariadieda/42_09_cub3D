@@ -2,6 +2,7 @@
 NAME=cub3D
 SRCS=src/main.c \
 	 src/rendering.c\
+	 src/rays.c\
 	 src/player.c\
 	 src/clean_up.c \
 	 src/utils.c \

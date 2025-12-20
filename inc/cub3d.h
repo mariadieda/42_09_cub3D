@@ -181,6 +181,11 @@ int						handle_close(t_cub *cub);
 
 //rendering
 int						render(t_cub *cub);
+void					draw_vertical_slices(t_cub *cub, int i, t_hit *hit,
+							float start_angle);
+
+//rays
+t_hit					cast_dda_ray(t_cub *cub, float ray_angle);
 
 // collision handling
 int						check_screen_bounds_px(t_cub *cub, float x_px,
@@ -189,33 +194,24 @@ int						check_map_bounds_tiles(t_cub *cub, int x_tile,
 							int y_tile);
 int						check_walkable_pos(t_cub *cub, float new_x_px,
 							float new_y_px);
+int						touches_wall(t_cub *cub, int x_tile, int y_tile);
 
-//2D debug
-
+//minimap
 void					draw_minimap(t_cub *cub);
 void					draw_tile(t_cub *cub, t_minimap mm, t_pos map_px,
 							int color);
 void					draw_map(t_cub *cub, t_minimap mm);
-void					draw_player_in_minimap(t_cub *cub, int wall_color,
-							int triangle_color);
 void					draw_player_triangle(t_cub *cub, t_pos player_pos,
 							float angle, t_minimap mm);
+void					draw_line(t_cub *cub, t_pos start_pos_px,
+							t_pos end_pos_px, int color);
 
 //player
 void					player_move(t_cub *cub);
-void					draw_ray(t_cub *cub, float start_angle, int i);
-void					draw_line(t_cub *cub, t_pos start_pos_px,
-							t_pos end_pos_px, int color);
-void					set_last_ray_point(t_cub *cub, float start_angle,
-							t_pos *ray_px);
 void					try_put_pixel(t_cub *cub, float x_px, float y_px,
 							int color);
-void					draw_vertical_slices(t_cub *cub, int i, t_hit *hit,
-							float start_angle);
 float					set_player_spawn_dir(char c);
-int						touches_wall(t_cub *cub, int x_tile, int y_tile);
-int						check_map_bounds_tiles(t_cub *cub, int x_tile,
-							int y_tile);
+
 
 // texture handling
 t_tex					select_texture(t_cub *cub, t_pos ray_dir,

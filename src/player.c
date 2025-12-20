@@ -67,13 +67,6 @@ void	update_pos(t_cub *cub, float new_x_px, float new_y_px)
 				cub->player_px.y);
  */
 
-int	touches_wall(t_cub *cub, int x_tile, int y_tile)
-{
-	if (cub->map->grid[y_tile][x_tile] == '1')
-		return (1);
-	return (0);
-}
-
 void	try_put_pixel(t_cub *cub, float x_px, float y_px, int color)
 {
 	char	*pixel;
