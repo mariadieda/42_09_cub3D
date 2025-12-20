@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   texture_handling.c                                 :+:      :+:    :+:   */
+/*   wall_texture_handling.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mdiederi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -37,72 +37,17 @@ void create_texture_imgs(t_cub *cub)
     }
 }
 
-/*
+// horziontal walls = north & south
+// vertical walls = east & west
 t_tex select_texture(t_cub *cub, t_pos ray_dir, int is_horiz_hit)
 {
-    t_tex wall_tex;
-
     if (is_horiz_hit)
-    {
-        if (ray_dir.x > 0)
-            wall_tex = cub->col->wall_tex[1];
-        else
-            wall_tex = cub->col->wall_tex[3];
-    }
-    else
-    {
-        if (ray_dir.y > 0)
-            wall_tex = cub->col->wall_tex[2];
-        else
-            wall_tex = cub->col->wall_tex[0];
-    }
-    return (wall_tex);
-}*/
-
-t_tex select_texture(t_cub *cub, t_pos ray_dir, int is_horiz_hit)
-{
-    if (is_horiz_hit) // horizontal wall (north/south)
     {
         if (ray_dir.y > 0)
             return cub->col->wall_tex[2];
-        else
-            return cub->col->wall_tex[0];
+        return cub->col->wall_tex[0];
     }
-    else // vertical wall (east/west)
-    {
-        if (ray_dir.x > 0)
-            return cub->col->wall_tex[1];
-        else
-            return cub->col->wall_tex[3];
-    }
+    if (ray_dir.x > 0)
+        return cub->col->wall_tex[1];
+    return cub->col->wall_tex[3];
 }
-
-
-/* todo ?
-void flip_texture(t_cub *cub, t_hit *hit, t_tex texture)
-{
-    if ((hit->is_horiz == 0 && hit->ray_dir.x < 0) ||
-    (hit->is_horiz == 1 && hit->ray_dir.y > 0))
-    {
-        texture = texture.width - texture. - 1;
-    }
-
-}*/
-
-//todo rm
-//Texture X = hit->wall_x * texture.width
-//Texture Y = (screen_y - wall_start) / wall_height * texture.height
-int get_texture_px_color(t_hit *hit, float wall_height, int wall_start, int y, int clipped)
-{
-    char	*pixel;
-
-    int rel_pos_y;
-
-    rel_pos_y =  (int)(((float)(y + clipped - wall_start) / wall_height ) * (float)hit->tex.height);
-    rel_pos_y = (int)fmin(fmax(rel_pos_y, 0), hit->tex.height-1);
-    char *line_start = hit->tex.pxl_arr + rel_pos_y * hit->tex.line_len;
-    pixel = line_start + (hit->rel_pos_x * (hit->tex.bytes_per_pixel));
-    return *(int *)pixel;
-}
-
-

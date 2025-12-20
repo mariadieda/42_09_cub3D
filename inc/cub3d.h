@@ -150,6 +150,16 @@ typedef struct s_line
 	double			y_diff;
 }					t_line;
 
+struct s_minimap
+{
+	t_pos offset;
+	float scale;
+	int player_color;
+	int wall_color;
+	int space_color;
+	int walk_color;
+} typedef t_minimap;
+
 typedef struct s_cub
 {
 	struct s_map	*map;
@@ -194,13 +204,13 @@ int					check_walkable_pos(t_cub *cub, float new_x_px,
 						float new_y_px);
 
 //2D debug
-void				draw_tile(t_cub *cub, t_pos start_px,
-				              float size_factor, int color);
-void				draw_map(t_cub *cub, int color);
+
+void				draw_minimap(t_cub *cub);
+void	draw_tile(t_cub *cub, t_minimap mm, t_pos map_px, int color);
+void				draw_map(t_cub *cub, t_minimap mm);
 void				draw_player_in_minimap(t_cub *cub, int wall_color,
 						int triangle_color);
-void				draw_player_triangle(t_cub *cub, float angle, float size,
-						int color);
+void				draw_player_triangle(t_cub *cub, t_pos player_pos, float angle, float scale, t_minimap mm);
 
 //player
 void				player_move(t_cub *cub);
@@ -212,8 +222,6 @@ void				set_last_ray_point(t_cub *cub, float start_angle,
 void				try_put_pixel(t_cub *cub, float x_px, float y_px,
 						int color);
 void				draw_vertical_slices(t_cub *cub, int i, t_hit *hit, float start_angle);
-/*void				draw_vertical_slices(t_cub *cub, int i, t_pos *ray_px,
-				                         float ray_angle);*/
 float				set_player_spawn_dir(char c);
 int					touches_wall(t_cub *cub, int x_tile, int y_tile);
 int					check_map_bounds_tiles(t_cub *cub, int x_tile, int y_tile);

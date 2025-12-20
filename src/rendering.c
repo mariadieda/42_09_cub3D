@@ -94,12 +94,10 @@ void	find_hit(t_cub *cub, t_hit *hit)
 			hit->map_pos.y += hit->step.y;
 			hit->is_horiz = 1;
 		}
-		if (DEBUG)
-			try_put_pixel(cub, hit->map_pos.x, hit->map_pos.x, 0xFF0000);
 	}
 }
 
-t_hit	dda_ray(t_cub *cub, float ray_angle)
+t_hit	cast_dda_ray(t_cub *cub, float ray_angle)
 {
 	t_hit	hit;
 
@@ -206,44 +204,25 @@ void	cast_rays(t_cub *cub) //todo block peaking??
 	i = 0;
 	while (i < cub->mlx_data.win_width)
 	{
-		hit = dda_ray(cub, start_angle);
+
+		hit = cast_dda_ray(cub, start_angle);
 		hit.tex = select_texture(cub, hit.ray_dir, hit.is_horiz);
 		set_rel_x_tile_pos(&hit);
-		if (!DEBUG) //  3D version
-			draw_vertical_slices(cub, i, &hit, start_angle);
+		draw_vertical_slices(cub, i, &hit, start_angle);
+		//t_pos ray_px = cub->player_px; //todo draw minimap rays
+		//set_last_ray_point(cub, start_angle, &ray_px); //todo replace with dda
 		start_angle += cub->fraction_ray_angle;
 		i++;
 	}
 }
 
-/* non dda version
-void	cast_rays(t_cub *cub) //todo block peaking??
-{
-	t_pos		ray_px;
-	float		start_angle;
-	int			i;
-
-	start_angle = cub->player_angle - (cub->player_fov / 2);
-	i = 0;
-	while (i < cub->mlx_data.win_width)
-	{
-		ray_px = cub->player_px; //todo replace with dda
-		set_last_ray_point(cub, start_angle, &ray_px); //todo replace with dda
-		if (!DEBUG) //  3D version
-			draw_vertical_slices(cub, i, &ray_px, start_angle);
-		start_angle += cub->fraction_ray_angle;
-		i++;
-	}
-}*/
-
 int	render(t_cub *cub)
 {
-	//mlx_do_sync(cub->mlx);
 	player_move(cub);
 	clean_img(cub, 0x000000);
-	if (DEBUG)
-		draw_player_in_minimap(cub, 0x444444, 0xFFFFFF);
+	//draw_player_in_minimap(cub, 0x444444, 0xFFFFFF);
 	cast_rays(cub);
+	draw_minimap(cub);
 	mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);
 	return (0);
 }

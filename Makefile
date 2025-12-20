@@ -6,7 +6,7 @@ SRCS=src/main.c \
 	 src/clean_up.c \
 	 src/utils.c \
 	 src/keyhandlers.c \
-	 src/texture_handling.c \
+	 src/wall_texture_handling.c \
 	 src/collision_handling.c \
 	 src/debug2d.c \
 	 src/parsing/parse.c\
