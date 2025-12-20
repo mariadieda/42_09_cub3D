@@ -47,6 +47,7 @@
 typedef struct s_mlx_data
 {
 	int				bits_per_pixel;
+	int				bytes_per_pixel;
 	int				line_length;
 	int				endian;
 	int				screen_width;
@@ -60,10 +61,24 @@ typedef struct s_tex {
 	char *pxl_arr;
 	int width;
 	int height;
-	int bpp;
+	int bits_per_pixel;
+	int bytes_per_pixel;
 	int line_len;
 	int endian;
 } t_tex;
+
+struct			s_w_slice
+{
+	float		wall_height;
+	int			wall_start_y;
+	int			wall_end_y;
+	int			clipped;
+	float		corrected_dist;
+	float		tex_step;
+	float		tex_pos;
+	char		*tex_px_wo_y;
+} typedef t_w_slice;
+
 
 typedef struct s_col
 {

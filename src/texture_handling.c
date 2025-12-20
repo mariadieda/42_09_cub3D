@@ -29,8 +29,9 @@ void create_texture_imgs(t_cub *cub)
                             &wall_tex.width, &wall_tex.height);
         if (!wall_tex.img)
             error_exit(cub, "Error\nFailed to load texture", NULL);
-        wall_tex.pxl_arr = mlx_get_data_addr(wall_tex.img, &wall_tex.bpp,
+        wall_tex.pxl_arr = mlx_get_data_addr(wall_tex.img, &wall_tex.bits_per_pixel,
             &wall_tex.line_len, &wall_tex.endian);
+        wall_tex.bytes_per_pixel = wall_tex.bits_per_pixel / 8;
         cub->col->wall_tex[i] = wall_tex;
         i++;
     }
@@ -88,7 +89,7 @@ void flip_texture(t_cub *cub, t_hit *hit, t_tex texture)
 
 }*/
 
-
+//todo rm
 //Texture X = hit->wall_x * texture.width
 //Texture Y = (screen_y - wall_start) / wall_height * texture.height
 int get_texture_px_color(t_hit *hit, float wall_height, int wall_start, int y, int clipped)
@@ -97,46 +98,11 @@ int get_texture_px_color(t_hit *hit, float wall_height, int wall_start, int y, i
 
     int rel_pos_y;
 
-    rel_pos_y =  (int)(((float)(y + clipped - wall_start) / wall_height ) * hit->tex.height);
-    rel_pos_y = fmin(fmax(rel_pos_y, 0), hit->tex.height-1);
+    rel_pos_y =  (int)(((float)(y + clipped - wall_start) / wall_height ) * (float)hit->tex.height);
+    rel_pos_y = (int)fmin(fmax(rel_pos_y, 0), hit->tex.height-1);
     char *line_start = hit->tex.pxl_arr + rel_pos_y * hit->tex.line_len;
-    pixel = line_start + (hit->rel_pos_x * (hit->tex.bpp / 8));
+    pixel = line_start + (hit->rel_pos_x * (hit->tex.bytes_per_pixel));
     return *(int *)pixel;
 }
 
 
-/*
-int get_texture_px_color(t_cub *cub, float wall_height, t_pos pos)
-{
-    t_tex texture;
-    char	*pixel;
-    int rel_pos_x;
-    int rel_pos_y;
-    float height_ratio;
-
-    texture = select_texture(cub, pos, 0);
-    height_ratio = wall_height/texture.height;
-    rel_pos_x = 0;
-    rel_pos_y = 0;
-    if (pos.x > 0)
-        rel_pos_x = (pos.x/cub->tile_size) * texture.width;
-    if (pos.y > 0)
-        rel_pos_y = (int) (pos.y*height_ratio);
-    printf("rel_pos_x: %d\nrel_pos y : %d\ntile width: %d\ntile height: %d\n", rel_pos_x, rel_pos_y, texture.width, texture.height);
-    if (rel_pos_y < texture.height && rel_pos_x < texture.width)
-    {
-        pixel = texture.pxl_arr + (rel_pos_y * texture.line_len) + (rel_pos_x
-    * (texture.bpp / 8));
-    }
-
-
-    if (cub->tile_size == sample_tex.height)
-    {
-
-    }
-    else
-    {
-
-    }
-    return *(int *)pixel;
-}*/

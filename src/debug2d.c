@@ -31,7 +31,7 @@ void	draw_tile(t_cub *cub, t_pos start_px, float size_factor, int color)
 			if (check_screen_bounds_px(cub, x, y))
 			{
 				pixel = cub->pxl_arr + (y * cub->mlx_data.line_length) + (x
-						* (cub->mlx_data.bits_per_pixel / 8));
+						* cub->mlx_data.bytes_per_pixel);
 				*(unsigned int *)pixel = color;
 			}
 			j++;
