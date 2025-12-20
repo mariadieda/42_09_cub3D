@@ -320,14 +320,6 @@ void    check_missing_text_col(t_cub* cub, char *line)
         error_exit(cub, "Missing texture path or color\n", (char*[]){line, NULL});
 }
 
-int     is_map(char c)
-{
-    if (ft_is_in_set(c, " 10NSWE"))
-        return (1);
-    else 
-        return (0);
-}
-
 int     is_player(char c)
 {
     if (c == 'N' || c == 'S' || c == 'W' || c == 'E')
@@ -336,6 +328,7 @@ int     is_player(char c)
         return (0);
 }
 
+
 int     is_blank_line(const char *line)
 {
     size_t i;
@@ -343,8 +336,7 @@ int     is_blank_line(const char *line)
 
     i = 0;
     len = ft_strlen(line);
-    while (line[i] == ' '  || line[i] == '\t' 
-        || line[i] == '\r' || line[i] == '\n')
+    while (ft_is_in_set(line[i], " \n\t\v\f\r") && i < len)
         i++;
     if(len == i)
         return (1);
@@ -360,12 +352,12 @@ int    validate_chars_in_map_line(char *trimd, int* has_player, int* map_started
     i = 0;
     while(trimd[i])
     {       
-        if(!is_map(trimd[i]))
-            return (0);//error_exit(cub, "Error\nInvalid map character\n");
+        if(!ft_is_in_set(trimd[i], " 10NSWE"))
+            return (0);//error_exit(cub, "Invalid map character\n");
         if(is_player(trimd[i]))
         {
             if(*has_player == 1)
-                return (0);//error_exit(cub, "Error\nMultiple players present\n");
+                return (0);//error_exit(cub, "Multiple players present\n");
             *has_player = 1;
             cub->player_tile.x = i + 0.5;
             cub->player_tile.y = cub->map->height + 0.5;

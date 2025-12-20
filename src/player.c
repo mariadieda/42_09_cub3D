@@ -25,7 +25,6 @@ float set_player_spawn_dir(const char c)
 	i = 0;
 	while (dirs[i] != '\0')
 	{
-		printf("dir: %c i = %d\n", dirs[i], i);
 		if (dirs[i] == c)
 			return ((float)(i * M_PI_2));
 		i++;

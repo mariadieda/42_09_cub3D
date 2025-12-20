@@ -29,6 +29,7 @@ void	free_n_array(char **arr, int grid_height)
 
 void	free_textures(t_cub *cub)
 {
+	int i;
 	if (cub->col->no_tex_p)
 		free(cub->col->no_tex_p);
 	if (cub->col->so_tex_p)
@@ -37,6 +38,14 @@ void	free_textures(t_cub *cub)
 		free(cub->col->we_tex_p);
 	if (cub->col->ea_tex_p)
 		free(cub->col->ea_tex_p);
+	if (cub->mlx && cub->col->wall_tex->img){
+		i = 0;
+		while (i < 4)
+		{
+			mlx_destroy_image(cub->mlx, cub->col->wall_tex[i].img);
+			i++;
+		}
+	}
 	free(cub->col);
 }
 
@@ -44,6 +53,8 @@ void	clean_up(t_cub *cub)
 {
 	if (!cub)
 		return ;
+	if (cub->col)
+		free_textures(cub);
 	if (cub->mlx)
 	{
 		if (cub->img)
@@ -58,8 +69,7 @@ void	clean_up(t_cub *cub)
 		free_n_array(cub->map->grid, cub->map->height);
 		free(cub->map);
 	}
-	if (cub->col)
-		free_textures(cub);
+
 }
 
 /* only for usage when calling with array on stack: error_exit(cub,
