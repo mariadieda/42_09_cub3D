@@ -145,29 +145,35 @@ void	draw_vertical_slices(t_cub *cub, int i, t_hit *hit, float start_angle)
 	wall_height = ((float)cub->tile_size / corrected_dist) * cub->screen_dist;
 	wall_start_y = (cub->mlx_data.win_height - (int)wall_height) / 2;
 	wall_end_y = wall_start_y + (int)wall_height;
-	y = 0;
+
 	clipped = 0;
 	if (wall_start_y < 0){
-		clipped = abs(wall_start_y);
+		clipped = -wall_start_y;
 		wall_start_y = 0;
 	}
-	if (wall_end_y > cub->mlx_data.win_height)
-		wall_end_y = cub->mlx_data.win_height;
+	/* --- TEXTURE SETUP (ONCE) --- */
+	float tex_step = (float)hit->tex.height / wall_height;
+	float tex_pos = clipped * tex_step;
+
+	//int tex_x = hit->rel_pos_x;
+	int bpp = hit->tex.bpp / 8;
+	//char *tex = hit->tex.pxl_arr;
+	y = 0;
 	while (y < cub->mlx_data.win_height)
 	{
 		if (y < wall_start_y)
 			try_put_pixel(cub, i, y, cub->col->ceil);
 		else if (y >= wall_start_y && y < wall_end_y)
-		/*{
+		{
 			int tex_y = (int)tex_pos;
 			tex_pos += tex_step;
 
-			char *line_start = tex + tex_y * hit->tex.line_len;
-			int color = *(int *)(line_start + tex_x * bpp);
+			char *line = hit->tex.pxl_arr + tex_y * hit->tex.line_len;
+			int color = *(int *)(line + hit->rel_pos_x * bpp);
 
 			try_put_pixel(cub, i, y, color);
-		}*/
-			try_put_pixel(cub, i, y, get_texture_px_color(hit, wall_height, wall_start_y, y, clipped)); // todo 0x444444 to be replaced by textures
+		}
+			//try_put_pixel(cub, i, y, get_texture_px_color(hit, wall_height, wall_start_y, y, clipped)); // todo 0x444444 to be replaced by textures
 		else
 			try_put_pixel(cub, i, y, cub->col->floor);
 		y++;
