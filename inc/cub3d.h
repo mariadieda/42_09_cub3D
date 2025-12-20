@@ -13,8 +13,7 @@
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# define PLAYER_SPEED 5
-//how fast the player is moving (how many tile units per keypress)
+# define PLAYER_SPEED 5 //how many units player moves per keypress
 # define PLAYER_ROTATE_SPEED 0.03f //how fast the player is turning
 
 # include "../gnl/get_next_line.h"
@@ -26,7 +25,6 @@
 # include <math.h>
 # include <mlx.h>
 # include <stdio.h>
-//# include "minilibx-linux/mlx.h"
 # include <stdlib.h> // malloc, free, exit
 # include <unistd.h> // close, read, write
 
@@ -186,6 +184,8 @@ void					draw_vertical_slices(t_cub *cub, int i, t_hit *hit,
 
 //rays
 t_hit					cast_dda_ray(t_cub *cub, float ray_angle);
+t_w_slice				set_up_wall_slice(t_cub *cub, t_hit *hit, float start_angle);
+void					set_rel_x_tile_pos(t_hit *hit);
 
 // collision handling
 int						check_screen_bounds_px(t_cub *cub, float x_px,

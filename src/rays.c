@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../inc/cub3d.h"
 
-
 /*
 * ray_dir	step
 ray_dir.x < 0	go left
@@ -21,10 +20,6 @@ ray_dir.y > 0	go down
  */
 void	set_step_direction_side_dist(t_hit *hit, float ray_angle)
 {
-	hit->ray_dir.x = cosf(ray_angle);
-	hit->ray_dir.y = sinf(ray_angle);
-	hit->delta_dist.x = fabsf(1.0f / hit->ray_dir.x);
-	hit->delta_dist.y = fabsf(1.0f / hit->ray_dir.y);
 	if (hit->ray_dir.x < 0)
 	{
 		hit->step.x = -1;
@@ -70,6 +65,8 @@ void	find_hit(t_cub *cub, t_hit *hit)
 			hit->is_horiz = 1;
 		}
 	}
+	hit->hit_point.x = (float)hit->map_pos.x;
+	hit->hit_point.y = (float)hit->map_pos.y;
 }
 
 t_hit	cast_dda_ray(t_cub *cub, float ray_angle)
@@ -78,10 +75,12 @@ t_hit	cast_dda_ray(t_cub *cub, float ray_angle)
 
 	hit.map_pos = get_map_tile_int_pos(cub, cub->player_px);
 	hit.player_float_map_pos = get_map_tile_px_pos(cub, cub->player_px);
+	hit.ray_dir.x = cosf(ray_angle);
+	hit.ray_dir.y = sinf(ray_angle);
+	hit.delta_dist.x = fabsf(1.0f / hit.ray_dir.x);
+	hit.delta_dist.y = fabsf(1.0f / hit.ray_dir.y);
 	set_step_direction_side_dist(&hit, ray_angle);
 	find_hit(cub, &hit);
-	hit.hit_point.x = (float)hit.map_pos.x;
-	hit.hit_point.y = (float)hit.map_pos.y;
 	if (hit.is_horiz == 0)
 	{
 		hit.perp_dist = (hit.side_dist.x - hit.delta_dist.x) * cub->tile_size;
@@ -110,12 +109,12 @@ void	set_rel_x_tile_pos(t_hit *hit)
 }
 
 /*
-	- set up values and clip as necessary for one vertical slice of the screen (determine wall dims) and determine
- * texture ratio
- * - correct distance to avoid fisheye,
-	and clip to avoid instability in close wall proximity (dist of actual 0 should
- * not be possible --> division by 0)
- * returns: populated slice
+- set up values and clip as necessary for one vertical slice of the screen
+	(determine wall dims) and determine texture ratio
+- correct distance to avoid fisheye,
+- clip to avoid instability in close wall proximity (dist of actual 0 should
+	not be possible --> division by 0)
+- returns: populated slice
  */
 t_w_slice	set_up_wall_slice(t_cub *cub, t_hit *hit, float start_angle)
 {

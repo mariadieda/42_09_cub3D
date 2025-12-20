@@ -35,7 +35,6 @@ void	clean_img(t_cub *cub, int color)
 	}
 }
 
-
 void	draw_vertical_slices(t_cub *cub, int i, t_hit *hit, float start_angle)
 {
 	t_w_slice	slice;
@@ -64,9 +63,9 @@ void	draw_vertical_slices(t_cub *cub, int i, t_hit *hit, float start_angle)
 
 void	cast_rays(t_cub *cub)
 {
-	t_hit hit;
-	float start_angle;
-	int i;
+	t_hit	hit;
+	float	start_angle;
+	int		i;
 
 	start_angle = cub->player_angle - (cub->player_fov / 2);
 	i = 0;
@@ -90,8 +89,6 @@ int	render(t_cub *cub)
 	mlx_put_image_to_window(cub->mlx, cub->win, cub->img, 0, 0);
 	return (0);
 }
-
-
 
 /*
 CHECKING intersections (Permadi, 1996)

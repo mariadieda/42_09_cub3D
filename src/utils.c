@@ -23,9 +23,9 @@ t_int_pos	get_map_tile_int_pos(t_cub *cub, t_pos px_pos)
 
 t_pos	get_map_tile_px_pos(t_cub *cub, t_pos px_pos)
 {
-	t_pos map_pos;
+	t_pos	map_pos;
+
 	map_pos.x = px_pos.x / cub->tile_size;
 	map_pos.y = px_pos.y / cub->tile_size;
-
 	return (map_pos);
 }
