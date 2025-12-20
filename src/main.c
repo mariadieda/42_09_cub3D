@@ -28,7 +28,7 @@ void	init_cub_for_rendering(t_cub *cub)
 		cub->mlx_data.screen_width / cub->map->width,
 		cub->mlx_data.screen_height / cub->map->height);
 	if (cub->tile_size < 1)
-		error_exit(cub, "Error\nMap too large for screen\n", NULL);
+		error_exit(cub, "Map too large for screen\n", NULL);
 	cub->mlx_data.win_width = cub->tile_size * cub->map->width;
 	cub->mlx_data.win_height = cub->tile_size * cub->map->height;
 	cub->player_px.x = (float)cub->tile_size * cub->player_tile.x;
@@ -40,15 +40,6 @@ void	init_cub_for_rendering(t_cub *cub)
 		/ tanf(cub->player_fov / 2.00f);
 	create_texture_imgs(cub);
 }
-/*
-* 	printf("map w=%d h=%d\nwindow w=%d h=%d, map w*CUBE %d, map h*CUBE %d\n",
-* 			cub->map->width, cub->map->height
-			cub->mlx_data.win_width,
-			cub->mlx_data.win_height,
-			cub->map->width * cub->tile_size,
-			cub->map->height * cub->tile_size);
-			//todo rm debug
- */
 
 int	has_cub_extension(char *cub_fn)
 {
@@ -73,7 +64,6 @@ int	main(int argc, char **argv)
 			"valid .cub file as an argument\n", NULL);
 	}
 	parse_file(argv[1], &cub);
-	print_map(&cub); //todo rm debug
 	init_cub_for_rendering(&cub);
 	make_window(&cub);
 	mlx_hook(cub.win, 2, 1L << 0, handle_keypress, &cub);

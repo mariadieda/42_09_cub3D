@@ -28,7 +28,7 @@ void create_texture_imgs(t_cub *cub)
         wall_tex.img = mlx_xpm_file_to_image(cub->mlx, file_paths[i],
                             &wall_tex.width, &wall_tex.height);
         if (!wall_tex.img)
-            error_exit(cub, "Error\nFailed to load texture", NULL);
+            error_exit(cub, "Failed to load texture", NULL);
         wall_tex.pxl_arr = mlx_get_data_addr(wall_tex.img, &wall_tex.bits_per_pixel,
             &wall_tex.line_len, &wall_tex.endian);
         wall_tex.bytes_per_pixel = wall_tex.bits_per_pixel / 8;
@@ -44,10 +44,10 @@ t_tex select_texture(t_cub *cub, t_pos ray_dir, int is_horiz_hit)
     if (is_horiz_hit)
     {
         if (ray_dir.y > 0)
-            return cub->col->wall_tex[2];
-        return cub->col->wall_tex[0];
+            return cub->col->wall_tex[0];
+        return cub->col->wall_tex[2];
     }
     if (ray_dir.x > 0)
-        return cub->col->wall_tex[1];
-    return cub->col->wall_tex[3];
+        return cub->col->wall_tex[3];
+    return cub->col->wall_tex[1];
 }

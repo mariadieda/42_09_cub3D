@@ -29,26 +29,3 @@ t_pos get_map_tile_px_pos(t_cub *cub, t_pos px_pos)
 
 	return (map_pos);
 }
-
-int	ft_fmin(const double x, const double y)
-{
-	int	min;
-
-	if (x <= y)
-		min = (int)x;
-	else
-		min = (int)y;
-	return (min);
-}
-
-void	print_map(t_cub *cub)
-{
-	int	i;
-
-	i = 0;
-	while (cub->map->grid[i])
-	{
-		printf("\n%s\n\n", cub->map->grid[i]);
-		i++;
-	}
-}

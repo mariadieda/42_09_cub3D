@@ -111,9 +111,9 @@ typedef struct s_hit
 	struct s_tex tex;
 	double wall_x;
 	int rel_pos_x;
-	int is_horiz ;  // 0 = vertical, 1 = horizontal
-	float perp_dist; // distance from player to wall
-	struct s_pos hit_point;     // exact hit position in tile (for texture)
+	int is_horiz ;
+	float perp_dist;
+	struct s_pos hit_point;
 } t_hit;
 
 typedef struct s_move
@@ -155,9 +155,8 @@ typedef struct s_cub
 	void			*img;
 	char			*pxl_arr;
 	struct s_col	*col;
-	//t_player		*player;
 	char			spawn_dir;
-	struct s_pos player_tile; //only used for parsing
+	struct s_pos	player_tile;
 	struct s_pos	player_px;
 	float			player_angle;
 	float			player_fov;
@@ -165,10 +164,11 @@ typedef struct s_cub
 	float			screen_dist;
 	struct s_move	move;
 	int				tile_size;
-
 }					t_cub;
 
 //main
+void				init_cub_for_rendering(t_cub *cub);
+int					has_cub_extension(char *cub_fn);
 void				make_window(t_cub *cub);
 
 //parse
@@ -225,7 +225,6 @@ void				free_n_array(char **arr, int grid_height);
 
 //utils
 void				print_map(t_cub *cub);
-int					ft_fmin(double x, double y);
 t_int_pos			get_map_tile_int_pos(t_cub *cub, t_pos px_pos);
 t_pos				get_map_tile_px_pos(t_cub *cub, t_pos px_pos);
 #endif //CUB3D_H

@@ -91,41 +91,6 @@ void	try_put_pixel(t_cub *cub, float x_px, float y_px, int color)
 	}
 }
 
-void	put_line_pixels(t_cub *cub, t_line *line, int color)
-{
-	float	x_cord;
-	float	y_cord;
-	int	i;
-
-	i = 0;
-	while (i <= (int)line->line_len)
-	{
-		x_cord = (float)(line->start_point.x + (i / line->line_len)
-				* line->x_diff);
-		y_cord = (float)(line->start_point.y + (i / line->line_len)
-				* line->y_diff);
-		if (x_cord >= 0 && x_cord < (float)cub->mlx_data.win_width && y_cord >= 0
-			&& y_cord < (float)cub->mlx_data.win_height)
-		{
-			try_put_pixel(cub, x_cord, y_cord, color);
-		}
-		i++;
-	}
-}
-
-void	draw_line(t_cub *cub, t_pos start_pos_px, t_pos end_pos_px, int color)
-{
-	t_line	line;
-
-	ft_memset(&line, 0, sizeof(t_line));
-	line.start_point = start_pos_px;
-	line.end_point = end_pos_px;
-	line.x_diff = line.end_point.x - line.start_point.x;
-	line.y_diff = line.end_point.y - line.start_point.y;
-	line.line_len = sqrt(line.x_diff * line.x_diff + line.y_diff * line.y_diff);
-	if (line.line_len > 0)
-		put_line_pixels(cub, &line, color);
-}
 
 // rotation = viewer perspective, not actual position change
 // rotation should always be possible

@@ -16,7 +16,6 @@
 int	check_walkable_pos(t_cub *cub, float new_x_px, float new_y_px)
 {
     float		radius;
-    float		eps;
     int			left;
     int			top;
     int			right;
@@ -25,11 +24,10 @@ int	check_walkable_pos(t_cub *cub, float new_x_px, float new_y_px)
     int			x;
 
     radius = 0.3f * cub->tile_size;
-    eps = 0.0001f;
-    left = (int)floorf((new_x_px - radius - eps) / cub->tile_size);
-    right = (int)floorf((new_x_px + radius - eps) / cub->tile_size);
-    top = (int)floorf((new_y_px - radius - eps) / cub->tile_size);
-    bottom = (int)floorf((new_y_px + radius - eps) / cub->tile_size);
+    left = (int)floorf((new_x_px - radius - 0.0001f) / cub->tile_size);
+    right = (int)floorf((new_x_px + radius - 0.0001f) / cub->tile_size);
+    top = (int)floorf((new_y_px - radius - 0.0001f) / cub->tile_size);
+    bottom = (int)floorf((new_y_px + radius - 0.0001f) / cub->tile_size);
     y = top;
     while (y <= bottom)
     {

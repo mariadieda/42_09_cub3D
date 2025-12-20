@@ -12,18 +12,9 @@
 
 #include "cub3d.h"
 
-int     ft_isspace(unsigned char c)
-{
-    if (c == ' ' || c == '\n' || c == '\t'
-         || c == '\v' || c == '\f' || c == '\r')
-        return (1);
-    else 
-        return (0);
-}
-
 const char* skip_ws(const char* s)
 {
-    while(*s && ft_isspace((unsigned char)*s))
+    while(*s && ft_is_in_set(*s, " \n\t\v\f\r"))
         s++;
     return (s);
 }
@@ -55,7 +46,7 @@ int     validate_color(char *s, t_cub* cub)
         if(!trimd_num)
         {
             free_n_array(nums, 3);
-            error_exit(cub, "Error\nMalloc failed!\n", NULL);
+            error_exit(cub, "Malloc failed!\n", NULL);
         }
         if(trimd_num[0] == '\0') // 100,,50
         {
@@ -87,6 +78,7 @@ int     validate_color(char *s, t_cub* cub)
     return(1);
 }
 
+//length of nums validated befirehand: always has 3 parts because of validate_color called before
 int get_int_color_from_str(char* s)
 {
     int		r;
@@ -95,7 +87,7 @@ int get_int_color_from_str(char* s)
     int     color;
     char    **nums;
 
-    nums = ft_split(s, ','); //always has 3 parts because of validate_color called before
+    nums = ft_split(s, ',');
     r = ft_atoi(nums[0]);
     g = ft_atoi(nums[1]);
     b = ft_atoi(nums[2]);
@@ -117,10 +109,10 @@ char*    second_part(char *ident, char* trimd, t_cub* cub)
     temp = skip_ws(temp); // if there are white spaces at the beginning remove them 
    
     if(*temp == '\0')
-        error_exit(cub, "Error\nMissing texture address / color!\n", (char*[]){trimd, NULL});
+        error_exit(cub, "Missing texture address/color!\n", (char*[]){trimd, NULL});
     s = ft_strdup(temp); // give back a malloced string
     if(!s)   
-        error_exit(cub, "Error\nMalloc failed!\n", (char*[]){trimd, NULL});
+        error_exit(cub, "Malloc failed!\n", (char*[]){trimd, NULL});
     return (s);
 }
 
@@ -128,9 +120,9 @@ char*   trim_the_line(char *line, t_cub* cub)
 {
     char *trimd = ft_strtrim(line, " \n\t\f\v\r");
     if(!trimd)
-        error_exit(cub, "Error\nMalloc failed!\n", (char*[]){line, NULL});
+        error_exit(cub, "Malloc failed!\n", (char*[]){line, NULL});
     if(*trimd == '\0')
-        error_exit(cub, "Error\nEmpty line\n", (char*[]){line, trimd, NULL});
+        error_exit(cub, "Empty line\n", (char*[]){line, trimd, NULL});
     return trimd;
 }
 
@@ -146,7 +138,7 @@ void    populate_color(char **bufs, char *ident, int* header_cnt, t_cub* cub)
         if(*ident == 'F')
         {
             if(cub->col->has_floor)
-                error_exit(cub, "Error\nDuplicate floor color definition.\n", (char*[]){bufs[0], trimd, color_str, NULL});
+                error_exit(cub, "Duplicate floor color definition.\n", (char*[]){bufs[0], trimd, color_str, NULL});
             cub->col->floor = get_int_color_from_str(color_str);
             cub->col->has_floor = 1;
             (*header_cnt)++;
@@ -154,14 +146,14 @@ void    populate_color(char **bufs, char *ident, int* header_cnt, t_cub* cub)
         else if(*ident == 'C')
         {
             if(cub->col->has_ceil)
-                error_exit(cub, "Error\nDuplicate ceiling color definition.\n", (char*[]){bufs[0], trimd, color_str, NULL});
+                error_exit(cub, "Duplicate ceiling color definition.\n", (char*[]){bufs[0], trimd, color_str, NULL});
             cub->col->ceil = get_int_color_from_str(color_str);
             cub->col->has_ceil = 1;
             (*header_cnt)++;
         }
     }
     else    
-        error_exit(cub, "Error\nInvalid Color Format\n", (char*[]){bufs[0], color_str, trimd, NULL});
+        error_exit(cub, "Invalid color format\n", (char*[]){bufs[0], color_str, trimd, NULL});
 }
 
 int     validate_address(char* token)
@@ -171,7 +163,7 @@ int     validate_address(char* token)
     i = 0;
     while(token[i])
     {
-        if(ft_isspace((unsigned char)token[i]))
+        if(ft_is_in_set(token[i], " \n\t\v\f\r"))
         {
             return (0);
         }
@@ -191,7 +183,7 @@ int     validate_identifier(char *ident, char *trimd)
         return (0);
     }
     if (ft_strncmp(trimd, ident, len_ident) != 0 
-        || trimd[len_ident] == '\0' || !ft_isspace((unsigned char)trimd[len_ident]))
+        || trimd[len_ident] == '\0' || !ft_is_in_set(trimd[len_ident], " \n\t\v\f\r"))
     {
        
         return (0);
@@ -242,13 +234,13 @@ void    validate_and_populate_address(char **bufs, char* idn, int* header_cnt, t
     trimd = bufs[1];
     token = second_part(idn, trimd, cub);
     if(!validate_address(token))
-        error_exit(cub, "Error\nInvalid Path Format\n", (char*[]){trimd, token, bufs[0], NULL});
+        error_exit(cub, "Invalid Path Format\n", (char*[]){trimd, token, bufs[0], NULL});
     if (!populate_address(token, idn, header_cnt, cub))
     {
-        char* s1 = "Error\nMultiple addresses for identifier: ";
+        char* s1 = "Multiple addresses for identifier: ";
         char* s2 = ft_strjoin(s1, idn);
         if(!s2)
-            error_exit(cub, "Error\nMalloc failed\n", (char*[]){trimd, token, bufs[0], NULL});
+            error_exit(cub, "Malloc failed\n", (char*[]){trimd, token, bufs[0], NULL});
         char* msg = ft_strjoin(s2, "\n");
         free(s2);
         error_exit(cub, msg, (char*[]){trimd, token, bufs[0], msg, NULL});
@@ -277,7 +269,7 @@ void    parse_text_col_line(char *line, int* header_cnt, t_cub* cub)
     else if(validate_identifier("C", trimd))
         populate_color(bufs, "C", header_cnt, cub);
     else
-        error_exit(cub,  "Error\nInvalid/Missing texture/color header!\n",(char*[]){line, trimd, NULL});
+        error_exit(cub,  "Invalid/Missing texture/color header!\n",(char*[]){line, trimd, NULL});
     free(trimd);
 }
 
@@ -290,12 +282,12 @@ void     check_paths_accessibility(t_cub* cub)
     {    
         fd = open(paths[i], O_RDONLY);
         if (fd == -1)
-            error_exit(cub, "Error\nCannot open texture file\n", NULL);
+            error_exit(cub, "Cannot open texture file\n", NULL);
         char * extension = ft_strrchr(paths[i], '.');
         if(!extension || ft_strncmp(extension, ".xpm", 4) != 0)
         {
             close(fd);
-            error_exit(cub, "Error\nTexture is not .xpm\n", NULL);
+            error_exit(cub, "Texture is not .xpm\n", NULL);
         }
         close(fd);
         i++;
@@ -305,18 +297,18 @@ void     check_paths_accessibility(t_cub* cub)
 void    check_col_state(t_cub* cub)
 {
     if (!cub)
-        error_exit(cub, "Error\nCub is not initialized\n", NULL);
+        error_exit(cub, "Cub is not initialized\n", NULL);
     if (cub->col == NULL) //completely NULL col
     {
         cub->col = ft_calloc(1, sizeof(*(cub->col)));
         if (!cub->col)
-            error_exit(cub, "Error\nMalloc failed\n", NULL);
+            error_exit(cub, "Malloc failed\n", NULL);
     }
     else if (cub->col->no_tex_p || cub->col->so_tex_p ||
             cub->col->we_tex_p || cub->col->ea_tex_p || 
             cub->col->has_floor || cub->col->has_ceil) // if col is allocated and some of the members are not empty
     {
-        error_exit(cub, "Error\nInternal: col already initialized\n", NULL);
+        error_exit(cub, "Internal: col already initialized\n", NULL);
     } // if col is allocated but all members are NULL -> safe to use
 }
 
@@ -325,13 +317,12 @@ void    check_missing_text_col(t_cub* cub, char *line)
     if (!cub->col->no_tex_p || !cub->col->so_tex_p ||
         !cub->col->we_tex_p || !cub->col->ea_tex_p || 
         !cub->col->has_floor || !cub->col->has_ceil)
-        error_exit(cub, "Error\nMissing texture path or color\n", (char*[]){line, NULL});
+        error_exit(cub, "Missing texture path or color\n", (char*[]){line, NULL});
 }
 
 int     is_map(char c)
 {
-    if (c == ' ' ||c == '1' || c == '0' || c == 'N'
-         || c == 'S' || c == 'W' || c == 'E')
+    if (ft_is_in_set(c, " 10NSWE"))
         return (1);
     else 
         return (0);
@@ -416,14 +407,14 @@ void    allocate_map(t_cub* cub)
 {   
     cub->map = ft_calloc(1, sizeof(t_map));
     if (!cub->map)
-        error_exit(cub, "Error\nMalloc failed\n", NULL);
+        error_exit(cub, "Malloc failed\n", NULL);
 
     cub->map->height = 0;
     cub->map->width = 0;
     cub->map->capacity = 8;
     cub->map->grid = malloc(sizeof(char*) * (cub->map->capacity + 1));
     if (!cub->map->grid)
-        error_exit(cub, "Error\nMalloc failed for map grid\n", NULL);
+        error_exit(cub, "Malloc failed for map grid\n", NULL);
 }
 
 void    add_line_to_grid(t_cub* cub, char *trimd, char* line)
@@ -436,14 +427,14 @@ void    add_line_to_grid(t_cub* cub, char *trimd, char* line)
     {        
         new_grid = ft_calloc((cub->map->capacity*2)+1, sizeof(char*));
         if(!new_grid)
-            error_exit(cub, "Error\nMalloc failed\n", (char*[]){line, trimd, NULL});
+            error_exit(cub, "Malloc failed\n", (char*[]){line, trimd, NULL});
         while (i < cub->map->height)
         {
             new_grid[i] = ft_strdup(cub->map->grid[i]);
             if(!new_grid[i])
             {
                 free_n_array(new_grid, i);
-                error_exit(cub, "Error\nMalloc failed\n", (char*[]){line, trimd, NULL});
+                error_exit(cub, "Malloc failed\n", (char*[]){line, trimd, NULL});
             }
             i++;
         }
@@ -454,7 +445,7 @@ void    add_line_to_grid(t_cub* cub, char *trimd, char* line)
 
     cub->map->grid[cub->map->height] = ft_strdup(trimd);
     if(!cub->map->grid[cub->map->height])
-        error_exit(cub, "Error\nMalloc failed\n",  (char*[]){line, trimd, NULL});
+        error_exit(cub, "Malloc failed\n",  (char*[]){line, trimd, NULL});
     cub->map->height++;
 }
 
@@ -525,7 +516,7 @@ int     parse_file(char* filename, t_cub* cub)
     has_player = 0;
     fd = open(filename, O_RDONLY);
     if (fd == -1)
-        error_exit(cub, "Error\nError opening file\n", NULL);
+        error_exit(cub, "Error opening file\n", NULL);
     check_col_state(cub);
     allocate_map(cub);
     while(1)
@@ -557,10 +548,10 @@ int     parse_file(char* filename, t_cub* cub)
             else
             {               
                 if(is_blank_line(line))               
-                    error_exit(cub, "Error\nInvalid blank line inside map\n", (char*[]){line, NULL});
+                    error_exit(cub, "Invalid blank line inside map\n", (char*[]){line, NULL});
                 trimd = ft_strtrim(line, "\r\n");
                 if(!validate_chars_in_map_line(trimd, &has_player, &map_started, cub))
-                    error_exit(cub, "Error\nInvalid map character or Multiple players present\n", (char*[]){trimd, line, NULL});
+                    error_exit(cub, "Invalid map character or Multiple players present\n", (char*[]){trimd, line, NULL});
                 add_line_to_grid(cub, trimd, line);          
                 free(trimd);
             }
@@ -569,14 +560,14 @@ int     parse_file(char* filename, t_cub* cub)
     } 
     cub->map->grid[cub->map->height] = NULL;
     if(!map_started)
-        error_exit(cub, "Error\nNo map found\n", NULL);
+        error_exit(cub, "No map found\n", NULL);
     if(has_player == 0)
-        error_exit(cub, "Error\nNo player found\n", NULL);
+        error_exit(cub, "No player found\n", NULL);
     pad_map(cub);
     close(fd);
     check_paths_accessibility(cub);
     if (!check_map(cub))
-        error_exit(cub, "Error\nInvalid map structure\n", NULL);
+        error_exit(cub, "Invalid map structure\n", NULL);
     replace_player_with_floor(cub);
 
     return(1);
