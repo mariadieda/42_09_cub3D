@@ -13,6 +13,7 @@ SRCS=src/main.c \
 	 src/parsing/parse.c\
 	 src/parsing/parse_validation_helpers.c\
      src/parsing/color_validation.c\
+	 src/parsing/check_map.c\
 	 gnl/get_next_line.c \
 	 gnl/get_next_line_utils.c
 OBJS=${SRCS:.c=.o} 	# Change of file extension
