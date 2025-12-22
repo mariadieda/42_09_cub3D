@@ -310,52 +310,6 @@ void	add_line_to_grid(t_cub *cub, char *trimd, char *line)
 	cub->map->height++;
 }
 
-int	check_map(t_cub *cub)
-{
-	int		y;
-	int		x;
-	int		h;
-	int		w;
-	char	**grid;
-
-	grid = cub->map->grid;
-	y = 0;
-	if (cub->map->width <= 0 || cub->map->height <= 0)
-		error_exit(cub, "Invalid map size\n", NULL);
-	h = cub->map->height;
-	w = cub->map->width;
-	while (y < cub->map->height)
-	{
-		x = 0;
-		while (x < cub->map->width)
-		{
-			if ((y == 0) || (y == h - 1) || x == 0 || (x == w - 1))
-			{
-				if (grid[y][x] == '0' || is_player(grid[y][x]))
-					return (0);
-			}
-			else if (grid[y][x] == '0' || is_player(grid[y][x]))
-			{
-				if ((grid[y - 1][x] != '1' && grid[y - 1][x] != '0'
-						&& !is_player(grid[y - 1][x])))
-					return (0);
-				if ((grid[y][x - 1] != '1' && grid[y][x - 1] != '0'
-						&& !is_player(grid[y][x - 1])))
-					return (0);
-				if ((grid[y + 1][x] != '1' && grid[y + 1][x] != '0'
-						&& !is_player(grid[y + 1][x])))
-					return (0);
-				if ((grid[y][x + 1] != '1' && grid[y][x + 1] != '0'
-						&& !is_player(grid[y][x + 1])))
-					return (0);
-			}
-			x++;
-		}
-		y++;
-	}
-	return (1);
-}
-
 int	inside_header(t_cub *cub, int map_started)
 {
 	if (cub->header_cnt < 6)
