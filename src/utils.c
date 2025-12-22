@@ -29,3 +29,26 @@ t_pos	get_map_tile_px_pos(t_cub *cub, t_pos px_pos)
 	map_pos.y = px_pos.y / cub->tile_size;
 	return (map_pos);
 }
+
+void	free_tmp_lines(t_cub *cub)
+{
+	free(cub->trmd_line);
+	free(cub->cur_line);
+	cub->trmd_line = NULL;
+	cub->cur_line = NULL;
+}
+
+void	free_array(char **arr)
+{
+	int	i;
+
+	i = 0;
+	if (!arr)
+		return ;
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
+}

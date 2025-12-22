@@ -13,7 +13,7 @@
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# define PLAYER_SPEED 5 //how many units player moves per keypress
+# define PLAYER_SPEED 5            //how many units player moves per keypress
 # define PLAYER_ROTATE_SPEED 0.03f //how fast the player is turning
 
 # include "../gnl/get_next_line.h"
@@ -23,7 +23,7 @@
 # include <X11/keysym.h>
 # include <fcntl.h> // open
 # include <math.h>
-# include <mlx.h>
+# include "../minilibx-linux/mlx.h" //# include <mlx.h>
 # include <stdio.h>
 # include <stdlib.h> // malloc, free, exit
 # include <unistd.h> // close, read, write
@@ -153,9 +153,9 @@ typedef struct s_cub
 	void				*img;
 	char				*pxl_arr;
 	struct s_col		*col;
-    char				*cur_line;
-    char				*trmd_line;
-    int					header_cnt;
+	char				*cur_line;
+	char				*trmd_line;
+	int					header_cnt;
 	char				spawn_dir;
 	struct s_pos		player_tile;
 	struct s_pos		player_px;
@@ -176,36 +176,37 @@ void					make_window(t_cub *cub);
 int						parse_file(char *filename, t_cub *cub);
 
 // parse - check map
-void	pad_map(t_cub *cub);
-void	allocate_map(t_cub *cub);
-int	check_tile(int y, int x, char **grid, t_cub *cub);
-int	check_map(t_cub *cub);
-char	**expand_grid(t_cub *cub);
+void					pad_map(t_cub *cub);
+void					allocate_map(t_cub *cub);
+int						check_tile(int y, int x, char **grid, t_cub *cub);
+int						check_map(t_cub *cub);
+char					**expand_grid(t_cub *cub);
 
 // parse line validation
-char	*trim_the_line(char *line, t_cub *cub);
-void	validate_and_populate_address(char *idn, t_cub *cub);
-void	parse_text_col_line(t_cub *cub);
-void	check_texture_paths_accessibility(t_cub *cub);
-void	check_col_state(t_cub *cub);
-void	validate_chars_in_map_line(t_cub *cub, int *has_player, int *map_started);
+char					*trim_the_line(char *line, t_cub *cub);
+void					validate_and_populate_address(char *idn, t_cub *cub);
+void					parse_text_col_line(t_cub *cub);
+void					check_texture_paths_accessibility(t_cub *cub);
+void					validate_line_chars_map(t_cub *cub, int *has_player,
+							int *map_started);
 
 // parse populate funs
-void	populate_color(char *ident, t_cub *cub);
-int	populate_address(char *token, char *ident, t_cub *cub);
-char	*parse_ident_val(char *ident, char *trimd, t_cub *cub);
-const char	*skip_ws(const char *s);
+void					populate_color(char *ident, t_cub *cub);
+int						populate_address(char *token, char *ident, t_cub *cub);
+char					*parse_ident_val(char *ident, char *trimd, t_cub *cub);
+const char				*skip_ws(const char *s);
+void					check_col_state(t_cub *cub);
 
 //parse color validation
-int	validate_color(char **nums);
-int	get_int_color_from_str(char **nums);
+int						validate_color(char **nums);
+int						get_int_color_from_str(char **nums);
 
 // parse_validation_helpers
 int						is_blank_line(const char *line);
 int						is_player(char c);
-void					check_missing_text_col(t_cub* cub);
+void					check_missing_text_col(t_cub *cub);
 int						validate_identifier(char *ident, char *trimd);
-int						validate_address(char* token);
+int						validate_address(char *token);
 
 //keyhandlers
 int						handle_keyrelease(int keycode, t_cub *cub);
@@ -219,7 +220,8 @@ void					draw_vertical_slices(t_cub *cub, int i, t_hit *hit,
 
 //rays
 t_hit					cast_dda_ray(t_cub *cub, float ray_angle);
-t_w_slice				set_up_wall_slice(t_cub *cub, t_hit *hit, float start_angle);
+t_w_slice				set_up_wall_slice(t_cub *cub, t_hit *hit,
+							float start_angle);
 void					set_rel_x_tile_pos(t_hit *hit);
 
 // collision handling
@@ -247,22 +249,20 @@ void					try_put_pixel(t_cub *cub, float x_px, float y_px,
 							int color);
 float					set_player_spawn_dir(char c);
 
-
 // texture handling
 t_tex					select_texture(t_cub *cub, t_pos ray_dir,
 							int is_horiz_hit);
 void					create_texture_imgs(t_cub *cub);
 
 //clean up
-void					gnl_free_static(void);
 void					clean_up(t_cub *cub);
 void					error_exit(t_cub *cub, char *msg, char **to_be_freed);
 void					free_n_array(char **arr, int grid_height);
-void					free_array(char **arr);
-void					free_tmp_lines(t_cub *cub);
 
 //utils
 void					print_map(t_cub *cub);
 t_int_pos				get_map_tile_int_pos(t_cub *cub, t_pos px_pos);
 t_pos					get_map_tile_px_pos(t_cub *cub, t_pos px_pos);
+void					free_tmp_lines(t_cub *cub);
+void					free_array(char **arr);
 #endif //CUB3D_H

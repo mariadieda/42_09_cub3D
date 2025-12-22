@@ -75,7 +75,7 @@ void	loop_through_lines(t_cub *cub, int fd, int *map_started,
 		cub->trmd_line = ft_strtrim(cub->cur_line, "\r\n");
 		if (!cub->trmd_line)
 			error_exit(cub, "Malloc failed\n", NULL);
-		validate_chars_in_map_line(cub, has_player, map_started);
+		validate_line_chars_map(cub, has_player, map_started);
 		add_line_to_grid(cub, cub->trmd_line);
 		free_tmp_lines(cub);
 	}

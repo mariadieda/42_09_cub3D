@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/cub3d.h"
+#include "../../inc/cub3d.h"
 
 void	pad_map(t_cub *cub)
 {
@@ -59,14 +59,14 @@ int	check_tile(int y, int x, char **grid, t_cub *cub)
 	}
 	else if (grid[y][x] == '0' || is_player(grid[y][x]))
 	{
-		if ((grid[y - 1][x] != '1' && grid[y - 1][x] != '0'
-				&& !is_player(grid[y - 1][x])))
+		if ((grid[y - 1][x] != '1' && grid[y - 1][x] != '0' && !is_player(grid[y
+					- 1][x])))
 			return (0);
 		if ((grid[y][x - 1] != '1' && grid[y][x - 1] != '0'
 				&& !is_player(grid[y][x - 1])))
 			return (0);
-		if ((grid[y + 1][x] != '1' && grid[y + 1][x] != '0'
-				&& !is_player(grid[y + 1][x])))
+		if ((grid[y + 1][x] != '1' && grid[y + 1][x] != '0' && !is_player(grid[y
+					+ 1][x])))
 			return (0);
 		if ((grid[y][x + 1] != '1' && grid[y][x + 1] != '0'
 				&& !is_player(grid[y][x + 1])))

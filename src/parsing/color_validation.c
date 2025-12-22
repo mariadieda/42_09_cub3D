@@ -100,10 +100,10 @@ int	validate_color(char **nums)
 // always has 3 parts because of validate_color called before
 int	get_int_color_from_str(char **nums)
 {
-	int r;
-	int g;
-	int b;
-	int color;
+	int	r;
+	int	g;
+	int	b;
+	int	color;
 
 	r = ft_atoi(nums[0]);
 	g = ft_atoi(nums[1]);

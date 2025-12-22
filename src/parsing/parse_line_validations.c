@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../inc/cub3d.h"
-#include "../inc/cub3d.h"
 
 char	*trim_the_line(char *line, t_cub *cub)
 {
@@ -27,7 +26,6 @@ char	*trim_the_line(char *line, t_cub *cub)
 	}
 	return (trimd);
 }
-
 
 void	validate_and_populate_address(char *idn, t_cub *cub)
 {
@@ -99,25 +97,8 @@ void	check_texture_paths_accessibility(t_cub *cub)
 	}
 }
 
-void	check_col_state(t_cub *cub)
-{
-	if (!cub)
-		error_exit(cub, "Cub is not initialized\n", NULL);
-	if (cub->col == NULL)
-	{
-		cub->col = ft_calloc(1, sizeof(*(cub->col)));
-		if (!cub->col)
-			error_exit(cub, "Malloc failed\n", NULL);
-	}
-	else if (cub->col->no_tex_p || cub->col->so_tex_p || cub->col->we_tex_p
-			|| cub->col->ea_tex_p || cub->col->has_floor || cub->col->has_ceil)
-	{
-		error_exit(cub, "Internal: col already initialized\n", NULL);
-	}
-}
-
 // validate the line and start_map = 1
-void validate_chars_in_map_line(t_cub *cub, int *has_player, int *map_started)
+void	validate_line_chars_map(t_cub *cub, int *has_player, int *map_started)
 {
 	int	i;
 	int	trimd_len;

@@ -55,10 +55,10 @@ void	clean_up(t_cub *cub)
 {
 	if (!cub)
 		return ;
-    if (cub->cur_line)
-      free(cub->cur_line);
-    if (cub->trmd_line)
-      free(cub->trmd_line);
+	if (cub->cur_line)
+		free(cub->cur_line);
+	if (cub->trmd_line)
+		free(cub->trmd_line);
 	if (cub->col)
 		free_textures(cub);
 	if (cub->mlx)
@@ -77,23 +77,6 @@ void	clean_up(t_cub *cub)
 	}
 }
 
-/* only for usage when calling with array on stack: error_exit(cub,
-"Error\nMalloc failed!\n", (char*[]){trimd, NULL});*/
-void	free_array(char **arr)
-{
-	int	i;
-
-	i = 0;
-	if (!arr)
-		return ;
-	while (arr[i])
-	{
-		free(arr[i]);
-		i++;
-	}
-	free(arr);
-}
-
 void	free_array_without_malloc_arr(char **arr)
 {
 	int	i;
@@ -108,19 +91,10 @@ void	free_array_without_malloc_arr(char **arr)
 	}
 }
 
-void free_tmp_lines(t_cub *cub)
-{
-	free(cub->trmd_line);
-	free(cub->cur_line);
-	cub->trmd_line = NULL;
-	cub->cur_line = NULL;
-}
-
 void	error_exit(t_cub *cub, char *msg, char **to_be_freed)
 {
 	ft_putstr_fd("Error\n", 2);
 	ft_putstr_fd(msg, 2);
-	//gnl_free_static();
 	get_next_line(-1);
 	free_array_without_malloc_arr(to_be_freed);
 	clean_up(cub);
