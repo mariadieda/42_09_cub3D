@@ -180,6 +180,7 @@ int						parse_file(char *filename, t_cub *cub);
 //parse color validation
 int	validate_color(char **nums);
 int	get_int_color_from_str(char **nums);
+int	check_map(t_cub* cub);
 
 // parse_validation_helpers
 int						is_blank_line(const char *line);
