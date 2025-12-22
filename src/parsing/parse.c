@@ -19,60 +19,7 @@ const char	*skip_ws(const char *s)
 	return (s);
 }
 
-void	validate_num(const char *s, int *error)
-{
-	int		j;
-	char	*trimd_num;
-	int		num;
 
-	trimd_num = ft_strtrim(s, " \n\t\f\v\r");
-	if (!trimd_num || trimd_num[0] == '\0')
-		*error = 1;
-	j = 0;
-	while (!error && trimd_num[j])
-	{
-		if (!ft_isdigit(trimd_num[j]))
-			*error = 1;
-		j++;
-	}
-	num = ft_atoi(trimd_num);
-	free(trimd_num);
-	if (!*error && (num < 0 || num > 255))
-		*error = 1;
-}
-
-int	validate_color(char **nums)
-{
-	int	i;
-	int	error;
-
-	error = 0;
-	i = 0;
-	while (!error && nums[i])
-	{
-		validate_num(nums[i], &error);
-		i++;
-	}
-	if (i != 3)
-		error = 1;
-	return (!error);
-}
-
-// length of nums validated befirehand:
-// always has 3 parts because of validate_color called before
-int	get_int_color_from_str(char **nums)
-{
-	int	r;
-	int	g;
-	int	b;
-	int	color;
-
-	r = ft_atoi(nums[0]);
-	g = ft_atoi(nums[1]);
-	b = ft_atoi(nums[2]);
-	color = ((r << 16) | (g << 8) | b);
-	return (color);
-}
 
 // find the end of the identifier and make it start of the temp
 // if there are white spaces at the beginning remove them
@@ -121,7 +68,10 @@ void	populate_color(char *ident, t_cub *cub)
 		if (*ident == 'F')
 		{
 			if (cub->col->has_floor)
+			{
+				free_array(nums);
 				error_exit(cub, "Duplicate floor color definition.\n", NULL);
+			}
 			cub->col->floor = get_int_color_from_str(nums);
 			cub->col->has_floor = 1;
 			cub->header_cnt++;
@@ -129,7 +79,10 @@ void	populate_color(char *ident, t_cub *cub)
 		else if (*ident == 'C')
 		{
 			if (cub->col->has_ceil)
+			{
+				free_array(nums);
 				error_exit(cub, "Duplicate ceiling color definition.\n", NULL);
+			}
 			cub->col->ceil = get_int_color_from_str(nums);
 			cub->col->has_ceil = 1;
 			cub->header_cnt++;
@@ -137,10 +90,10 @@ void	populate_color(char *ident, t_cub *cub)
 	}
 	else
 	{
-		free_n_array(nums, 3); // todo ensure to free the right size and not double free
+		free_array(nums);
 		error_exit(cub, "Invalid color format\n", NULL);
 	}
-    // free nums
+    free_array(nums);
 }
 
 int	populate_address(char *token, char *ident, t_cub *cub)

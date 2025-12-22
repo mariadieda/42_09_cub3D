@@ -176,6 +176,10 @@ void					make_window(t_cub *cub);
 //parse
 int						parse_file(char *filename, t_cub *cub);
 
+//parse color validation
+int	validate_color(char **nums);
+int	get_int_color_from_str(char **nums);
+
 // parse_validation_helpers
 int						is_blank_line(const char *line);
 int						is_player(char c);
@@ -233,6 +237,7 @@ void					create_texture_imgs(t_cub *cub);
 void					clean_up(t_cub *cub);
 void					error_exit(t_cub *cub, char *msg, char **to_be_freed);
 void					free_n_array(char **arr, int grid_height);
+void	free_array(char **arr);
 
 //utils
 void					print_map(t_cub *cub);

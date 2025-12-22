@@ -1,6 +1,6 @@
 // todo add header
 
-#include "inc/cub3d.h"
+#include "../inc/cub3d.h"
 
 int	is_blank_line(const char *line)
 {

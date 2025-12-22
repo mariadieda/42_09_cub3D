@@ -1,37 +1,31 @@
+
 NAME=cub3D
-
 SRCS=src/main.c \
-     src/rendering.c \
-     src/rays.c \
-     src/player.c \
-     src/clean_up.c \
-     src/utils.c \
-     src/keyhandlers.c \
-     src/wall_texture_handling.c \
-     src/collision_handling.c \
-     src/minimap.c \
-     src/parsing/parse.c\
-     src/parsing/parse_validation_helpers.c\
+	 src/rendering.c\
+	 src/rays.c\
+	 src/player.c\
+	 src/clean_up.c \
+	 src/utils.c \
+	 src/keyhandlers.c \
+	 src/wall_texture_handling.c \
+	 src/collision_handling.c \
+	 src/minimap.c \
+	 src/parsing/parse.c\
+	 src/parsing/parse_validation_helpers.c\
      src/parsing/color_validation.c\
-     gnl/get_next_line.c \
-     gnl/get_next_line_utils.c
-
-OBJS=${SRCS:.c=.o}
-INCL=inc
+	 gnl/get_next_line.c \
+	 gnl/get_next_line_utils.c
+OBJS=${SRCS:.c=.o} 	# Change of file extension
+INCL=inc	  		 # File headers
 LIBFT_DIR=libft
 LIBFT=libft/libft.a
-
-MINLB_DIR=minilibx-mac
+MINLB_DIR=minilibx-linux
 MLX=$(MINLB_DIR)/libmlx.a
+CC=cc            # Define compiler
+RM=rm -f         # Remove file without error, even if it does not exist
+CFLAGS=-Wall -Wextra -Werror -g -I$(INCL) -I gnl -I$(MINLB_DIR)  # Define options for compilation #-fsanitize=address for MAC work
+LDFLAGS=-L$(LIBFT_DIR) -lft -L$(MINLB_DIR) -lmlx -lXext -lX11 -lm # linker flags for linking stage
 
-CC=clang
-RM=rm -f
-
-CFLAGS=-Wall -Wextra -Werror -g -I$(INCL) -I gnl -I$(MINLB_DIR)
-LDFLAGS=-L$(LIBFT_DIR) -lft -L$(MINLB_DIR) -lmlx \
-	-framework OpenGL -framework AppKit
-CFLAGS += -I/opt/X11/include
-LDFLAGS += -L/opt/X11/lib
 # Default target to build the library
 all: $(LIBFT) $(MLX) $(NAME)
 
