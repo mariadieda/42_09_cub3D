@@ -19,8 +19,8 @@
 # include "../gnl/get_next_line.h"
 # include "../libft/ft_printf.h"
 # include "../libft/libft.h"
-//# include <X11/X.h>
-//# include <X11/keysym.h>
+# include <X11/X.h>
+# include <X11/keysym.h>
 # include <fcntl.h> // open
 # include <math.h>
 # include <mlx.h>
@@ -158,7 +158,8 @@ typedef struct s_cub
     int					header_cnt;
 	char				**bufs;
 	char				spawn_dir;
-	struct s_int_pos	player_tile;
+	//struct s_int_pos	player_tile;
+	struct s_pos	player_tile;
 	struct s_pos		player_px;
 	float				player_angle;
 	float				player_fov;

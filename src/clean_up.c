@@ -93,6 +93,7 @@ void	free_array(char **arr)
 		free(arr[i]);
 		i++;
 	}
+	free(arr);
 }
 
 void	error_exit(t_cub *cub, char *msg, char **to_be_freed)

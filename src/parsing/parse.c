@@ -49,51 +49,47 @@ char	*trim_the_line(char *line, t_cub *cub)
 
 	trimd = ft_strtrim(line, " \n\t\f\v\r");
 	if (!trimd)
-		error_exit(cub, "Malloc failed!\n", (char *[]){line, NULL});
+		error_exit(cub, "Malloc failed!\n", NULL);
 	if (*trimd == '\0')
-		error_exit(cub, "Empty line\n", (char *[]){line, trimd, NULL});
+	{
+		free(trimd);
+		error_exit(cub, "Empty line\n", NULL);
+	}
 	return (trimd);
 }
 
+// identifier already valdiated (F or C)
 void	populate_color(char *ident, t_cub *cub)
 {
 	char	*color_str;
 	char	**nums;
+	int		color;
 
 	color_str = second_part(ident, cub->trmd_line, cub);
 	nums = ft_split(color_str, ',');
 	free(color_str);
-	if (nums && validate_color(nums))
-	{
-		if (*ident == 'F')
-		{
-			if (cub->col->has_floor)
-			{
-				free_array(nums);
-				error_exit(cub, "Duplicate floor color definition.\n", NULL);
-			}
-			cub->col->floor = get_int_color_from_str(nums);
-			cub->col->has_floor = 1;
-			cub->header_cnt++;
-		}
-		else if (*ident == 'C')
-		{
-			if (cub->col->has_ceil)
-			{
-				free_array(nums);
-				error_exit(cub, "Duplicate ceiling color definition.\n", NULL);
-			}
-			cub->col->ceil = get_int_color_from_str(nums);
-			cub->col->has_ceil = 1;
-			cub->header_cnt++;
-		}
-	}
-	else
+	if (!nums || !validate_color(nums))
 	{
 		free_array(nums);
 		error_exit(cub, "Invalid color format\n", NULL);
 	}
-    free_array(nums);
+	color = get_int_color_from_str(nums);
+	free_array(nums);
+	if (*ident == 'F')
+	{
+		if (cub->col->has_floor)
+			error_exit(cub, "Duplicate floor color definition.\n", NULL);
+		cub->col->floor = color;
+		cub->col->has_floor = 1;
+	}
+	else if (*ident == 'C')
+	{
+		if (cub->col->has_ceil)
+			error_exit(cub, "Duplicate ceiling color definition.\n", NULL);
+		cub->col->ceil = color;
+		cub->col->has_ceil = 1;
+	}
+	cub->header_cnt++;
 }
 
 int	populate_address(char *token, char *ident, t_cub *cub)
@@ -132,25 +128,23 @@ int	populate_address(char *token, char *ident, t_cub *cub)
 void	validate_and_populate_address(char *idn, t_cub *cub)
 {
 	char	*token;
-	char	*trimd;
 	char	*s1;
 	char	*s2;
 	char	*msg;
 
-	trimd = cub->bufs[1];
-	token = second_part(idn, trimd, cub);
+	token = second_part(idn, cub->trmd_line, cub);
 	if (!validate_address(token))
-		error_exit(cub, "Invalid Path Format\n", (char *[]){trimd, token,
+		error_exit(cub, "Invalid Path Format\n", (char *[]){token,
 			NULL});
 	if (!populate_address(token, idn, cub))
 	{
 		s1 = "Multiple addresses for identifier: ";
 		s2 = ft_strjoin(s1, idn);
 		if (!s2)
-			error_exit(cub, "Malloc failed\n", (char *[]){trimd, token, NULL});
+			error_exit(cub, "Malloc failed\n", (char *[]){token, NULL});
 		msg = ft_strjoin(s2, "\n");
 		free(s2);
-		error_exit(cub, msg, (char *[]){trimd, token, msg, NULL});
+		error_exit(cub, msg, (char *[]){token, msg, NULL});
 	}
 }
 
@@ -372,7 +366,10 @@ int	inside_header(t_cub *cub, int map_started)
 			return (1);
 		}
 		parse_text_col_line(cub);
+		free(cub->trmd_line);
+		cub->trmd_line = NULL;
 		free(cub->cur_line);
+		cub->cur_line = NULL;
 		return (1);
 	}
 	if (cub->header_cnt == 6)
@@ -417,6 +414,8 @@ int	parse_file(char *filename, t_cub *cub)
 		add_line_to_grid(cub, cub->trmd_line, cub->cur_line);
 		free(cub->trmd_line);
 		free(cub->cur_line);
+		cub->trmd_line = NULL;
+		cub->cur_line = NULL;
 	}
 	cub->map->grid[cub->map->height] = NULL;
 	if (!map_started)
@@ -428,7 +427,7 @@ int	parse_file(char *filename, t_cub *cub)
 	check_texture_paths_accessibility(cub);
 	if (!check_map(cub))
 		error_exit(cub, "Invalid map structure\n", NULL);
-	cub->map->grid[cub->player_tile.y][cub->player_tile.x] = '0';
+	cub->map->grid[(int)cub->player_tile.y][(int)cub->player_tile.x] = '0';
 	return (1);
 }
 

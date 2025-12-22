@@ -20,9 +20,6 @@ int	handle_close(t_cub *cub)
 
 int	handle_keypress(int keycode, t_cub *cub)
 {
-  (void) keycode;
-  (void) cub;
-  /*
 	if (keycode == XK_Escape)
 		handle_close(cub);
 	if (keycode == XK_W || keycode == XK_w)
@@ -36,15 +33,12 @@ int	handle_keypress(int keycode, t_cub *cub)
 	if (keycode == XK_Left)
 		cub->move.rotate_left = 1;
 	if (keycode == XK_Right)
-		cub->move.rotate_right = 1;*/
+		cub->move.rotate_right = 1;
 	return (0);
 }
 
 int	handle_keyrelease(int keycode, t_cub *cub)
 {
-	(void) keycode;
-	(void) cub;
-  /*
 	if (keycode == XK_W || keycode == XK_w)
 		cub->move.forward = 0;
 	if (keycode == XK_A || keycode == XK_a)
@@ -56,6 +50,6 @@ int	handle_keyrelease(int keycode, t_cub *cub)
 	if (keycode == XK_Left)
 		cub->move.rotate_left = 0;
 	if (keycode == XK_Right)
-		cub->move.rotate_right = 0;*/
+		cub->move.rotate_right = 0;
 	return (0);
 }

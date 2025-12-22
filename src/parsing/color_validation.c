@@ -33,7 +33,7 @@ void	validate_num(const char *s, int *error)
         j++;
     }
     num = ft_atoi(trimd_num);
-
+    free(trimd_num);
     if (!*error && (num < 0 || num > 255))
         *error = 1;
 }
