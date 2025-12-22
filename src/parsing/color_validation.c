@@ -3,14 +3,53 @@
 /*                                                        :::      ::::::::   */
 /*   color_validation.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdiederi <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apavlopo <apavlopo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 10:00:40 by mdiederi          #+#    #+#             */
-/*   Updated: 2025/12/22 10:00:42 by mdiederi         ###   ########.fr       */
+/*   Updated: 2025/12/22 14:23:07 by apavlopo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
+
+static void	set_fc_color(char ident, int color, t_cub *cub)
+{
+	if (ident == 'F')
+	{
+		if (cub->col->has_floor)
+			error_exit(cub, "Duplicate floor color definition.\n", NULL);
+		cub->col->floor = color;
+		cub->col->has_floor = 1;
+	}
+	else if (ident == 'C')
+	{
+		if (cub->col->has_ceil)
+			error_exit(cub, "Duplicate ceiling color definition.\n", NULL);
+		cub->col->ceil = color;
+		cub->col->has_ceil = 1;
+	}
+}
+
+// identifier already valdiated (F or C)
+void	populate_color(char *ident, t_cub *cub)
+{
+	char	*color_str;
+	char	**nums;
+	int		color;
+
+	color_str = parse_ident_val(ident, cub->trmd_line, cub);
+	nums = ft_split(color_str, ',');
+	free(color_str);
+	if (!nums || !validate_color(nums))
+	{
+		free_array(nums);
+		error_exit(cub, "Invalid color format\n", NULL);
+	}
+	color = get_int_color_from_str(nums);
+	free_array(nums);
+	set_fc_color(*ident, color, cub);
+	cub->header_cnt++;
+}
 
 void	validate_num(const char *s, int *error)
 {
