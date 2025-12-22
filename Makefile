@@ -12,6 +12,7 @@ SRCS=src/main.c \
 	 src/minimap.c \
 	 src/parsing/parse.c\
 	 src/parsing/parse_validation_helpers.c\
+	 src/parsing/parse_line_validations.c\
      src/parsing/color_validation.c\
      src/parsing/populate_functions.c\
 	 src/parsing/check_map.c\

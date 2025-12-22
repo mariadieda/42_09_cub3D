@@ -102,3 +102,22 @@ int	check_map(t_cub *cub)
 	}
 	return (1);
 }
+
+char	**expand_grid(t_cub *cub)
+{
+	int		i;
+	char	**new_grid;
+
+	new_grid = ft_calloc((cub->map->capacity * 2) + 1, sizeof(char *));
+	if (!new_grid)
+		error_exit(cub, "Malloc failed\n", NULL);
+	i = 0;
+	while (i < cub->map->height)
+	{
+		new_grid[i] = cub->map->grid[i];
+		i++;
+	}
+	free(cub->map->grid);
+	cub->map->capacity *= 2;
+	return (new_grid);
+}

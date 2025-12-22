@@ -40,23 +40,27 @@ char	*parse_ident_val(char *ident, char *trimd, t_cub *cub)
 	return (s);
 }
 
-static void	set_texture(char *token, char *texture)
+static int	set_texture(char *token, char *texture, t_cub *cub)
 {
 	if (texture)
 		return (0);
-	texture = token;
+	else
+	{
+		texture = token;
+		cub->header_cnt++;
+		return (1);
+	}
 }
 
 int	populate_address(char *token, char *ident, t_cub *cub)
 {
 	if (ft_strncmp(ident, "NO", 2) == 0)
-		set_texture(token, cub->col->no_tex_p);
+		return (set_texture(token, cub->col->no_tex_p, cub));
 	else if (ft_strncmp(ident, "SO", 2) == 0)
-		set_texture(token, cub->col->so_tex_p);
+		return (set_texture(token, cub->col->so_tex_p, cub));
 	else if (ft_strncmp(ident, "WE", 2) == 0)
-		set_texture(token, cub->col->we_tex_p);
+		return (set_texture(token, cub->col->we_tex_p, cub));
 	else if (ft_strncmp(ident, "EA", 2) == 0)
-		set_texture(token, cub->col->ea_tex_p);
-	cub->header_cnt++;
+		return (set_texture(token, cub->col->ea_tex_p, cub));
 	return (1);
 }

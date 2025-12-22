@@ -180,11 +180,20 @@ void	pad_map(t_cub *cub);
 void	allocate_map(t_cub *cub);
 int	check_tile(int y, int x, char **grid, t_cub *cub);
 int	check_map(t_cub *cub);
+char	**expand_grid(t_cub *cub);
+
+// parse line validation
+char	*trim_the_line(char *line, t_cub *cub);
+void	validate_and_populate_address(char *idn, t_cub *cub);
+void	parse_text_col_line(t_cub *cub);
+void	check_texture_paths_accessibility(t_cub *cub);
+void	check_col_state(t_cub *cub);
+void	validate_chars_in_map_line(t_cub *cub, int *has_player, int *map_started);
 
 // parse populate funs
 void	populate_color(char *ident, t_cub *cub);
 int	populate_address(char *token, char *ident, t_cub *cub);
-char	*second_part(char *ident, char *trimd, t_cub *cub);
+char	*parse_ident_val(char *ident, char *trimd, t_cub *cub);
 const char	*skip_ws(const char *s);
 
 //parse color validation
