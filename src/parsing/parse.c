@@ -167,8 +167,10 @@ void	check_texture_paths_accessibility(t_cub *cub)
 	int		fd;
 	char	*extension;
 
-	paths[5] = {cub->col->no_tex_p, cub->col->so_tex_p, cub->col->we_tex_p,
-		cub->col->ea_tex_p, NULL};
+	paths[0] = cub->col->no_tex_p;
+	paths[1] = cub->col->so_tex_p;
+	paths[2] = cub->col->we_tex_p;
+	paths[3] = cub->col->ea_tex_p;
 	i = 0;
 	while (paths[i])
 	{
