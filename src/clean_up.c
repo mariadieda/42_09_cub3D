@@ -55,6 +55,12 @@ void	clean_up(t_cub *cub)
 {
 	if (!cub)
 		return ;
+    if (cub->cur_line)
+      free(cub->cur_line);
+    if (cub->trmd_line)
+      free(cub->trmd_line);
+	if (cub->bufs)
+		free_n_array(cub->bufs, 3);
 	if (cub->col)
 		free_textures(cub);
 	if (cub->mlx)

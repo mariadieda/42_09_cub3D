@@ -18,7 +18,7 @@ ray_dir.x > 0	go right
 ray_dir.y < 0	go up
 ray_dir.y > 0	go down
  */
-void	set_step_direction_side_dist(t_hit *hit, float ray_angle)
+void	set_step_direction_side_dist(t_hit *hit)
 {
 	if (hit->ray_dir.x < 0)
 	{
@@ -79,7 +79,7 @@ t_hit	cast_dda_ray(t_cub *cub, float ray_angle)
 	hit.ray_dir.y = sinf(ray_angle);
 	hit.delta_dist.x = fabsf(1.0f / hit.ray_dir.x);
 	hit.delta_dist.y = fabsf(1.0f / hit.ray_dir.y);
-	set_step_direction_side_dist(&hit, ray_angle);
+	set_step_direction_side_dist(&hit);
 	find_hit(cub, &hit);
 	if (hit.is_horiz == 0)
 	{

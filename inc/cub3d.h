@@ -19,8 +19,8 @@
 # include "../gnl/get_next_line.h"
 # include "../libft/ft_printf.h"
 # include "../libft/libft.h"
-# include <X11/X.h>
-# include <X11/keysym.h>
+//# include <X11/X.h>
+//# include <X11/keysym.h>
 # include <fcntl.h> // open
 # include <math.h>
 # include <mlx.h>
@@ -153,8 +153,12 @@ typedef struct s_cub
 	void				*img;
 	char				*pxl_arr;
 	struct s_col		*col;
+    char				*cur_line;
+    char				*trmd_line;
+    int					header_cnt;
+	char				**bufs;
 	char				spawn_dir;
-	struct s_pos		player_tile;
+	struct s_int_pos	player_tile;
 	struct s_pos		player_px;
 	float				player_angle;
 	float				player_fov;
@@ -171,6 +175,13 @@ void					make_window(t_cub *cub);
 
 //parse
 int						parse_file(char *filename, t_cub *cub);
+
+// parse_validation_helpers
+int						is_blank_line(const char *line);
+int						is_player(char c);
+void					check_missing_text_col(t_cub* cub);
+int						validate_identifier(char *ident, char *trimd);
+int						validate_address(char* token);
 
 //keyhandlers
 int						handle_keyrelease(int keycode, t_cub *cub);
