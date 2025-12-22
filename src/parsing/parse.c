@@ -12,33 +12,7 @@
 
 #include "../inc/cub3d.h"
 
-const char	*skip_ws(const char *s)
-{
-	while (*s && ft_is_in_set(*s, " \n\t\v\f\r"))
-		s++;
-	return (s);
-}
 
-// find the end of the identifier and make it start of the temp
-// if there are white spaces at the beginning remove them
-// give back a malloced string
-char	*second_part(char *ident, char *trimd, t_cub *cub)
-{
-	size_t		len_ident;
-	const char	*temp;
-	char		*s;
-
-	len_ident = ft_strlen(ident);
-	temp = trimd + len_ident;
-	temp = skip_ws(temp);
-	if (*temp == '\0')
-		error_exit(cub, "Missing texture address/color!\n", (char *[]){trimd,
-				NULL});
-	s = ft_strdup(temp);
-	if (!s)
-		error_exit(cub, "Malloc failed!\n", (char *[]){trimd, NULL});
-	return (s);
-}
 
 char	*trim_the_line(char *line, t_cub *cub)
 {
@@ -55,69 +29,6 @@ char	*trim_the_line(char *line, t_cub *cub)
 	return (trimd);
 }
 
-// identifier already valdiated (F or C)
-void	populate_color(char *ident, t_cub *cub)
-{
-	char	*color_str;
-	char	**nums;
-	int		color;
-
-	color_str = second_part(ident, cub->trmd_line, cub);
-	nums = ft_split(color_str, ',');
-	free(color_str);
-	if (!nums || !validate_color(nums))
-	{
-		free_array(nums);
-		error_exit(cub, "Invalid color format\n", NULL);
-	}
-	color = get_int_color_from_str(nums);
-	free_array(nums);
-	if (*ident == 'F')
-	{
-		if (cub->col->has_floor)
-			error_exit(cub, "Duplicate floor color definition.\n", NULL);
-		cub->col->floor = color;
-		cub->col->has_floor = 1;
-	}
-	else if (*ident == 'C')
-	{
-		if (cub->col->has_ceil)
-			error_exit(cub, "Duplicate ceiling color definition.\n", NULL);
-		cub->col->ceil = color;
-		cub->col->has_ceil = 1;
-	}
-	cub->header_cnt++;
-}
-
-int	populate_address(char *token, char *ident, t_cub *cub)
-{
-	if (ft_strncmp(ident, "NO", 2) == 0)
-	{
-		if (cub->col->no_tex_p)
-			return (0);
-		cub->col->no_tex_p = token;
-	}
-	else if (ft_strncmp(ident, "SO", 2) == 0)
-	{
-		if (cub->col->so_tex_p)
-			return (0);
-		cub->col->so_tex_p = token;
-	}
-	else if (ft_strncmp(ident, "WE", 2) == 0)
-	{
-		if (cub->col->we_tex_p)
-			return (0);
-		cub->col->we_tex_p = token;
-	}
-	else if (ft_strncmp(ident, "EA", 2) == 0)
-	{
-		if (cub->col->ea_tex_p)
-			return (0);
-		cub->col->ea_tex_p = token;
-	}
-	cub->header_cnt++;
-	return (1);
-}
 
 void	validate_and_populate_address(char *idn, t_cub *cub)
 {
@@ -192,7 +103,7 @@ void	check_col_state(t_cub *cub)
 {
 	if (!cub)
 		error_exit(cub, "Cub is not initialized\n", NULL);
-	if (cub->col == NULL) // completely NULL col
+	if (cub->col == NULL)
 	{
 		cub->col = ft_calloc(1, sizeof(*(cub->col)));
 		if (!cub->col)
@@ -200,78 +111,38 @@ void	check_col_state(t_cub *cub)
 	}
 	else if (cub->col->no_tex_p || cub->col->so_tex_p || cub->col->we_tex_p
 			|| cub->col->ea_tex_p || cub->col->has_floor || cub->col->has_ceil)
-	// if col is allocated and some of the members are not empty
 	{
 		error_exit(cub, "Internal: col already initialized\n", NULL);
-	} // if col is allocated but all members are NULL -> safe to use
+	}
 }
 
-int	validate_chars_in_map_line(char *trimd, int *has_player, int *map_started,
-		t_cub *cub)
 // validate the line and start_map = 1
+void validate_chars_in_map_line(t_cub *cub, int *has_player, int *map_started)
 {
-	int i;
-	int trimd_len;
+	int	i;
+	int	trimd_len;
 
 	i = 0;
-	while (trimd[i])
+	while (cub->trmd_line[i])
 	{
-		if (!ft_is_in_set(trimd[i], " 10NSWE"))
-			return (0); // error_exit(cub, "Invalid map character\n");
-		if (is_player(trimd[i]))
+		if (!ft_is_in_set(cub->trmd_line[i], " 10NSWE"))
+			error_exit(cub, "Invalid map character\n", NULL);
+		if (is_player(cub->trmd_line[i]))
 		{
 			if (*has_player == 1)
-				return (0); // error_exit(cub, "Multiple players present\n");
+				error_exit(cub, "Multiple players present\n", NULL);
 			*has_player = 1;
 			cub->player_tile.x = i + 0.5;
 			cub->player_tile.y = cub->map->height + 0.5;
-			cub->spawn_dir = trimd[i];
+			cub->spawn_dir = cub->trmd_line[i];
 		}
 		i++;
 	}
 	if (*map_started == 0)
 		*map_started = 1;
-	trimd_len = ft_strlen(trimd);
+	trimd_len = ft_strlen(cub->trmd_line);
 	if (cub->map->width < trimd_len)
 		cub->map->width = trimd_len;
-	return (1);
-}
-
-void	pad_map(t_cub *cub)
-{
-	int	y;
-	int	old_width;
-	int	add_size;
-
-	add_size = 0;
-	y = 0;
-	while (y < cub->map->height)
-	{
-		old_width = ft_strlen(cub->map->grid[y]);
-		add_size = cub->map->width - old_width + 1;
-		cub->map->grid[y] = ft_realloc(cub->map->grid[y], old_width, (old_width
-					+ add_size));
-		while (old_width < cub->map->width)
-		{
-			cub->map->grid[y][old_width] = ' ';
-			old_width++;
-		}
-		cub->map->grid[y][cub->map->width] = '\0';
-		y++;
-	}
-}
-
-void	allocate_map(t_cub *cub)
-{
-	cub->map = ft_calloc(1, sizeof(t_map));
-	if (!cub->map)
-		error_exit(cub, "Malloc failed\n", NULL);
-	cub->map->height = 0;
-	cub->map->width = 0;
-	cub->map->capacity = 8;
-	cub->map->grid = malloc(sizeof(char *) * (cub->map->capacity + 1));
-	if (!cub->map->grid)
-		error_exit(cub, "Malloc failed for map grid\n", NULL);
 }
 
 void	add_line_to_grid(t_cub *cub, char *trimd, char *line)
@@ -316,10 +187,7 @@ int	inside_header(t_cub *cub, int map_started)
 			return (1);
 		}
 		parse_text_col_line(cub);
-		free(cub->trmd_line);
-		cub->trmd_line = NULL;
-		free(cub->cur_line);
-		cub->cur_line = NULL;
+		free_tmp_lines(cub);
 		return (1);
 	}
 	if (cub->header_cnt == 6)
@@ -330,6 +198,21 @@ int	inside_header(t_cub *cub, int map_started)
 		return (1);
 	}
 	return (0);
+}
+
+void	finalize_map(t_cub *cub, int fd, int map_started, int has_player)
+{
+	cub->map->grid[cub->map->height] = NULL;
+	if (!map_started)
+		error_exit(cub, "No map found\n", NULL);
+	if (has_player == 0)
+		error_exit(cub, "No player found\n", NULL);
+	pad_map(cub);
+	close(fd);
+	check_texture_paths_accessibility(cub);
+	if (!check_map(cub))
+		error_exit(cub, "Invalid map structure\n", NULL);
+	cub->map->grid[(int)cub->player_tile.y][(int)cub->player_tile.x] = '0';
 }
 
 int	parse_file(char *filename, t_cub *cub)
@@ -357,28 +240,11 @@ int	parse_file(char *filename, t_cub *cub)
 		cub->trmd_line = ft_strtrim(cub->cur_line, "\r\n");
 		if (!cub->trmd_line)
 			error_exit(cub, "Malloc failed\n", NULL);
-		if (!validate_chars_in_map_line(cub->trmd_line, &has_player,
-				&map_started, cub))
-			error_exit(cub,
-						"Invalid map character or multiple players present\n",
-						NULL);
+		validate_chars_in_map_line(cub, &has_player, &map_started);
 		add_line_to_grid(cub, cub->trmd_line, cub->cur_line);
-		free(cub->trmd_line);
-		free(cub->cur_line);
-		cub->trmd_line = NULL;
-		cub->cur_line = NULL;
+		free_tmp_lines(cub);
 	}
-	cub->map->grid[cub->map->height] = NULL;
-	if (!map_started)
-		error_exit(cub, "No map found\n", NULL);
-	if (has_player == 0)
-		error_exit(cub, "No player found\n", NULL);
-	pad_map(cub);
-	close(fd);
-	check_texture_paths_accessibility(cub);
-	if (!check_map(cub))
-		error_exit(cub, "Invalid map structure\n", NULL);
-	cub->map->grid[(int)cub->player_tile.y][(int)cub->player_tile.x] = '0';
+	finalize_map(cub, fd, map_started, has_player);
 	return (1);
 }
 

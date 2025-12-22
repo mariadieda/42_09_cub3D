@@ -156,10 +156,8 @@ typedef struct s_cub
     char				*cur_line;
     char				*trmd_line;
     int					header_cnt;
-	char				**bufs;
 	char				spawn_dir;
-	//struct s_int_pos	player_tile;
-	struct s_pos	player_tile;
+	struct s_pos		player_tile;
 	struct s_pos		player_px;
 	float				player_angle;
 	float				player_fov;
@@ -177,10 +175,21 @@ void					make_window(t_cub *cub);
 //parse
 int						parse_file(char *filename, t_cub *cub);
 
+// parse - check map
+void	pad_map(t_cub *cub);
+void	allocate_map(t_cub *cub);
+int	check_tile(int y, int x, char **grid, t_cub *cub);
+int	check_map(t_cub *cub);
+
+// parse populate funs
+void	populate_color(char *ident, t_cub *cub);
+int	populate_address(char *token, char *ident, t_cub *cub);
+char	*second_part(char *ident, char *trimd, t_cub *cub);
+const char	*skip_ws(const char *s);
+
 //parse color validation
 int	validate_color(char **nums);
 int	get_int_color_from_str(char **nums);
-int	check_map(t_cub* cub);
 
 // parse_validation_helpers
 int						is_blank_line(const char *line);
@@ -241,6 +250,7 @@ void					clean_up(t_cub *cub);
 void					error_exit(t_cub *cub, char *msg, char **to_be_freed);
 void					free_n_array(char **arr, int grid_height);
 void					free_array(char **arr);
+void					free_tmp_lines(t_cub *cub);
 
 //utils
 void					print_map(t_cub *cub);

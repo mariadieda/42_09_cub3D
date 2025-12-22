@@ -59,8 +59,6 @@ void	clean_up(t_cub *cub)
       free(cub->cur_line);
     if (cub->trmd_line)
       free(cub->trmd_line);
-	if (cub->bufs)
-		free_n_array(cub->bufs, 3);
 	if (cub->col)
 		free_textures(cub);
 	if (cub->mlx)
@@ -108,6 +106,14 @@ void	free_array_without_malloc_arr(char **arr)
 		free(arr[i]);
 		i++;
 	}
+}
+
+void free_tmp_lines(t_cub *cub)
+{
+	free(cub->trmd_line);
+	free(cub->cur_line);
+	cub->trmd_line = NULL;
+	cub->cur_line = NULL;
 }
 
 void	error_exit(t_cub *cub, char *msg, char **to_be_freed)
