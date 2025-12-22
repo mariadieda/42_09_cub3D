@@ -40,27 +40,24 @@ char	*parse_ident_val(char *ident, char *trimd, t_cub *cub)
 	return (s);
 }
 
-static int	set_texture(char *token, char *texture, t_cub *cub)
+static int set_texture(char *token, char **texture_ptr, t_cub *cub)
 {
-	if (texture)
-		return (0);
-	else
-	{
-		texture = token;
-		cub->header_cnt++;
-		return (1);
-	}
+	if (*texture_ptr)
+		return 0;
+	*texture_ptr = token;
+	cub->header_cnt++;
+	return 1;
 }
 
-int	populate_address(char *token, char *ident, t_cub *cub)
+int populate_address(char *token, char *ident, t_cub *cub)
 {
 	if (ft_strncmp(ident, "NO", 2) == 0)
-		return (set_texture(token, cub->col->no_tex_p, cub));
+		return set_texture(token, &cub->col->no_tex_p, cub);
 	else if (ft_strncmp(ident, "SO", 2) == 0)
-		return (set_texture(token, cub->col->so_tex_p, cub));
+		return set_texture(token, &cub->col->so_tex_p, cub);
 	else if (ft_strncmp(ident, "WE", 2) == 0)
-		return (set_texture(token, cub->col->we_tex_p, cub));
+		return set_texture(token, &cub->col->we_tex_p, cub);
 	else if (ft_strncmp(ident, "EA", 2) == 0)
-		return (set_texture(token, cub->col->ea_tex_p, cub));
-	return (1);
+		return set_texture(token, &cub->col->ea_tex_p, cub);
+	return 1;
 }
