@@ -64,3 +64,10 @@ char	*ft_strchr(const char *s, int c)
 	else
 		return (NULL);
 }
+
+void	handle_empty_line(char *line, char *strleft)
+{
+	free(line);
+	free(strleft);
+	strleft = NULL;
+}

@@ -236,10 +236,11 @@ t_tex					select_texture(t_cub *cub, t_pos ray_dir,
 void					create_texture_imgs(t_cub *cub);
 
 //clean up
+void					gnl_free_static(void);
 void					clean_up(t_cub *cub);
 void					error_exit(t_cub *cub, char *msg, char **to_be_freed);
 void					free_n_array(char **arr, int grid_height);
-void	free_array(char **arr);
+void					free_array(char **arr);
 
 //utils
 void					print_map(t_cub *cub);

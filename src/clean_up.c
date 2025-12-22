@@ -96,11 +96,27 @@ void	free_array(char **arr)
 	free(arr);
 }
 
+void	free_array_without_malloc_arr(char **arr)
+{
+	int	i;
+
+	i = 0;
+	if (!arr)
+		return ;
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+}
+
 void	error_exit(t_cub *cub, char *msg, char **to_be_freed)
 {
 	ft_putstr_fd("Error\n", 2);
 	ft_putstr_fd(msg, 2);
-	free_array(to_be_freed);
+	//gnl_free_static();
+	get_next_line(-1);
+	free_array_without_malloc_arr(to_be_freed);
 	clean_up(cub);
 	exit(1);
 }

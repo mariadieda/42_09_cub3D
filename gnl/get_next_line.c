@@ -12,6 +12,17 @@
 
 #include "get_next_line.h"
 
+/*
+
+
+void	gnl_free_static(void)
+{
+	if (g_strleft)
+	{
+		free(g_strleft);
+		g_strleft = NULL;
+	}
+}*/
 static char	*fill_buffer(int fd, ssize_t *nbytesread, char *new_buffer,
 		char *stat_str)
 {
@@ -106,7 +117,10 @@ char	*get_next_line(int fd)
 
 	line = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
+	{
+		free(strleft);
 		return (NULL);
+	}
 	eol_pos = 0;
 	strleft = generate_str_with_eol(fd, strleft);
 	if (!strleft)
@@ -118,9 +132,7 @@ char	*get_next_line(int fd)
 	strleft = rm_line(strleft, eol_pos);
 	if (line && line[0] == '\0')
 	{
-		free(line);
-		free(strleft);
-		strleft = NULL;
+		handle_empty_line(line, strleft);
 		return (NULL);
 	}
 	return (line);
