@@ -22,21 +22,21 @@ int	check_tile(int y, int x, char **grid, t_cub *cub)
 	if ((y == 0) || (y == h - 1) || x == 0 || (x == w - 1))
 		if (grid[y][x] == '0' || is_player(grid[y][x]))
 			return (0);
-	else if (grid[y][x] == '0' || is_player(grid[y][x]))
-	{
-		if ((grid[y - 1][x] != '1' && grid[y - 1][x] != '0' && !is_player(grid[y
-					- 1][x])))
-			return (0);
-		if ((grid[y][x - 1] != '1' && grid[y][x - 1] != '0'
-				&& !is_player(grid[y][x - 1])))
-			return (0);
-		if ((grid[y + 1][x] != '1' && grid[y + 1][x] != '0' && !is_player(grid[y
-					+ 1][x])))
-			return (0);
-		if ((grid[y][x + 1] != '1' && grid[y][x + 1] != '0'
-				&& !is_player(grid[y][x + 1])))
-			return (0);
-	}
+		else if (grid[y][x] == '0' || is_player(grid[y][x]))
+		{
+			if ((grid[y - 1][x] != '1' && grid[y - 1][x] != '0'
+					&& !is_player(grid[y - 1][x])))
+				return (0);
+			if ((grid[y][x - 1] != '1' && grid[y][x - 1] != '0'
+					&& !is_player(grid[y][x - 1])))
+				return (0);
+			if ((grid[y + 1][x] != '1' && grid[y + 1][x] != '0'
+					&& !is_player(grid[y + 1][x])))
+				return (0);
+			if ((grid[y][x + 1] != '1' && grid[y][x + 1] != '0'
+					&& !is_player(grid[y][x + 1])))
+				return (0);
+		}
 	return (1);
 }
 

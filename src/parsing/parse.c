@@ -19,8 +19,6 @@ const char	*skip_ws(const char *s)
 	return (s);
 }
 
-
-
 // find the end of the identifier and make it start of the temp
 // if there are white spaces at the beginning remove them
 // give back a malloced string
@@ -32,11 +30,10 @@ char	*second_part(char *ident, char *trimd, t_cub *cub)
 
 	len_ident = ft_strlen(ident);
 	temp = trimd + len_ident;
-
 	temp = skip_ws(temp);
 	if (*temp == '\0')
 		error_exit(cub, "Missing texture address/color!\n", (char *[]){trimd,
-			NULL});
+				NULL});
 	s = ft_strdup(temp);
 	if (!s)
 		error_exit(cub, "Malloc failed!\n", (char *[]){trimd, NULL});
@@ -99,29 +96,26 @@ int	populate_address(char *token, char *ident, t_cub *cub)
 		if (cub->col->no_tex_p)
 			return (0);
 		cub->col->no_tex_p = token;
-		cub->header_cnt++;
 	}
 	else if (ft_strncmp(ident, "SO", 2) == 0)
 	{
 		if (cub->col->so_tex_p)
 			return (0);
 		cub->col->so_tex_p = token;
-		cub->header_cnt++;
 	}
 	else if (ft_strncmp(ident, "WE", 2) == 0)
 	{
 		if (cub->col->we_tex_p)
 			return (0);
 		cub->col->we_tex_p = token;
-		cub->header_cnt++;
 	}
 	else if (ft_strncmp(ident, "EA", 2) == 0)
 	{
 		if (cub->col->ea_tex_p)
 			return (0);
 		cub->col->ea_tex_p = token;
-		cub->header_cnt++;
 	}
+	cub->header_cnt++;
 	return (1);
 }
 
@@ -134,8 +128,7 @@ void	validate_and_populate_address(char *idn, t_cub *cub)
 
 	token = second_part(idn, cub->trmd_line, cub);
 	if (!validate_address(token))
-		error_exit(cub, "Invalid Path Format\n", (char *[]){token,
-			NULL});
+		error_exit(cub, "Invalid Path Format\n", (char *[]){token, NULL});
 	if (!populate_address(token, idn, cub))
 	{
 		s1 = "Multiple addresses for identifier: ";
@@ -170,11 +163,12 @@ void	parse_text_col_line(t_cub *cub)
 void	check_texture_paths_accessibility(t_cub *cub)
 {
 	int		i;
-	char	*paths[5] = {cub->col->no_tex_p, cub->col->so_tex_p,
-			cub->col->we_tex_p, cub->col->ea_tex_p, NULL};
+	char	*paths[5];
 	int		fd;
 	char	*extension;
 
+	paths[5] = {cub->col->no_tex_p, cub->col->so_tex_p, cub->col->we_tex_p,
+		cub->col->ea_tex_p, NULL};
 	i = 0;
 	while (paths[i])
 	{
@@ -203,7 +197,7 @@ void	check_col_state(t_cub *cub)
 			error_exit(cub, "Malloc failed\n", NULL);
 	}
 	else if (cub->col->no_tex_p || cub->col->so_tex_p || cub->col->we_tex_p
-		|| cub->col->ea_tex_p || cub->col->has_floor || cub->col->has_ceil)
+			|| cub->col->ea_tex_p || cub->col->has_floor || cub->col->has_ceil)
 	// if col is allocated and some of the members are not empty
 	{
 		error_exit(cub, "Internal: col already initialized\n", NULL);
@@ -296,7 +290,7 @@ void	add_line_to_grid(t_cub *cub, char *trimd, char *line)
 			{
 				free_n_array(new_grid, i);
 				error_exit(cub, "Malloc failed\n", (char *[]){line, trimd,
-					NULL});
+						NULL});
 			}
 			i++;
 		}
@@ -364,7 +358,8 @@ int	parse_file(char *filename, t_cub *cub)
 		if (!validate_chars_in_map_line(cub->trmd_line, &has_player,
 				&map_started, cub))
 			error_exit(cub,
-				"Invalid map character or multiple players present\n", NULL);
+						"Invalid map character or multiple players present\n",
+						NULL);
 		add_line_to_grid(cub, cub->trmd_line, cub->cur_line);
 		free(cub->trmd_line);
 		free(cub->cur_line);
